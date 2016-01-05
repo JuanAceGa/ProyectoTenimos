@@ -1,0 +1,137 @@
+
+<div class="row" id="rowAuxiliares">
+    <div class=" col-md-offset-1 col-md-10">
+        <form id="frmAuxiliares" class="form-horizontal">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-btns" id="frmMaestroAux">
+                        <!--<a href="#" class="panel-close">&times;</a>-->
+                        <a href="#" class="minimize">&minus;</a>
+                    </div>
+                    <h4 class="panel-title">Formulario para Maestro de Auxiliares</h4>
+                    <p>Por favor ingrese todos los campos obligatorios ( <span class="asterisk">*</span> ).</p>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="col-sm-4 control-label">Nombre del Auxiliar <span class="asterisk">*</span></label>
+                            <div class="col-sm-8">
+                                <input type="text" name="nomAux" id="nomAux" class="form-control" placeholder="Nombre del auxiliar"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="col-sm-4 control-label">Fibra <span class="asterisk">*</span></label>
+                            <div class="col-sm-8">
+                                <select id="cbxfibraAux" class="form-control">
+                                    <option>Seleccione una...</option>
+                                    <option>Fibra</option>
+                                </select>
+                                <label class="error" for="fibra"></label>
+                            </div>
+                        </div><!-- form-group -->
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-10 col-md-offset-1">
+                            <div class="table-responsive">
+                                <table class="table mb30" id="dataTableNewQAuxiliar">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-3">Código del Quimico</th>
+                                            <th class="col-md-5">Nombre del Quimico</th>
+                                            <th class="col-md-2">Cant. Gr/Lt</th>
+                                            <th class="col-md-2">Cant. %/Kl</th>
+                                            <th class="col-md-2"></th>
+                                            <th class="col-md-2"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="form-group col-md-12">
+                                                    <div class="col-sm-12">
+                                                        <input type="text" name="codQuimAux" id="codQuimAux" class="form-control" placeholder="Código del quimico" list="dlCodQuimAux"/>
+                                                        <datalist id="dlCodQuimAux"></datalist>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group col-md-12">
+                                                    <div class="col-sm-12">
+                                                        <input type="text" name="nomQuimAux" id="nomQuimAux" class="form-control" placeholder="Nombre del quimico" list="dlNomQuimAux"/>
+                                                        <datalist id="dlNomQuimAux"></datalist>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group col-md-12">
+                                                    <div class="col-sm-12">
+                                                        <input type="text" name="cantGrLtAux" id="cantGrLtAux" class="form-control" placeholder="Gr/Lt" />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group col-md-12">
+                                                    <div class="col-sm-12">
+                                                        <input type="text" name="cantPctjAux" id="cantPctjAux" class="form-control" placeholder="%/Kl" />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="table-action">
+                                                <div class="form-group col-md-12">
+                                                    <button type="button" class="btn" id="btnAddLineaAux"><i class="fa fa-check"></i></button>
+                                                </div>
+                                            </td>
+                                            <td class="table-action">
+                                                <!--<div class="form-group col-md-12">
+                                                    <button type="button" class="btn" id="btnAddLineaAux"><i class="fa fa-check"></i></button>
+                                                </div>-->
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div><!-- table-responsive -->
+                        </div><!-- col-md-6 -->
+                    </div>
+
+                </div><!-- panel-body -->
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-9 col-sm-offset-5">
+                            <button class="btn btn-primary" id="btnSaveAux" type="button">Guardar</button>
+                            <button type="reset" class="btn btn-default" id="btnCleanAux">Limpiar</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- panel -->
+        </form>
+    </div><!-- col-md-6 -->
+
+    <div class=" col-md-offset-1 col-md-10">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-btns" id="tblMaestroAux">
+                    <a href="#" class="minimize">&minus;</a>
+                </div>
+                <h4 class="panel-title">Listado de Maestros de Auxiliares</h4>
+                <p>Si desea consultar o editar un maestro específico, despliegue este panel.</p>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table" id="dataTableAuxiliar">
+                        <thead>
+                            <tr>
+                                <th class="col-md-1">Id. Aux.</th>
+                                <th class="col-md-3">Nombre del Auxiliar</th>
+                                <th class="col-md-3">Fibra</th>
+                                <th class="col-md-1">Coste</th>
+                                <th class="col-md-1">Ult. Fecha de Uso</th>
+                                <th class="col-md-1">Editar</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div><!-- table-responsive -->
+            </div><!-- panel-body -->
+        </div><!-- panel -->
+    </div><!-- col-md-10 -->                        
+</div><!--row -->

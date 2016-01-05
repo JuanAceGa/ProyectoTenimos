@@ -1,0 +1,5 @@
+*.xml
+target/
+src/test/
+src/main/java/
+src/main/resources/
