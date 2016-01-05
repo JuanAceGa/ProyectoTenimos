@@ -59,7 +59,7 @@
         </section>
         
         <!-- Modal -->
-        <jsp:include page="modales/modalMensajeAlert.jspf" />
+        <jsp:include page="src/views/modal.alert/modalMensajeAlert.jspf" />
         
         <script src="style_js/js/lib/jquery-1.10.2.min.js"></script>
         <script src="style_js/js/lib/jquery-migrate-1.2.1.min.js"></script>
