@@ -54,10 +54,15 @@
             cargarDatos: function(dato, opc) {
                 var self = this;
                 var data = JSON.parse(dato);
-
+                var elementos = [];
+                
                 if (opc === 'f') {
                     self.oFibras = data;
-                    self.cargarComboBox();
+                    elementos.push(self.$cbxfibraPrep);
+                    //elementos.push(self.$eCbxfibraPrep);
+                    
+                    u.cargarComboBox(elementos, self.oFibras);
+                    //self.cargarComboBox();
                 }
 
                 if (opc === 'q') {
@@ -67,7 +72,8 @@
 
                 if (opc === 'pr') {
                     self.oPreparaciones = data;
-                    self.iniciarDataTables();
+                    u.renderDataTables(self.$dataTablePreparacion, self.oPreparaciones);
+                    //self.iniciarDataTables();
                 }
 
                 if (opc === 'npr') {
@@ -94,6 +100,7 @@
                 self.iniciarDataTables();
                 self.pintarCamposObligatorios();
             },
+            
             iniciarDataTables: function() {
                 var self = this;
                 var i;
@@ -528,11 +535,11 @@
             },
             borrarLineaPreparacion: function() {
                 var self = this;
-
-                $(document).on('click', '#btnDelLineaPrep', function(e) {
+                
+                self.$dataTableNewQPreparacion.on('click', '#btnDelLineaPrep', function(e) {
                     var fila = $(this).closest('tr');
                     fila.remove();
-
+                    
                     self.noRepetirQuimicos("-", fila[0].cells[0].textContent);
 
                     if ($('#dataTableNewQPreparacion tbody tr').length - 1 == 0) {

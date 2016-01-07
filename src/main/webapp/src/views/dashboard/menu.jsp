@@ -16,11 +16,11 @@
 
         <title>ERP Teñimos S.A.</title>
 
-        <link href="../../../style_js/css/style.default.css" rel="stylesheet">
-        <link href="../../../style_js/css/jquery.gritter.css" rel="stylesheet">
-        <link href="../../../style_js/css/jquery.datatables.css" rel="stylesheet">
-        <link href="../../../style_js/css/display.css" rel="stylesheet">
-        <link href="../../../style_js/css/datatable-align-text.css" rel="stylesheet">
+        <link href="../../css/style.default.css" rel="stylesheet">
+        <link href="../../css/jquery.gritter.css" rel="stylesheet">
+        <link href="../../css/jquery.datatables.css" rel="stylesheet">
+        <link href="../../css/display.css" rel="stylesheet">
+        <link href="../../css/datatable-align-text.css" rel="stylesheet">
     </head>
 
     <body>
@@ -166,7 +166,7 @@
                             <li>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                        <img src="../../../style_js/images/photos/loggeduser.png" alt="" />
+                                        <img src="../../images/photos/loggeduser.png" alt="" />
                                         <span id="nomUser">John Doe</span>
                                         <span class="caret"></span>
                                     </button>
@@ -213,32 +213,33 @@
         <!-- Modal -->
         <jsp:include page="../modal.alert/modalMensajeAlert.jspf"></jsp:include>
         
-        <script src="../../../style_js/js/lib/jquery-1.10.2.min.js"></script>
-        <script src="../../../style_js/js/lib/code.jquery.com-jquery-1.11.3.min.js"></script>
-        <script src="../../../style_js/js/lib/jquery-migrate-1.2.1.min.js"></script>
-        <script src="../../../style_js/js/lib/bootstrap.min.js"></script>
-        <script src="../../../style_js/js/lib/modernizr.min.js"></script>
-        <script src="../../../style_js/js/lib/jquery.sparkline.min.js"></script>
-        <script src="../../../style_js/js/lib/toggles.min.js"></script>
-        <script src="../../../style_js/js/lib/retina.min.js"></script>
-        <script src="../../../style_js/js/lib/jquery.cookies.js"></script>
-        <script src="../../../style_js/js/lib/jquery.gritter.min.js"></script>
+        <script src="../../js/lib/jquery-1.10.2.min.js"></script>
+        <script src="../../js/lib/code.jquery.com-jquery-1.11.3.min.js"></script>
+        <script src="../../js/lib/jquery-migrate-1.2.1.min.js"></script>
+        <script src="../../js/lib/bootstrap.min.js"></script>
+        <script src="../../js/lib/modernizr.min.js"></script>
+        <script src="../../js/lib/jquery.sparkline.min.js"></script>
+        <script src="../../js/lib/toggles.min.js"></script>
+        <script src="../../js/lib/retina.min.js"></script>
+        <script src="../../js/lib/jquery.cookies.js"></script>
+        <script src="../../js/lib/jquery.gritter.min.js"></script>
 
-        <script src="../../../style_js/js/lib/morris.min.js"></script>
-        <script src="../../../style_js/js/lib/raphael-2.1.0.min.js"></script>
+        <script src="../../js/lib/morris.min.js"></script>
+        <script src="../../js/lib/raphael-2.1.0.min.js"></script>
 
-        <script src="../../../style_js/js/lib/chosen.jquery.min.js"></script>
+        <script src="../../js/lib/chosen.jquery.min.js"></script>
 
-        <script src="../../../style_js/js/lib/jquery.validate.min.js"></script>
+        <script src="../../js/lib/jquery.validate.min.js"></script>
         
-        <script src="../../../style_js/js/lib/custom.js"></script>
-        <script src="../../../style_js/js/lib/datatables.min.js"></script>
-        <script src="../../../style_js/js/lib/jquery-inputformat.min.js"></script>
+        <script src="../../js/lib/custom.js"></script>
+        <script src="../../js/lib/datatables.min.js"></script>
+        <script src="../../js/lib/jquery-inputformat.min.js"></script>
 
-        <script src="../../../style_js/js/consultas.js"></script>
-        <script src="../../../style_js/js/camposObligatorios.js"></script>
-        <script src="../../../style_js/js/frmPreparacion.js"></script>
+        <script src="../../js/consultas.js"></script>
+        <script src="../../js/camposObligatorios.js"></script>
+        <script src="../../js/util.js"></script>
+        <script src="../../js/frmPreparacion.js"></script>
         <!--<script src="../../../style_js/js/frmAuxiliares.js"></script>-->
-        <script src="../../../style_js/js/dashboard.js"></script>
+        <script src="../../js/dashboard.js"></script>
     </body>
 </html>

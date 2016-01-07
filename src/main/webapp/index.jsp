@@ -6,11 +6,11 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="shortcut icon" href="style_js/images/favicon.ico">
+        <link rel="shortcut icon" href="src/images/favicon.ico">
 
         <title>ERP Teñimos S.A.</title>
 
-        <link href="style_js/css/style.default.css" rel="stylesheet">
+        <link href="src/css/style.default.css" rel="stylesheet">
     </head>
 
     <body class="signin">
@@ -61,15 +61,15 @@
         <!-- Modal -->
         <jsp:include page="src/views/modal.alert/modalMensajeAlert.jspf" />
         
-        <script src="style_js/js/lib/jquery-1.10.2.min.js"></script>
-        <script src="style_js/js/lib/jquery-migrate-1.2.1.min.js"></script>
-        <script src="style_js/js/lib/bootstrap.min.js"></script>
-        <script src="style_js/js/lib/modernizr.min.js"></script>
-        <script src="style_js/js/lib/retina.min.js"></script>
+        <script src="src/js/lib/jquery-1.10.2.min.js"></script>
+        <script src="src/js/lib/jquery-migrate-1.2.1.min.js"></script>
+        <script src="src/js/lib/bootstrap.min.js"></script>
+        <script src="src/js/lib/modernizr.min.js"></script>
+        <script src="src/js/lib/retina.min.js"></script>
 
-        <script src="style_js/js/lib/custom.js"></script>
+        <script src="src/js/lib/custom.js"></script>
         
-        <script src="style_js/js/index.js"></script>
+        <script src="src/js/index.js"></script>
 
     </body>
 </html>
