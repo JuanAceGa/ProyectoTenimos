@@ -238,6 +238,7 @@
         <script src="../../js/consultas.js"></script>
         <script src="../../js/camposObligatorios.js"></script>
         <script src="../../js/util.js"></script>
+        <script src="../../js/utilMaestros.js"></script>
         <script src="../../js/frmPreparacion.js"></script>
         <!--<script src="../../../style_js/js/frmAuxiliares.js"></script>-->
         <script src="../../js/dashboard.js"></script>
