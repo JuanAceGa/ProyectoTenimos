@@ -47,7 +47,7 @@
                 this.pintarCamposObligatorios();
                 this.agregarLineaPreparacion();
                 this.borrarLineaPreparacion();
-                this.agregarPreparacion();
+                this.consultaNombrePreparacion();
                 this.verPreparacion();
                 this.modificarQuimicoPreparacion();
             },
@@ -326,7 +326,8 @@
                     e.stopPropagation();
                 });
             },
-            agregarPreparacion: function() {
+            
+            consultaNombrePreparacion: function(){
                 var self = this;
 
                 self.$btnSavePrep.on("click", function(e) {
@@ -341,94 +342,40 @@
 
                     var b = true;
 
-                    if (self.cantidadDeProductoQuimico({val: self.$cantGrLtPrep.val(), input: 'grlt'})) {
+                    if (um.cantidadDeQuimico({val: self.$cantGrLtPrep.val(), input: 'grlt'})) {
                         b = false;
-                    } else if (self.cantidadDeProductoQuimico({val: self.$cantPctjPrep.val(), input: 'pctj'})) {
+                    } else if (um.cantidadDeQuimico({val: self.$cantPctjPrep.val(), input: 'pctj'})) {
                         b = false;
                     }
 
-                    if (b && campObligPrep) {
-
-                        $.ajax({
-                            url: '../ServletPreparaciones',
-                            type: 'GET',
-                            dataType: 'text',
-                            data: {
-                                accion: 'buscarNombre',
-                                nombre: self.$nomPrep.val() + " (" + self.$cbxfibraPrep.val() + ")"
-                            },
-                            success: function(data) {
-                                var response = JSON.parse(data);
-
-                                if (response === 'true') {
-
-                                    self.mensajeObligatoriedad({
-                                        titulo: 'Nombre de Preparación Existente.',
-                                        cuerpoMensaje: 'Ya hay un nombre de preparación para la fibra seleccionada, por favor intente nuevamente.'
-                                    });
-
-                                } else if (response === 'false') {
-
-                                    var datos = new Object();
-                                    datos.nomPrep = null;
-                                    datos.idFib = null;
-                                    datos.codQuimico = null;
-                                    datos.cantGr = null;
-                                    datos.cantPtj = null;
-
-                                    $('#dataTableNewQPreparacion tbody tr').each(function(index) {
-                                        if (index > 0) {
-                                            $(this).children('td').each(function(index2) {
-                                                switch (index2) {
-                                                    case 0: //Código Quimico
-                                                        if (datos.codQuimico === null) {
-                                                            datos.codQuimico = $(this).text();
-                                                        } else {
-                                                            datos.codQuimico += ";" + $(this).text();
-                                                        }
-                                                        break;
-                                                    case 1: //Nombre Quimico                                            
-                                                        break;
-                                                    case 2: //Cantidad Gr
-                                                        if (datos.cantGr === null) {
-                                                            datos.cantGr = $(this).text();
-                                                        } else {
-                                                            datos.cantGr += ";" + $(this).text();
-                                                        }
-                                                        break;
-                                                    case 3: //Cantidad Porcentaje
-                                                        if (datos.cantPtj === null) {
-                                                            datos.cantPtj = $(this).text();
-                                                        } else {
-                                                            datos.cantPtj += ";" + $(this).text();
-                                                        }
-                                                        break;
-                                                }
-                                            });
-                                        }
-                                    });
-
-                                    datos.codQuimico = datos.codQuimico.split(";");
-                                    datos.cantGr = datos.cantGr.split(";")
-                                    datos.cantPtj = datos.cantPtj.split(";");
-
-                                    datos.nomPrep = self.$nomPrep.val() + " (" + self.$cbxfibraPrep.val() + ")";
-
-                                    for (var i = 0; self.oFibras.length; i++) {
-                                        if (self.oFibras[i].nomFibra === self.$cbxfibraPrep.val()) {
-                                            datos.idFib = "" + self.oFibras[i].idFibra;
-                                            break;
-                                        }
-                                    }
-                                    consultas.guardarNuevaPreparacion(datos);
-                                }
-                            },
-                            error: function(response, status, er) {
-                                console.log("error: " + response + " status: " + status + " er:" + er);
-                            }
-                        });
+                    if (b && campObligPrep) {                        
+                        consultas.consultarNombrePreparacion(self.$nomPrep.val() + " (" + self.$cbxfibraPrep.val() + ")");
                     }
                 });
+            },
+            
+            agregarPreparacion: function(response) {
+                var self = this;
+
+                if (response === 'true') {
+                    self.mensajeObligatoriedad({
+                        titulo: 'Nombre de Preparación Existente.',
+                        cuerpoMensaje: 'Ya hay un nombre de preparación para la fibra seleccionada, por favor intente nuevamente.'
+                    });
+                
+                } else if (response === 'false') {
+                    var nombre = self.$nomPrep.val() + " (" + self.$cbxfibraPrep.val() + ")";
+                    
+                    for (var i = 0; self.oFibras.length; i++) {
+                        if (self.oFibras[i].nomFibra === self.$cbxfibraPrep.val()) {
+                            var idFib = "" + self.oFibras[i].idFibra;
+                            break;
+                        }
+                    }
+                    
+                    um.guardarRegistro({form: 'prep', tabla: self.$dataTableNewQPreparacion, nombre: nombre, idFib: idFib});
+                    
+                }
             },
             verPreparacion: function() {
                 var self = this;

@@ -31,6 +31,25 @@
                 });
             },
             
+            consultarNombrePreparacion: function(nombre) {
+                $.ajax({
+                    url: '../../../ServletPreparaciones',
+                    type: 'GET',
+                    dataType: 'text',
+                    data: {
+                        accion: 'buscarNombre',
+                        nombre: nombre
+                    },
+                    success: function(data) {
+                        var response = JSON.parse(data);
+                        frmPreparacion.agregarPreparacion(response);
+                    },
+                    error: function(response, status, er) {
+                        console.log("error: " + response + " status: " + status + " er:" + er);
+                    }
+                });
+            },
+            
             guardarNuevaPreparacion: function(datos) {
                 
                 $.ajax({

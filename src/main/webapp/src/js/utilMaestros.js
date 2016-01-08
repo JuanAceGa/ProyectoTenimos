@@ -265,6 +265,60 @@
                     }
                 }
                 return {existe: existe, oQuim: oQuimicos};
+            },
+            
+            guardarRegistro: function(d) {
+                var self = this;
+                var datos = new Object();
+                
+                if (d.form === 'prep') {
+                    datos.nomPrep = d.nombre;
+                    datos.idFib = d.idFib;
+                    datos.codQuimico = null;
+                    datos.cantGr = null;
+                    datos.cantPtj = null;
+                    
+                    $(d.tabla).find('tbody tr').each(function(index){
+                        if (index > 0) {
+                            $(this).children('td').each(function(index2) {
+                                switch (index2) {
+                                    case 0: //Código Quimico
+                                        if (datos.codQuimico === null) {
+                                            datos.codQuimico = $(this).text();
+                                        } else {
+                                            datos.codQuimico += ";" + $(this).text();
+                                        }
+                                        break;
+                                    case 1: //Nombre Quimico                                            
+                                        break;
+                                    case 2: //Cantidad Gr
+                                        if (datos.cantGr === null) {
+                                            datos.cantGr = $(this).text();
+                                        } else {
+                                            datos.cantGr += ";" + $(this).text();
+                                        }
+                                        break;
+                                    case 3: //Cantidad Porcentaje
+                                        if (datos.cantPtj === null) {
+                                            datos.cantPtj = $(this).text();
+                                        } else {
+                                            datos.cantPtj += ";" + $(this).text();
+                                        }
+                                        break;
+                                }
+                            });
+                        }
+                    });
+                    
+                    datos.codQuimico = datos.codQuimico.split(";");
+                    datos.cantGr = datos.cantGr.split(";")
+                    datos.cantPtj = datos.cantPtj.split(";");
+                    
+                    consultas.guardarNuevaPreparacion(datos);
+                    
+                } else if (d.form === ''){
+                    
+                }
             }
             
         }
