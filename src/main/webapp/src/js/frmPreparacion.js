@@ -59,6 +59,7 @@
                 if (opc === 'f') {
                     self.oFibras = data;
                     elementos.push(self.$cbxfibraPrep);
+                    elementos.push(self.$eCbxfibraPrep);
                     um.cargarComboBox(elementos, self.oFibras);
                 }
 
@@ -66,6 +67,11 @@
                     self.oQuimicos = data;
                     elementos.push(self.$dlCodQuimPrep);
                     elementos.push(self.$dlNomQuimPrep);
+                    um.cargarDataList(elementos, self.oQuimicos);
+                    
+                    elementos = [];
+                    elementos.push(self.$eDlCodQuimPrep);
+                    elementos.push(self.$eDlNomQuimPrep);
                     um.cargarDataList(elementos, self.oQuimicos);
                 }
 
@@ -257,6 +263,7 @@
             },
             agregarLineaPreparacion: function() {
                 var self = this;
+                
                 self.$btnAddLineaPrep.on('click', function(e) {
                     e.preventDefault();
                     var campObligQuim = false;
@@ -380,71 +387,30 @@
             verPreparacion: function() {
                 var self = this;
 
-                $(document).on('click', '#btnViewPrep', function (e) {
+                self.$dataTablePreparacion.on('click', '#btnViewPrep', function (e) {
                     self.idPreparacion = 0;
                     var fila = $(this).closest('tr');
-                    var id = fila[0].cells[0].textContent;
-                    var trTemplate = '<tr>' +
-                                        '<td style="text-align: center">:eCodQuimPrep:</td>' +
-                                        '<td>:eNomQuimPrep:</td>' +
-                                        '<td style="text-align: center">:eCantGrLtPrep:</td>' +
-                                        '<td style="text-align: center">:eCantPctjPrep:</td>' +
-                                        '<td>' +
-                                            '<div class="form-group col-md-12">' +
-                                                '<button type="button" class="btn" id="eBtnDelLineaPrep">' +
-                                                    '<i class="fa fa-trash-o"></i>' +
-                                                '</button>' +
-                                            '</div>' +
-                                        '</td>' +
-                                        '<td>' +
-                                            '<div class="form-group col-md-12">' +
-                                                '<button type="button" class="btn" id="eBtnEditLineaPrep">' +
-                                                    '<span class="glyphicon glyphicon-edit"></span>' +
-                                                '</button>' +
-                                            '</div>' +
-                                        '</td>' +
-                                     '</tr>';
-
-                    self.idPreparacion = parseInt(id);
-
-                    $("#tableEditPrep tr:gt(1)").remove();
-                    self.quimicosPorPrep = [];
-
-                    for (var i = 0; i < self.oPreparaciones.length; i++) {
-                        if (self.oPreparaciones[i].idNomPreparacion === self.idPreparacion) {
-                            self.$eNomPrep.val(self.nombrePreparacionModificacion({
-                                nombre: self.oPreparaciones[i].nomPreparacion,  
-                                fibra: self.oPreparaciones[i].idFibra.nomFibra
-                            }));
-                            
-                            self.$eCbxfibraPrep.val(self.oPreparaciones[i].idFibra.nomFibra);
-
-                            for (var j = 0; j < self.oPreparaciones[i].preparacionCollection.length; j++) {
-                                for (var k = 0; k < self.oQuimicos.length; k++) {
-
-                                    if (self.oPreparaciones[i].preparacionCollection[j].codQuimico === self.oQuimicos[k].codProduct) {
-                                        self.noRepetirQuimicos('+', self.oPreparaciones[i].preparacionCollection[j].codQuimico);
-                                        var newTr = trTemplate
-                                            .replace(':eCodQuimPrep:', self.oPreparaciones[i].preparacionCollection[j].codQuimico)
-                                            .replace(':eCantGrLtPrep:', self.oPreparaciones[i].preparacionCollection[j].cantGr)
-                                            .replace(':eCantPctjPrep:', self.oPreparaciones[i].preparacionCollection[j].cantPtj)
-                                            .replace(':eNomQuimPrep:', self.oQuimicos[k].nomProducto);
-                                        break;
-                                    }
-                                }
-                                self.$tBodyEditPrep.append($(newTr));
-                            }
-                            break;
-                        }
+                    var elementos = [self.$eNomPrep, self.$eCodQuimPrep, self.$eNomQuimPrep, self.$eCantGrLtPrep, self.$eCantPctjPrep];
+                    var datos = {
+                        frm: 'prep',
+                        idReg: parseInt(fila[0].cells[0].textContent),
+                        registros: self.oPreparaciones,
+                        quimicos: self.oQuimicos,
+                        eNombre: self.$eNomPrep,
+                        eNombreFib: self.$eCbxfibraPrep,
+                        eTabla: self.$tBodyEditPrep,
+                        eModal: self.$modalEditPrep
                     }
-                    self.$modalEditPrep.modal("show");
-
+                    
+                    $("#tableEditPrep tr:gt(1)").remove();
+                    u.limpiarCampos(elementos);
+                    elementos.splice(0, 1);
+                    u.camposObligatorios(elementos, '3');
+                    self.quimicosPorPrep = um.verRegistro(datos);
+                    
                     e.stopPropagation();
                 });
-            },
-            
-            nombrePreparacionModificacion: function(prep) {
-                return prep.nombre.substring(0, (prep.nombre.length - (prep.fibra.length + 3)));
+                    
             },
             
             modificarQuimicoPreparacion: function() {

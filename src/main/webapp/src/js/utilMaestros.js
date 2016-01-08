@@ -311,7 +311,7 @@
                     });
                     
                     datos.codQuimico = datos.codQuimico.split(";");
-                    datos.cantGr = datos.cantGr.split(";")
+                    datos.cantGr = datos.cantGr.split(";");
                     datos.cantPtj = datos.cantPtj.split(";");
                     
                     consultas.guardarNuevaPreparacion(datos);
@@ -319,7 +319,73 @@
                 } else if (d.form === ''){
                     
                 }
-            }
+            },
+            
+            verRegistro: function(oDatos) {
+                var self = this;
+                var resp = [];
+                var trTemplate = '<tr>' +
+                                    '<td style="text-align: center">:codQuim:</td>' +
+                                    '<td>:nomQuim:</td>' +
+                                    '<td style="text-align: center">:cantGrLt:</td>' +
+                                    '<td style="text-align: center">:cantPctj:</td>' +
+                                    '<td>' +
+                                        '<div class="form-group col-md-12">' +
+                                            '<button type="button" class="btn" id="eBtnDelLineaPrep">' +
+                                                '<i class="fa fa-trash-o"></i>' +
+                                            '</button>' +
+                                        '</div>' +
+                                    '</td>' +
+                                    '<td>' +
+                                        '<div class="form-group col-md-12">' +
+                                            '<button type="button" class="btn" id="eBtnEditLineaPrep">' +
+                                                '<span class="glyphicon glyphicon-edit"></span>' +
+                                            '</button>' +
+                                        '</div>' +
+                                    '</td>' +
+                                 '</tr>';
+
+                if (oDatos.frm === 'prep'){
+                    
+                    for (var i = 0; i < oDatos.registros.length; i++) {
+                        if (oDatos.registros[i].idNomPreparacion === oDatos.idReg) {
+                            oDatos.eNombre.val(self.separarNombreDeFibra({
+                                nombre: oDatos.registros[i].nomPreparacion,  
+                                fibra: oDatos.registros[i].idFibra.nomFibra
+                            }));
+                            
+                            oDatos.eNombreFib.val(oDatos.registros[i].idFibra.nomFibra);
+
+                            for (var j = 0; j < oDatos.registros[i].preparacionCollection.length; j++) {
+                                for (var k = 0; k < oDatos.quimicos.length; k++) {
+
+                                    if (oDatos.registros[i].preparacionCollection[j].codQuimico === oDatos.quimicos[k].codProduct) {
+                                        resp.push(oDatos.registros[i].preparacionCollection[j].codQuimico);
+                                        var newTr = trTemplate
+                                            .replace(':codQuim:', oDatos.registros[i].preparacionCollection[j].codQuimico)
+                                            .replace(':cantGrLt:', oDatos.registros[i].preparacionCollection[j].cantGr)
+                                            .replace(':cantPctj:', oDatos.registros[i].preparacionCollection[j].cantPtj)
+                                            .replace(':nomQuim:', oDatos.quimicos[k].nomProducto);
+                                        break;
+                                    }
+                                }
+                                oDatos.eTabla.append($(newTr));
+                            }
+                            break;
+                        }
+                    }
+                    oDatos.eModal.modal('show', 'slow');
+                    
+                } else if (oDatos.frm === 'aux'){
+                    
+                }
+                
+                return resp;
+            },
+            
+            separarNombreDeFibra: function(prep) {
+                return prep.nombre.substring(0, (prep.nombre.length - (prep.fibra.length + 3)));
+            },
             
         }
     })();
