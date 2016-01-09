@@ -35,6 +35,9 @@
             $eCantGrLtPrep: $('#eCantGrLtPrep'),
             $eCantPctjPrep: $('#eCantPctjPrep'),
             $eBtnAddLineaPrep: $('#eBtnAddLineaPrep'),
+            $eBtnModificar: $('#eBtnEditPrep'),
+            $eBtnCerrar: $('#eBtnCerrar'),
+            $eBtnCerrar2: $('#modalEditPreparacion').find('.modal-header .close'),
             quimicosPorPrep: [],
             idPreparacion: 0,
             
@@ -50,6 +53,7 @@
                 this.consultaNombrePreparacion();
                 this.verPreparacion();
                 this.modificarQuimicoPreparacion();
+                this.cerrarModalEdicion();
             },
             cargarDatos: function(dato, opc) {
                 var self = this;
@@ -332,6 +336,16 @@
 
                     e.stopPropagation();
                 });
+                
+                self.$tBodyEditPrep.on('click', '#eBtnDelLineaPrep', function (e){
+                    var fila = $(this).closest('tr');
+                    fila.remove();
+                    var d = um.noRepetirQuimicos({tipo: '-', codQ: fila[0].cells[0].textContent, maestro: 'prep', codQpermitido: ''}, self.quimicosPorPrep); 
+                    
+                    self.quimicosPorPrep = d.oQuim;
+
+                    e.stopPropagation();
+                });
             },
             
             consultaNombrePreparacion: function(){
@@ -416,18 +430,6 @@
             modificarQuimicoPreparacion: function() {
                 var self = this;
                 
-                $(document).on('click', '#eBtnDelLineaPrep', function (e){
-                    var fila = $(this).closest('tr');
-                    fila.remove();
-
-                    self.noRepetirQuimicos("-", fila[0].cells[0].textContent);
-
-                    if ($('#dataTableNewQPreparacion tbody tr').length - 1 == 0) {
-                        self.$btnSavePrep.attr('disabled', true);
-                    }
-                    e.stopPropagation();
-                });
-                
                 $(document).on('click', '#eBtnEditLineaPrep', function (e) {
                     var fila = $(this).closest('tr');
                     
@@ -478,7 +480,7 @@
                                                     '</div>' +
                                                 '</td>' +
                                              '</tr>';
-                            //AQUI <>
+
                             var newFila = trTemplate
                                 .replace(':eCodQuimPrep:', self.$eCodQuimPrep.val())
                                 .replace(':eNomQuimPrep:', self.$eNomQuimPrep.val())
@@ -498,6 +500,28 @@
             
             solicitarModificarPreparacion: function() {
                 var self = this;
+            },
+            
+            cerrarModalEdicion: function() {
+                var self = this;
+                
+                $(document).on('click', function(e) {
+                    e.preventDefault();
+
+                    if (self.$modalEditPrep.is(':hidden')) {
+                        self.quimicosPorPrep = [];
+                    }
+                });
+                
+                self.$eBtnCerrar.on('click', function(e) {
+                    e.preventDefault();
+                    self.quimicosPorPrep = [];
+                });
+                
+                self.$eBtnCerrar2.on('click', function(e) {
+                    e.preventDefault();
+                    self.quimicosPorPrep = [];
+                });
             }
         };
     })();

@@ -221,7 +221,7 @@
                 <div class="row">
                     <div class="col-lg-12 col-lg-offset-0">
                         <button class="btn btn-primary" type="button" id="eBtnEditPrep">Modificar</button>
-                        <button type="reset" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button type="reset" class="btn btn-default" data-dismiss="modal" id="eBtnCerrar">Cerrar</button>
                     </div>
                 </div>
             </div>
