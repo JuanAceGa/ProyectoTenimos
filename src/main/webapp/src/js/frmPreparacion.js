@@ -41,6 +41,7 @@
             quimicosPorPrep: [],
             idPreparacion: 0,
             tipoEdicion: 'nuevo',
+            filaEditar: null,
             
             init: function() {
                 this.inhabilitarCampos();
@@ -106,11 +107,7 @@
 
                 $(self.$codQuimPrep).on("keyup keypress change", function() {
                     self.$nomQuimPrep.val("");
-                    var elementos = [];
-                    elementos.push(self.$codQuimPrep);
-                    elementos.push(self.$nomQuimPrep);
-                    elementos.push(self.$cantGrLtPrep);
-                    elementos.push(self.$cantPctjPrep);
+                    var elementos = [self.$codQuimPrep, self.$nomQuimPrep, self.$cantGrLtPrep, self.$cantPctjPrep];
 
                     um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
                 });
@@ -340,7 +337,8 @@
                     
                     if (um.cantidadDeQuimico({val: self.$eCantGrLtPrep.val(), input: 'grlt'})) {
                         b = false;
-                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Gramos por Litro', cuerpoMensaje: '...'});
+                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Gramos por Litro', 
+                            cuerpoMensaje: 'Los gramos debe ser superior a 0.'});
 
                     } else if (um.cantidadDeQuimico({val: self.$eCantPctjPrep.val(), input: 'pctj'})) {
                         b = false;
@@ -349,32 +347,18 @@
                     }
                     
                     if (b && campObligQuim) {
-                        
-                        var d = um.noRepetirQuimicos({
-                            tipo: '+', 
-                            codQ: self.$eCodQuimPrep.val(), 
-                            maestro: 'prep', 
-                            codQpermitido: '1550'},
-                            self.quimicosPorPrep);
-                            
-                        if (!d.existe) {
-                            
-                            self.quimicosPorPrep.push(self.$eCodQuimPrep.val());
-                            
                             um.agregarLinea(
-                                    self.$tBodyEditPrep,
-                                    {tipo: 'nuevo',
+                                    self.filaEditar,
+                                    {tipo: self.tipoEdicion,
                                      codQuim: self.$eCodQuimPrep.val(),
                                      nomQuim: self.$eNomQuimPrep.val(),
                                      cantGrLt: self.$eCantGrLtPrep.val(),
                                      cantPctj: self.$eCantPctjPrep.val()});
                             
                             u.limpiarCampos([self.$eCodQuimPrep, self.$eNomQuimPrep, self.$eCantGrLtPrep, self.$eCantPctjPrep])
-
-                        } else {
-                            self.mensajeObligatoriedad({titulo: 'Registro de Químicos',
-                            cuerpoMensaje: 'No puede agregar más de una vez un mismo químico.'});
-                        }
+                            self.$eCodQuimPrep.attr('disabled', false);
+                            self.$eNomQuimPrep.attr('disabled', false);
+                            self.filaEditar = null;
                     }
                 });
             },
@@ -384,7 +368,12 @@
                 self.$dataTableNewQPreparacion.on('click', '#btnDelLineaPrep', function(e) {
                     var fila = $(this).closest('tr');
                     fila.remove();
-                    var d = um.noRepetirQuimicos({tipo: '-', codQ: fila[0].cells[0].textContent, maestro: 'prep', codQpermitido: ''}, self.quimicosPorPrep); 
+                    var d = um.noRepetirQuimicos({
+                        tipo: '-', 
+                        codQ: fila[0].cells[0].textContent, 
+                        maestro: 'prep', 
+                        codQpermitido: ''}, 
+                        self.quimicosPorPrep); 
                     
                     self.quimicosPorPrep = d.oQuim;
 
@@ -398,7 +387,12 @@
                 self.$tBodyEditPrep.on('click', '#eBtnDelLineaPrep', function (e){
                     var fila = $(this).closest('tr');
                     fila.remove();
-                    var d = um.noRepetirQuimicos({tipo: '-', codQ: fila[0].cells[0].textContent, maestro: 'prep', codQpermitido: ''}, self.quimicosPorPrep); 
+                    var d = um.noRepetirQuimicos({
+                        tipo: '-', 
+                        codQ: fila[0].cells[0].textContent, 
+                        maestro: 'prep', 
+                        codQpermitido: ''}, 
+                        self.quimicosPorPrep); 
                     
                     self.quimicosPorPrep = d.oQuim;
 
@@ -491,7 +485,20 @@
                 self.$tBodyEditPrep.on('click', '#eBtnEditLineaPrep', function (e) {
                     var fila = $(this).closest('tr');
                     self.tipoEdicion = 'editar';
+                    self.filaEditar = fila;
                     
+                    self.$eCodQuimPrep.val(parseInt(fila[0].cells[0].textContent));
+                    self.$eNomQuimPrep.val(fila[0].cells[1].textContent);
+                    self.$eCantGrLtPrep.val(fila[0].cells[2].textContent);
+                    self.$eCantPctjPrep.val(fila[0].cells[3].textContent);
+                    
+                    var elementos = [self.$eCodQuimPrep, self.$eNomQuimPrep, self.$eCantGrLtPrep, self.$eCantPctjPrep];
+                    um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
+                    self.$eCodQuimPrep.attr('disabled', true);
+                    self.$eNomQuimPrep.attr('disabled', true);
+                    
+                    u.camposObligatorios([self.$eCodQuimPrep, self.$eNomQuimPrep, self.$eCantGrLtPrep, self.$eCantPctjPrep], '2');
+                                   
                     e.stopPropagation();
                 });
 

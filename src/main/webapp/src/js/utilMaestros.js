@@ -153,8 +153,15 @@
                     miles = parseFloat(miles);
                     cientos = parseFloat(cientos);
                     decimas = parseFloat(decimas);
-
-                    return false;
+                    
+                    if ((cientos === 0 && decimas === 0)) {
+                        return true;
+                    } else if ((cientos === 0 && isNaN(decimas))) {
+                        return true;
+                    }else {
+                        return false;
+                    }
+                    
                 } else {
                     if (aNum.length > 1) {
                         return true;
@@ -200,36 +207,16 @@
                                     .replace(':cantGrLt:', oDatos.cantGrLt)
                                     .replace(':cantPctj:', oDatos.cantPctj);
                     
-                } else if (oDatos.tipo === 'editar'){
-                    var trTemplate = '<tr>' +
-                                        '<td style="text-align: center">:codQuim:</td>' +
-                                        '<td>:nomQuim:</td>' +
-                                        '<td style="text-align: center">:cantGrLt:</td>' +
-                                        '<td style="text-align: center">:cantPctj:</td>' +
-                                        '<td>' +
-                                            '<div class="form-group col-md-12">' +
-                                                '<button type="button" class="btn" id="eBtnDelLineaPrep">' +
-                                                    '<i class="fa fa-trash-o"></i>' +
-                                                '</button>' +
-                                            '</div>' +
-                                        '</td>' +
-                                        '<td>' +
-                                            '<div class="form-group col-md-12">' +
-                                                '<button type="button" class="btn" id="eBtnEditLineaPrep">' +
-                                                    '<span class="glyphicon glyphicon-edit"></span>' +
-                                                '</button>' +
-                                            '</div>' +
-                                        '</td>' +
-                                     '</tr>';
-                             
-                    var newTr = trTemplate
-                                    .replace(':codQuim:', oDatos.codQuim)
-                                    .replace(':nomQuim:', oDatos.nomQuim)
-                                    .replace(':cantGrLt:', oDatos.cantGrLt)
-                                    .replace(':cantPctj:', oDatos.cantPctj);
+                    elemento.append(newTr);
+                    
+                } else if (oDatos.tipo === 'editar'){                    
+                    if (oDatos.cantGrLt !== '') {
+                        elemento[0].cells[2].textContent = oDatos.cantGrLt;
+                    } else {
+                        elemento[0].cells[3].textContent = oDatos.cantPctj;
+                    }
+                    
                 }
-                
-                elemento.append(newTr);
             },
             
             noRepetirQuimicos: function(d, oQuimicos) {
