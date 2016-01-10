@@ -178,6 +178,8 @@
                         return true;
                     } else if (cientos === 100 && decimas > 0) {
                         return true;
+                    } else if (cientos === 0) {
+                        return true;
                     } else {
                         return false;
                     }

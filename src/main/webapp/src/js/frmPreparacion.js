@@ -506,6 +506,7 @@
             
             solicitarModificarPreparacion: function() {
                 var self = this;
+                
             },
             
             cerrarModalEdicion: function() {
