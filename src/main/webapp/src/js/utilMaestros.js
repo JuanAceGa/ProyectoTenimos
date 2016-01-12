@@ -261,53 +261,83 @@
                 var datos = new Object();
                 
                 if (d.form === 'prep') {
-                    datos.nomPrep = d.nombre;
+                    datos.nombre = d.nombre;
                     datos.idFib = d.idFib;
                     datos.codQuimico = null;
                     datos.cantGr = null;
                     datos.cantPtj = null;
                     
-                    $(d.tabla).find('tbody tr').each(function(index){
+                    datos = self.obtenerDatosTabla(d.tabla, datos, 'nuevo');
+                    
+                    consultas.guardarNuevaPreparacion(datos);
+                } else if (d.form === 'aux') {
+                    
+                }
+            },
+            
+            obtenerDatosTabla: function(tabla, oArr, tipo) {
+                
+                if (tipo === 'nuevo') {
+                    $(tabla).find('tbody tr').each(function(index) {
                         if (index > 0) {
                             $(this).children('td').each(function(index2) {
                                 switch (index2) {
                                     case 0: //Código Quimico
-                                        if (datos.codQuimico === null) {
-                                            datos.codQuimico = $(this).text();
+                                        if (oArr.codQuimico === null) {
+                                            oArr.codQuimico = $(this).text();
                                         } else {
-                                            datos.codQuimico += ";" + $(this).text();
+                                            oArr.codQuimico += ";" + $(this).text();
                                         }
                                         break;
                                     case 1: //Nombre Quimico                                            
                                         break;
                                     case 2: //Cantidad Gr
-                                        if (datos.cantGr === null) {
-                                            datos.cantGr = $(this).text();
+                                        if (oArr.cantGr === null) {
+                                            oArr.cantGr = $(this).text();
                                         } else {
-                                            datos.cantGr += ";" + $(this).text();
+                                            oArr.cantGr += ";" + $(this).text();
                                         }
                                         break;
                                     case 3: //Cantidad Porcentaje
-                                        if (datos.cantPtj === null) {
-                                            datos.cantPtj = $(this).text();
+                                        if (oArr.cantPtj === null) {
+                                            oArr.cantPtj = $(this).text();
                                         } else {
-                                            datos.cantPtj += ";" + $(this).text();
+                                            oArr.cantPtj += ";" + $(this).text();
                                         }
                                         break;
                                 }
                             });
                         }
                     });
-                    
-                    datos.codQuimico = datos.codQuimico.split(";");
-                    datos.cantGr = datos.cantGr.split(";");
-                    datos.cantPtj = datos.cantPtj.split(";");
-                    
-                    consultas.guardarNuevaPreparacion(datos);
-                    
-                } else if (d.form === ''){
-                    
+
+                    oArr.codQuimico = oArr.codQuimico.split(";");
+                    oArr.cantGr = oArr.cantGr.split(";");
+                    oArr.cantPtj = oArr.cantPtj.split(";");
+                
+                } else if (tipo === 'editar') {
+                    var f = {codQuimicoNue: '', cantGrNue: '', cantPtjNue: ''};
+                    $(tabla).find('tbody tr').each(function(index) {
+                        if (index > 0) {
+                            $(this).children('td').each(function(index2) {
+                                switch (index2) {
+                                    case 0: //Código Quimico
+                                        f.codQuimicoNue = $(this).text();
+                                        break;
+                                    case 1: //Nombre Quimico                                            
+                                        break;
+                                    case 2: //Cantidad Gr
+                                        f.cantGrNue = $(this).text();
+                                        break;
+                                    case 3: //Cantidad Porcentaje
+                                        f.cantPtjNue = $(this).text();
+                                        break;
+                                }
+                            });
+                            oArr.preparacionCollectionNue.push(f);
+                        }
+                    });
                 }
+                return oArr;
             },
             
             verRegistro: function(oDatos) {
@@ -376,6 +406,81 @@
                 return prep.nombre.substring(0, (prep.nombre.length - (prep.fibra.length + 3)));
             },
             
+            modificarRegistro: function(oMod, oReg) {
+                var self = this;
+                var datos = new Object();
+                var mod = false;
+                
+                /*datos.idPrep = oMod.idPrep;
+                datos.nombre = oMod.nombre;
+                datos.idFib = oMod.idFib;
+                datos.codQuimico = null;
+                datos.cantGr = null;
+                datos.cantPtj = null;
+                
+                modif = {idPrep: oMod.idPrep, nombreAct: '', nombreNue: '', codQuimico: '', cantGrAct: '', cantGrNue: '', cantPtjAct: '', cantPtjNue: ''};
+                datos = self.obtenerDatosTabla(oMod.tabla, datos);
+                */
+               
+                for (var j = 0; j < oReg.length; j++) {
+                    if (oReg[j].idNomPreparacion === oMod.idPrep) {
+                        datos = oReg[j];
+                        delete datos.btnView;
+                        delete datos.costoPreparacion;
+                        datos.nombreNue = oMod.nombre;
+                        datos.idFibNue = oMod.idFib;
+                        datos.preparacionCollectionNue = new Array();
+                        
+                        datos = self.obtenerDatosTabla(oMod.tabla, datos, 'editar');
+                        
+                        for (var i = 0; i < datos.preparacionCollectionNue.length; i++){
+                            
+                        }
+                        
+                        console.log(datos);
+                        
+                        /*
+                        for (var k = 0; k < datos.codQuimico.length; k ++) {
+                            for (var i = 0; i < oReg[j].preparacionCollection.length; i ++) {                            
+                                if ((datos.codQuimico[k] !== oReg[j].preparacionCollection[i].codQuimico) && (datos.cantGr[k] !== "" + oReg[j].preparacionCollection[i].cantGr) && (datos.cantPtj[k] !== "" + oReg[j].preparacionCollection[i].cantPtj)) {
+                                    if (modif.codQuimico === '') {
+                                        modif.codQuimico = datos.codQuimico[k];
+                                        modif.cantGrAct = oReg[j].preparacionCollection[i].cantGr;
+                                        modif.cantGrNue = datos.cantGr[k];
+                                        modif.cantPtjAct = oReg[j].preparacionCollection[i].cantPtj;
+                                        modif.cantPtjNue = datos.cantPtj[k];
+                                    } else {
+                                        modif.codQuimico += ";" + datos.codQuimico[k];
+                                        modif.cantGrAct += ";" + oReg[j].preparacionCollection[i].cantGr;
+                                        modif.cantGrNue += ";" + datos.cantGr[k];
+                                        modif.cantPtjAct += ";" + oReg[j].preparacionCollection[i].cantPtj;
+                                        modif.cantPtjNue += ";" + datos.cantPtj[k];
+                                    }
+                                }
+                            }
+                        }
+                        if (datos.nombre !== oReg[j].nomPreparacion) {
+                            modif.nombreAct = oReg[j].nomPreparacion;
+                            modif.nombreNue = datos.nombre;
+                        } else {
+                            modif.nombreAct = oReg[j].nomPreparacion;
+                        }*/
+                        break;
+                    }
+                }
+                
+                if (modif.codQuimico !== '') {
+                    modif.codQuimico = modif.codQuimico.split(";");
+                    modif.cantGrAct = modif.cantGrAct.split(";");
+                    modif.cantGrNue = modif.cantGrNue.split(";");
+                    modif.cantPtjAct = modif.cantPtjAct.split(";");
+                    modif.cantPtjNue = modif.cantPtjNue.split(";");
+                    
+                    console.log(modif);
+                } else {
+                    console.log('No hay nada a modificar');
+                }
+            }
         }
     })();
 

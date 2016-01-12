@@ -36,10 +36,12 @@
             $eCantPctjPrep: $('#eCantPctjPrep'),
             $eBtnAddLineaPrep: $('#eBtnAddLineaPrep'),
             $eBtnModificar: $('#eBtnEditPrep'),
+            $eBtnRestPrep: $('#eBtnRestPrep'),
             $eBtnCerrar: $('#eBtnCerrar'),
             $eBtnCerrar2: $('#modalEditPreparacion').find('.modal-header .close'),
             quimicosPorPrep: [],
             idPreparacion: 0,
+            banderaModal: 0,
             tipoEdicion: 'nuevo',
             filaEditar: null,
             
@@ -220,6 +222,17 @@
 
                     self.limpiarFormulario();
                 });
+                
+                self.$eBtnRestPrep.on('click', function(e) {
+                   e.preventDefault();
+                   
+                   var elementos = [self.$eCodQuimPrep, self.$eNomQuimPrep, self.$eCantGrLtPrep, self.$eCantPctjPrep];
+                   u.limpiarCampos(elementos);
+                   self.$eCodQuimPrep.attr('disabled', false);
+                   self.$eNomQuimPrep.attr('disabled', false);
+                   u.camposObligatorios(elementos, '3');
+                   self.tipoEdicion = 'nuevo';
+                });
 
             },
             limpiarFormulario: function() {
@@ -347,6 +360,9 @@
                     }
                     
                     if (b && campObligQuim) {
+                            if (self.tipoEdicion === 'nuevo') {
+                                self.filaEditar = self.$tBodyEditPrep;
+                            }
                             um.agregarLinea(
                                     self.filaEditar,
                                     {tipo: self.tipoEdicion,
@@ -406,10 +422,7 @@
                 self.$btnSavePrep.on("click", function(e) {
                     e.preventDefault();
                     var campObligPrep = false;
-                    var campos = [];
-                    
-                    campos.push(self.$nomPrep);
-                    campos.push(self.$cbxfibraPrep);
+                    var campos = [self.$nomPrep, self.$cbxfibraPrep];
 
                     campObligPrep = u.camposObligatorios(campos, '2');
 
@@ -422,7 +435,27 @@
                     }
 
                     if (b && campObligPrep) {                        
-                        consultas.consultarNombrePreparacion(self.$nomPrep.val() + " (" + self.$cbxfibraPrep.val() + ")");
+                        consultas.consultarNombrePreparacion(self.$nomPrep.val() + " (" + self.$cbxfibraPrep.val() + ")", 'nuevo', 0);
+                    }
+                });
+                
+                self.$eBtnModificar.on("click", function(e) {
+                    e.preventDefault();
+                    var campObligPrep = false;
+                    var campos = [self.$eNomPrep, self.$eCbxfibraPrep];
+
+                    campObligPrep = u.camposObligatorios(campos, '2');
+
+                    var b = true;
+
+                    if (um.cantidadDeQuimico({val: self.$eCantGrLtPrep.val(), input: 'grlt'})) {
+                        b = false;
+                    } else if (um.cantidadDeQuimico({val: self.$eCantPctjPrep.val(), input: 'pctj'})) {
+                        b = false;
+                    }
+
+                    if (b && campObligPrep) {
+                        consultas.consultarNombrePreparacion(self.$eNomPrep.val() + " (" + self.$eCbxfibraPrep.val() + ")", 'editar', self.idPreparacion);
                     }
                 });
             },
@@ -454,8 +487,9 @@
                 var self = this;
 
                 self.$dataTablePreparacion.on('click', '#btnViewPrep', function (e) {
-                    self.idPreparacion = 0;
+                    self.banderaModal = 1;
                     var fila = $(this).closest('tr');
+                    self.idPreparacion = parseInt(fila[0].cells[0].textContent);
                     var elementos = [self.$eNomPrep, self.$eCodQuimPrep, self.$eNomQuimPrep, self.$eCantGrLtPrep, self.$eCantPctjPrep];
                     var datos = {
                         frm: 'prep',
@@ -497,16 +531,35 @@
                     self.$eCodQuimPrep.attr('disabled', true);
                     self.$eNomQuimPrep.attr('disabled', true);
                     
-                    u.camposObligatorios([self.$eCodQuimPrep, self.$eNomQuimPrep, self.$eCantGrLtPrep, self.$eCantPctjPrep], '2');
+                    u.camposObligatorios(elementos, '2');
                                    
                     e.stopPropagation();
                 });
 
             },
             
-            solicitarModificarPreparacion: function() {
+            solicitarModificarPreparacion: function(response) {
                 var self = this;
                 
+                if (response === 'true') {
+                    self.mensajeObligatoriedad({
+                        titulo: 'Nombre de Preparación Existente.',
+                        cuerpoMensaje: 'Ya hay un nombre de preparación para la fibra seleccionada, por favor intente nuevamente.'
+                    });
+                
+                } else if (response === 'false') {
+                    var nombre = self.$eNomPrep.val() + " (" + self.$eCbxfibraPrep.val() + ")";
+                    
+                    for (var i = 0; self.oFibras.length; i++) {
+                        if (self.oFibras[i].nomFibra === self.$eCbxfibraPrep.val()) {
+                            var idFib = "" + self.oFibras[i].idFibra;
+                            break;
+                        }
+                    }
+                    
+                    um.modificarRegistro({tabla: self.$tableEditPrep, nombre: nombre, idFib: idFib, idPrep: self.idPreparacion}, self.oPreparaciones);
+                    
+                }
             },
             
             cerrarModalEdicion: function() {
@@ -515,19 +568,25 @@
                 $(document).on('click', function(e) {
                     e.preventDefault();
 
-                    if (self.$modalEditPrep.is(':hidden')) {
+                    if (self.banderaModal === 1 && self.$modalEditPrep.is(':hidden')) {
                         self.quimicosPorPrep = [];
+                        self.banderaModal = 0;
+                        self.tipoEdicion = 'nuevo';
                     }
                 });
                 
                 self.$eBtnCerrar.on('click', function(e) {
                     e.preventDefault();
                     self.quimicosPorPrep = [];
+                    self.banderaModal = 0;
+                    self.tipoEdicion = 'nuevo';
                 });
                 
                 self.$eBtnCerrar2.on('click', function(e) {
                     e.preventDefault();
                     self.quimicosPorPrep = [];
+                    self.banderaModal = 0;
+                    self.tipoEdicion = 'nuevo';
                 });
             }
         };

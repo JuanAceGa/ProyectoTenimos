@@ -31,18 +31,24 @@
                 });
             },
             
-            consultarNombrePreparacion: function(nombre) {
+            consultarNombrePreparacion: function(nombre, tipo, idPrep) {
                 $.ajax({
                     url: '../../../ServletPreparaciones',
                     type: 'GET',
                     dataType: 'text',
                     data: {
                         accion: 'buscarNombre',
+                        tipo: tipo,
+                        idPrep: idPrep,
                         nombre: nombre
                     },
                     success: function(data) {
                         var response = JSON.parse(data);
-                        frmPreparacion.agregarPreparacion(response);
+                        if (tipo === 'nuevo') {
+                            frmPreparacion.agregarPreparacion(response);
+                        } else if (tipo === 'editar') {
+                            frmPreparacion.solicitarModificarPreparacion(response);
+                        }
                     },
                     error: function(response, status, er) {
                         console.log("error: " + response + " status: " + status + " er:" + er);

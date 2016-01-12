@@ -92,7 +92,7 @@
                 <div class="panel-footer">
                     <div class="row">
                         <div class="col-sm-9 col-sm-offset-5">
-                            <button class="btn btn-primary" type="button" id="btnSavePrep">Guardar</button>
+                            <button class="btn btn-success" type="button" id="btnSavePrep">Guardar</button>
                             <button type="reset" class="btn btn-default" id="btnCleanPrep">Limpiar</button>
                         </div>
                     </div>
@@ -220,7 +220,8 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-lg-12 col-lg-offset-0">
-                        <button class="btn btn-primary" type="button" id="eBtnEditPrep">Modificar</button>
+                        <button class="btn btn-success" type="button" id="eBtnEditPrep">Modificar</button>
+                        <button class="btn btn-white" type="button" id="eBtnRestPrep">Restaurar</button>
                         <button type="reset" class="btn btn-default" data-dismiss="modal" id="eBtnCerrar">Cerrar</button>
                     </div>
                 </div>
