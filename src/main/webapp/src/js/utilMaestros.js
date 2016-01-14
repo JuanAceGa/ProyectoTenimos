@@ -315,9 +315,9 @@
                     oArr.cantPtj = oArr.cantPtj.split(";");
                 
                 } else if (tipo === 'editar') {
-                    var f = {codQuimicoNue: '', cantGrNue: '', cantPtjNue: ''};
                     $(tabla).find('tbody tr').each(function(index) {
                         if (index > 0) {
+                            var f = {codQuimicoNue: '', cantGrNue: '', cantPtjNue: ''};
                             $(this).children('td').each(function(index2) {
                                 switch (index2) {
                                     case 0: //Código Quimico
@@ -350,7 +350,7 @@
                                     '<td style="text-align: center">:cantPctj:</td>' +
                                     '<td>' +
                                         '<div class="form-group col-md-12">' +
-                                            '<button type="button" class="btn" id="eBtnDelLineaPrep">' +
+                                            '<button type="button" class="btn" id="btnDelLineaPrep">' +
                                                 '<i class="fa fa-trash-o"></i>' +
                                             '</button>' +
                                         '</div>' +
@@ -409,76 +409,68 @@
             modificarRegistro: function(oMod, oReg) {
                 var self = this;
                 var datos = new Object();
-                var mod = false;
-                
-                /*datos.idPrep = oMod.idPrep;
-                datos.nombre = oMod.nombre;
-                datos.idFib = oMod.idFib;
-                datos.codQuimico = null;
-                datos.cantGr = null;
-                datos.cantPtj = null;
-                
-                modif = {idPrep: oMod.idPrep, nombreAct: '', nombreNue: '', codQuimico: '', cantGrAct: '', cantGrNue: '', cantPtjAct: '', cantPtjNue: ''};
-                datos = self.obtenerDatosTabla(oMod.tabla, datos);
-                */
                
                 for (var j = 0; j < oReg.length; j++) {
                     if (oReg[j].idNomPreparacion === oMod.idPrep) {
                         datos = oReg[j];
-                        delete datos.btnView;
-                        delete datos.costoPreparacion;
-                        datos.nombreNue = oMod.nombre;
-                        datos.idFibNue = oMod.idFib;
-                        datos.preparacionCollectionNue = new Array();
-                        
-                        datos = self.obtenerDatosTabla(oMod.tabla, datos, 'editar');
-                        
-                        for (var i = 0; i < datos.preparacionCollectionNue.length; i++){
-                            
-                        }
-                        
-                        console.log(datos);
-                        
-                        /*
-                        for (var k = 0; k < datos.codQuimico.length; k ++) {
-                            for (var i = 0; i < oReg[j].preparacionCollection.length; i ++) {                            
-                                if ((datos.codQuimico[k] !== oReg[j].preparacionCollection[i].codQuimico) && (datos.cantGr[k] !== "" + oReg[j].preparacionCollection[i].cantGr) && (datos.cantPtj[k] !== "" + oReg[j].preparacionCollection[i].cantPtj)) {
-                                    if (modif.codQuimico === '') {
-                                        modif.codQuimico = datos.codQuimico[k];
-                                        modif.cantGrAct = oReg[j].preparacionCollection[i].cantGr;
-                                        modif.cantGrNue = datos.cantGr[k];
-                                        modif.cantPtjAct = oReg[j].preparacionCollection[i].cantPtj;
-                                        modif.cantPtjNue = datos.cantPtj[k];
-                                    } else {
-                                        modif.codQuimico += ";" + datos.codQuimico[k];
-                                        modif.cantGrAct += ";" + oReg[j].preparacionCollection[i].cantGr;
-                                        modif.cantGrNue += ";" + datos.cantGr[k];
-                                        modif.cantPtjAct += ";" + oReg[j].preparacionCollection[i].cantPtj;
-                                        modif.cantPtjNue += ";" + datos.cantPtj[k];
-                                    }
-                                }
-                            }
-                        }
-                        if (datos.nombre !== oReg[j].nomPreparacion) {
-                            modif.nombreAct = oReg[j].nomPreparacion;
-                            modif.nombreNue = datos.nombre;
-                        } else {
-                            modif.nombreAct = oReg[j].nomPreparacion;
-                        }*/
                         break;
                     }
                 }
                 
-                if (modif.codQuimico !== '') {
-                    modif.codQuimico = modif.codQuimico.split(";");
-                    modif.cantGrAct = modif.cantGrAct.split(";");
-                    modif.cantGrNue = modif.cantGrNue.split(";");
-                    modif.cantPtjAct = modif.cantPtjAct.split(";");
-                    modif.cantPtjNue = modif.cantPtjNue.split(";");
+                delete datos.btnView;
+                delete datos.costoPreparacion;
+                datos.nombreNue = oMod.nombre;
+                datos.idFibNue = oMod.idFib;
+                datos.preparacionCollectionNue = new Array();
+
+                datos = self.obtenerDatosTabla(oMod.tabla, datos, 'editar');
+
+                console.log(datos);
+
+                var a = datos.preparacionCollection.length;
+                var n = datos.preparacionCollectionNue.length;
+                var i;
+                var j;
+                
+                if (a === n) {
+                    var p = new Array(a - 1);
                     
-                    console.log(modif);
-                } else {
-                    console.log('No hay nada a modificar');
+                    for (var k = 0; k < a; k++){
+                        p[k] = new Array(3);
+                    }
+                    
+                    for (i = 0; i < a; i++) {
+                        for (j = 0; j < n; j++) {                            
+                            if (datos.preparacionCollection[i].codQuimico === datos.preparacionCollectionNue[j].codQuimicoNue) {
+                                p[i][0] = -1;
+                                if ('' + datos.preparacionCollection[i].cantGr === datos.preparacionCollectionNue[j].cantGrNue) {
+                                    p[i][1] = -1;
+                                    if ('' + datos.preparacionCollection[i].cantPtj === datos.preparacionCollectionNue[j].cantPtjNue) {
+                                        p[i][2] = -1;
+                                        break;
+                                    } else {
+                                        p[i][2] = j;
+                                        break;
+                                    }
+                                } else {
+                                    p[i][1] = j;
+                                    break;
+                                }
+                            } else {
+                                p[i][0] = j;
+                            }
+                        }
+                    }
+                    console.log(p);
+                    
+                    for (i = 0; i < p.length; i++){
+                        for (j = 0; j < p.length; j++){
+                            if (p[i][j] > -1) {
+                                console.log(datos.preparacionCollection[i]);
+                                console.log(datos.preparacionCollectionNue[p[i][j]]);
+                            }
+                        }
+                    }
                 }
             }
         }

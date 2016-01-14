@@ -127,6 +127,7 @@
 
                 $(self.$eCodQuimPrep).on('keyup keypress change', function() {
                     self.$eNomQuimPrep.val("");
+                    self.tipoEdicion = 'nuevo';
                     var elementos = [];
                     elementos.push(self.$eCodQuimPrep);
                     elementos.push(self.$eNomQuimPrep);
@@ -138,6 +139,7 @@
 
                 $(self.$eNomQuimPrep).on('keyup keypress change', function() {
                     self.$eCodQuimPrep.val("");
+                    self.tipoEdicion = 'nuevo';
                     var elementos = [];
                     elementos.push(self.$eNomQuimPrep);
                     elementos.push(self.$eCodQuimPrep);
@@ -400,7 +402,7 @@
                     e.stopPropagation();
                 });
                 
-                self.$tBodyEditPrep.on('click', '#eBtnDelLineaPrep', function (e){
+                self.$tBodyEditPrep.on('click', '#btnDelLineaPrep', function (e){
                     var fila = $(this).closest('tr');
                     fila.remove();
                     var d = um.noRepetirQuimicos({
