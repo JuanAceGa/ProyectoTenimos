@@ -227,14 +227,14 @@
                 if (d.tipo === "+") {
                     if (d.maestro === 'prep') {
                         for (var i = 0; i < oQuimicos.length; i++) {
-                            if (oQuimicos[i] === d.codQ) {
+                            if (oQuimicos[i].codQ === d.codQ) {
                                 existe = true;
                                 break;
                             }
                         }
                     } else if (d.maestro === 'aux') {
                         for (var i = 0; i < oQuimicos.length; i++) {
-                            if ((oQuimicos[i] === d.codQ) && (oQuimicos[i] !== d.codQpermitido)) {
+                            if ((oQuimicos[i].codQ === d.codQ) && (oQuimicos[i].codQ !== d.codQpermitido)) {
                                 existe = true;
                                 break;
                             }
@@ -242,13 +242,28 @@
                     }
                     
                 } else if (d.tipo === "-") {
-                    for (var i = 0; i < oQuimicos.length; i++) {
-                        if (oQuimicos[i] === d.codQ) {
-                            if (i === 0) {
-                                oQuimicos.splice(0, 1);
-                            } else {
-                                oQuimicos.splice(i, i);
-                                break;
+                    if (d.maestro === 'prep') {
+                        for (var i = 0; i < oQuimicos.length; i++) {
+                            if (oQuimicos[i].codQ === d.codQ) {
+                                if (i === 0) {
+                                    oQuimicos.splice(0, 1);
+                                    break;
+                                } else {
+                                    oQuimicos.splice(i, i);
+                                    break;
+                                }
+                            }
+                        }
+                    } else if (d.maestro === 'aux') {
+                        for (var i = 0; i < oQuimicos.length; i++) {
+                            if ((oQuimicos[i].codQ === d.codQ && oQuimicos[i].cant1 === d.cant1 && oQuimicos[i].cant2 === d.cant2)) {
+                                if (i === 0) {
+                                    oQuimicos.splice(0, 1);
+                                    break;
+                                } else {
+                                    oQuimicos.splice(i, i);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -368,6 +383,7 @@
                     
                     for (var i = 0; i < oDatos.registros.length; i++) {
                         if (oDatos.registros[i].idNomPreparacion === oDatos.idReg) {
+                            
                             oDatos.eNombre.val(self.separarNombreDeFibra({
                                 nombre: oDatos.registros[i].nomPreparacion,  
                                 fibra: oDatos.registros[i].idFibra.nomFibra
@@ -378,8 +394,12 @@
                             for (var j = 0; j < oDatos.registros[i].preparacionCollection.length; j++) {
                                 for (var k = 0; k < oDatos.quimicos.length; k++) {
 
-                                    if (oDatos.registros[i].preparacionCollection[j].codQuimico === oDatos.quimicos[k].codProduct) {
-                                        resp.push(oDatos.registros[i].preparacionCollection[j].codQuimico);
+                                    if (oDatos.registros[i].preparacionCollection[j].codQuimico === oDatos.quimicos[k].codProduct) {                                        
+                                        resp.push({
+                                            codQ: oDatos.registros[i].preparacionCollection[j].codQuimico,
+                                            cant1: parseFloat(oDatos.registros[i].preparacionCollection[j].cantGr),
+                                            cant2: parseFloat(oDatos.registros[i].preparacionCollection[j].cantPtj)
+                                        });
                                         var newTr = trTemplate
                                             .replace(':codQuim:', oDatos.registros[i].preparacionCollection[j].codQuimico)
                                             .replace(':cantGrLt:', oDatos.registros[i].preparacionCollection[j].cantGr)
@@ -406,10 +426,71 @@
                 return prep.nombre.substring(0, (prep.nombre.length - (prep.fibra.length + 3)));
             },
             
-            modificarRegistro: function(oMod, oReg) {
+            modificarRegistro: function(reg, oArr) {
+                var mod = false;
+                
+                for (var i = 0; i < oArr.length; i++) {
+                    if (reg.codQ === oArr[i].codQ) {
+                        mod = true;
+                        oArr[i].tipo = reg.tipo;
+                        if (oArr[i].cantGrLt > 0) {
+                            oArr[i].cantGrLtNue = parseFloat(reg.cantGrLtNue);
+                            oArr[i].cantPctjNue = 0;
+                        } else {
+                            oArr[i].cantGrLtNue = 0;
+                            oArr[i].cantPctjNue = parseFloat(reg.cantPctjNue);
+                        }
+                        break;
+                    }
+                }
+                return oArr;
+            },
+            
+            SolicitarModificarRegistro: function(oBas, oQmod, oQnue) {
                 var self = this;
                 var datos = new Object();
-               
+                datos.idReg = oBas.idPrep;
+                datos.nombreReg = oBas.nombre;
+                datos.nombreRegNue = oBas.nombreNue;
+                datos.idFibra = oBas.idFib;
+                datos.idFibraNue = oBas.idFibNue;
+                datos.comentario = oBas.coment;
+                datos.quimicoMod = new Array();
+                datos.quimicoNue = new Array();
+                
+                for (var i = 0; i < oQmod.length; i++) {
+                    if (oQmod[i].tipo !== '') {
+                        datos.quimicoMod.push(oQmod[i]);
+                    }
+                }
+                
+                for (var i = 0; i < oQnue.length; i++) {
+                    datos.quimicoNue.push(oQnue[i]);
+                }
+                
+                console.log('Id del registro: ' + datos.idReg + '.');
+                console.log('Nombre del registro: ' + datos.nombreReg + '.');
+                console.log('Nuevo nombre del registro: ' + datos.nombreRegNue + '.');
+                console.log('Id de la fibra: ' + datos.idFibra + '.');
+                console.log('Id nuevo de la fibra: ' + datos.idFibraNue + '.');
+                console.log('Motivo de la modificación: ' + datos.comentario + '.');
+                console.log('Quimicos editados: ' + datos.quimicoMod.length + '.');
+                for (var i = 0; i < datos.quimicoMod.length; i++) {
+                    if (datos.quimicoMod[i].tipo === 'mod') {
+                        console.log('Modificado:');
+                        console.log(datos.quimicoMod[i]);
+                    } else if (datos.quimicoMod[i].tipo === 'eli') {
+                        console.log('Eliminado:');
+                        console.log(datos.quimicoMod[i]);
+                    }
+                }
+                console.log('Quimicos Nuevos: ' + datos.quimicoNue.length + '.');
+                for (var i = 0; i < datos.quimicoNue.length; i++) {
+                    console.log(datos.quimicoNue[i]);
+                }
+                
+                
+                /*
                 for (var j = 0; j < oReg.length; j++) {
                     if (oReg[j].idNomPreparacion === oMod.idPrep) {
                         datos = oReg[j];
@@ -421,6 +502,7 @@
                 delete datos.costoPreparacion;
                 datos.nombreNue = oMod.nombre;
                 datos.idFibNue = oMod.idFib;
+                datos.comentario = oMod.coment;
                 datos.preparacionCollectionNue = new Array();
 
                 datos = self.obtenerDatosTabla(oMod.tabla, datos, 'editar');
@@ -432,10 +514,15 @@
                 var i;
                 var j;
                 
-                if (a === n) {
-                    var p = new Array(a - 1);
+                if (a > n) {
+                    var p = new Array(a);
+                } else if (a < n) {
+                    var p = new Array(n);
+                } else {
+                    var p = new Array(a);
+                }
                     
-                    for (var k = 0; k < a; k++){
+                    for (var k = 0; k < p.length; k++){
                         p[k] = new Array(3);
                     }
                     
@@ -471,7 +558,8 @@
                             }
                         }
                     }
-                }
+                    */
+                //}
             }
         }
     })();
