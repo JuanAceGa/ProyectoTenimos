@@ -106,6 +106,92 @@
                         //console.log("error: " + response + " status: " + status + " er:" + er);
                     }
                 });
+            },
+            
+            verificarEstadoModificacion: function(dato, idMaestro){
+                
+                $.ajax({
+                    url: "../../../ServletPreparaciones",
+                    type: "GET",
+                    dataType: 'json',
+                    data: {
+                        accion: 'verificarModificacion',
+                        dato: dato,
+                        idMaestro: idMaestro
+                    },
+                    contentType: 'application/json',
+                    mimeType: 'application/json',
+                    success: function(response){
+                        if (response === 'true'){
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    },
+                    error: function(response, status, er) {
+                        $.gritter.add({
+                            title: "Problema con la Aplicación",
+                            text: "error: " + response + " status: " + status + " er:" + er,
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+                    },
+                    async: false, // La petición es síncrona
+                    cache: false // No queremos usar la caché del navegador
+                });
+
+            },
+            
+            solicitarModificarPreparacion: function(datos) {
+                
+                $.ajax({
+                    url: "../../../ServletPreparaciones",
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        accion: "editarPreparacion",
+                        datos: JSON.stringify(datos)
+                    },
+                    contentType: 'application/json',
+                    mimeType: 'application/json',
+                    
+                    success: function(response) {
+                        
+                        if (response === 'true') {
+                            $.gritter.add({
+                                title: "Modificar Registro",
+                                text: "¡Solicitud enviada con éxito.!",
+                                class_name: "growl-info",
+                                sticky: false,
+                                time: ""
+                            });
+                            //frmPreparacion.cargarDatos(response, "npr");
+                            
+                        } else {
+                            $.gritter.add({
+                                title: "Modificar Registro",
+                                text: "¡ No se entregó la solicitud de modificación.!",
+                                class_name: "growl-danger",
+                                sticky: false,
+                                time: ""
+                            });
+                        }
+                        
+                    },
+                    error: function(response, status, er) {
+                        
+                        $.gritter.add({
+                            title: "Problema con la Aplicación",
+                            text: "error: " + response + " status: " + status + " er:" + er,
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+                        
+                        //console.log("error: " + response + " status: " + status + " er:" + er);
+                    }
+                });
             }
         };
     })();

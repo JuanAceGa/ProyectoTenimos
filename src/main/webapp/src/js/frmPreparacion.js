@@ -446,34 +446,46 @@
                 self.$tBodyEditPrep.on('click', '#btnDelLineaPrep', function (e){
                     var d;
                     var fila = $(this).closest('tr');
-                    fila.remove();
-                    d = um.noRepetirQuimicos({
-                        tipo: '-', 
-                        codQ: fila[0].cells[0].textContent, 
-                        cant1: parseFloat(fila[0].cells[2].textContent),
-                        cant2: parseFloat(fila[0].cells[3].textContent),
-                        maestro: 'prep', 
-                        codQpermitido: ''},
+                    var estado = consultas.verificarEstadoModificacion(fila[0].cells[0].textContent, self.idPreparacion);
+                    
+                    if (!estado) {
+                        fila.remove();
+                        d = um.noRepetirQuimicos({
+                            tipo: '-',
+                            codQ: fila[0].cells[0].textContent,
+                            cant1: parseFloat(fila[0].cells[2].textContent),
+                            cant2: parseFloat(fila[0].cells[3].textContent),
+                            maestro: 'prep',
+                            codQpermitido: ''},
                         self.quimicosPorPrep);
-                    
-                    self.quimicosPorPrep = d.oQuim;
-                    
-                    d = um.noRepetirQuimicos({
-                        tipo: '-', 
-                        codQ: fila[0].cells[0].textContent, 
-                        cant1: parseFloat(fila[0].cells[2].textContent),
-                        cant2: parseFloat(fila[0].cells[3].textContent),
-                        maestro: 'prep', 
-                        codQpermitido: ''},
+
+                        self.quimicosPorPrep = d.oQuim;
+
+                        d = um.noRepetirQuimicos({
+                            tipo: '-',
+                            codQ: fila[0].cells[0].textContent,
+                            cant1: parseFloat(fila[0].cells[2].textContent),
+                            cant2: parseFloat(fila[0].cells[3].textContent),
+                            maestro: 'prep',
+                            codQpermitido: ''},
                         self.eNuevosQuimicos);
-                    
-                    self.eNuevosQuimicos = d.oQuim;
-                    
-                    for (var i = 0; i < self.eQuimicosModif.length; i++) {
-                        if (self.eQuimicosModif[i].codQ === fila[0].cells[0].textContent) {
-                            self.eQuimicosModif[i].tipo = 'eli';
-                            break;
+
+                        self.eNuevosQuimicos = d.oQuim;
+
+                        for (var i = 0; i < self.eQuimicosModif.length; i++) {
+                            if (self.eQuimicosModif[i].codQ === fila[0].cells[0].textContent) {
+                                self.eQuimicosModif[i].tipo = 'eli';
+                                break;
+                            }
                         }
+                    } else {
+                        $.gritter.add({
+                            title: "Modificar Registro",
+                            text: "¡Ya solicitaron eliminar este producto, está pendiente por aprobación.!",
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
                     }
 
                     e.stopPropagation();
@@ -712,19 +724,3 @@
     frmPreparacion.init();
 
 })(document, window, jQuery)
-
-/*
- data[i].costoPreparacion: "0"
- data[i].fechaUso: null
- data[i].idNomPreparacion: 21
- data[i].nomPreparacion: "PRUEBA 2 (ALG LYCRA)"
- 
- data[i].idFibra.nomFibra: "ALG LYCRA"
- data[i].idFibra.codFibra: "011"
- data[i].idFibra.idFibra: 1
- 
- data[i].preparacionCollection[k].cantGr: 10
- data[i].preparacionCollection[k].cantPtj: 0
- data[i].preparacionCollection[k].codQuimico: "9923"
- data[i].preparacionCollection[k].idPreparacion: 70
- */

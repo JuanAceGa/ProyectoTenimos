@@ -427,18 +427,30 @@
             },
             
             modificarRegistro: function(reg, oArr) {
-                var mod = false;
                 
                 for (var i = 0; i < oArr.length; i++) {
                     if (reg.codQ === oArr[i].codQ) {
-                        mod = true;
-                        oArr[i].tipo = reg.tipo;
+                        
                         if (oArr[i].cantGrLt > 0) {
-                            oArr[i].cantGrLtNue = parseFloat(reg.cantGrLtNue);
-                            oArr[i].cantPctjNue = 0;
+                            if (parseFloat(reg.cantGrLtNue) !== oArr[i].cantGrLt) {
+                                oArr[i].tipo = reg.tipo;
+                                oArr[i].cantGrLtNue = parseFloat(reg.cantGrLtNue);
+                                oArr[i].cantPctjNue = 0;
+                            } else {
+                                oArr[i].tipo = '';
+                                oArr[i].cantGrLtNue = 0;
+                                oArr[i].cantPctjNue = 0;
+                            }
                         } else {
-                            oArr[i].cantGrLtNue = 0;
-                            oArr[i].cantPctjNue = parseFloat(reg.cantPctjNue);
+                            if (parseFloat(reg.cantPctjNue) !== oArr[i].cantPctj) {
+                                oArr[i].tipo = reg.tipo;
+                                oArr[i].cantGrLtNue = 0;
+                                oArr[i].cantPctjNue = parseFloat(reg.cantPctjNue);
+                            } else {
+                                oArr[i].tipo = '';
+                                oArr[i].cantGrLtNue = 0;
+                                oArr[i].cantPctjNue = 0;
+                            }                            
                         }
                         break;
                     }
@@ -447,13 +459,14 @@
             },
             
             SolicitarModificarRegistro: function(oBas, oQmod, oQnue) {
-                var self = this;
+                var usuario = JSON.parse(sessionStorage.user);
                 var datos = new Object();
                 datos.idReg = oBas.idPrep;
                 datos.nombreReg = oBas.nombre;
                 datos.nombreRegNue = oBas.nombreNue;
                 datos.idFibra = oBas.idFib;
                 datos.idFibraNue = oBas.idFibNue;
+                datos.idSolicitante = usuario.idUsuario.idPersonal;
                 datos.comentario = oBas.coment;
                 datos.quimicoMod = new Array();
                 datos.quimicoNue = new Array();
@@ -468,98 +481,17 @@
                     datos.quimicoNue.push(oQnue[i]);
                 }
                 
-                console.log('Id del registro: ' + datos.idReg + '.');
-                console.log('Nombre del registro: ' + datos.nombreReg + '.');
-                console.log('Nuevo nombre del registro: ' + datos.nombreRegNue + '.');
-                console.log('Id de la fibra: ' + datos.idFibra + '.');
-                console.log('Id nuevo de la fibra: ' + datos.idFibraNue + '.');
-                console.log('Motivo de la modificación: ' + datos.comentario + '.');
-                console.log('Quimicos editados: ' + datos.quimicoMod.length + '.');
-                for (var i = 0; i < datos.quimicoMod.length; i++) {
-                    if (datos.quimicoMod[i].tipo === 'mod') {
-                        console.log('Modificado:');
-                        console.log(datos.quimicoMod[i]);
-                    } else if (datos.quimicoMod[i].tipo === 'eli') {
-                        console.log('Eliminado:');
-                        console.log(datos.quimicoMod[i]);
-                    }
-                }
-                console.log('Quimicos Nuevos: ' + datos.quimicoNue.length + '.');
-                for (var i = 0; i < datos.quimicoNue.length; i++) {
-                    console.log(datos.quimicoNue[i]);
-                }
-                
-                
-                /*
-                for (var j = 0; j < oReg.length; j++) {
-                    if (oReg[j].idNomPreparacion === oMod.idPrep) {
-                        datos = oReg[j];
-                        break;
-                    }
-                }
-                
-                delete datos.btnView;
-                delete datos.costoPreparacion;
-                datos.nombreNue = oMod.nombre;
-                datos.idFibNue = oMod.idFib;
-                datos.comentario = oMod.coment;
-                datos.preparacionCollectionNue = new Array();
-
-                datos = self.obtenerDatosTabla(oMod.tabla, datos, 'editar');
-
-                console.log(datos);
-
-                var a = datos.preparacionCollection.length;
-                var n = datos.preparacionCollectionNue.length;
-                var i;
-                var j;
-                
-                if (a > n) {
-                    var p = new Array(a);
-                } else if (a < n) {
-                    var p = new Array(n);
+                if (datos.nombreRegNue !== '' || datos.idFibraNue !== '' || datos.quimicoMod.length > 0 || datos.quimicoNue.length > 0) {
+                    consultas.solicitarModificarPreparacion(datos);
                 } else {
-                    var p = new Array(a);
+                    $.gritter.add({
+                        title: "Modificar Registro",
+                        text: "¡No hay datos a modificar.!",
+                        class_name: "growl-warning",
+                        sticky: false,
+                        time: ""
+                    });
                 }
-                    
-                    for (var k = 0; k < p.length; k++){
-                        p[k] = new Array(3);
-                    }
-                    
-                    for (i = 0; i < a; i++) {
-                        for (j = 0; j < n; j++) {                            
-                            if (datos.preparacionCollection[i].codQuimico === datos.preparacionCollectionNue[j].codQuimicoNue) {
-                                p[i][0] = -1;
-                                if ('' + datos.preparacionCollection[i].cantGr === datos.preparacionCollectionNue[j].cantGrNue) {
-                                    p[i][1] = -1;
-                                    if ('' + datos.preparacionCollection[i].cantPtj === datos.preparacionCollectionNue[j].cantPtjNue) {
-                                        p[i][2] = -1;
-                                        break;
-                                    } else {
-                                        p[i][2] = j;
-                                        break;
-                                    }
-                                } else {
-                                    p[i][1] = j;
-                                    break;
-                                }
-                            } else {
-                                p[i][0] = j;
-                            }
-                        }
-                    }
-                    console.log(p);
-                    
-                    for (i = 0; i < p.length; i++){
-                        for (j = 0; j < p.length; j++){
-                            if (p[i][j] > -1) {
-                                console.log(datos.preparacionCollection[i]);
-                                console.log(datos.preparacionCollectionNue[p[i][j]]);
-                            }
-                        }
-                    }
-                    */
-                //}
             }
         }
     })();
