@@ -444,11 +444,18 @@
                 });
                 
                 self.$tBodyEditPrep.on('click', '#btnDelLineaPrep', function (e){
-                    var d;
                     var fila = $(this).closest('tr');
-                    var estado = consultas.verificarEstadoModificacion(fila[0].cells[0].textContent, self.idPreparacion);
-                    
-                    if (!estado) {
+                    consultas.verificarEstadoModificacion(fila[0].cells[0].textContent, self.idPreparacion, fila, 'frmPrep');
+
+                    e.stopPropagation();
+                });
+            },
+            
+            eliminarLineaPrepFormEdicion: function(estado, fila) {
+                var self = this;
+                var d;
+                
+                if (!estado) {
                         fila.remove();
                         d = um.noRepetirQuimicos({
                             tipo: '-',
@@ -481,15 +488,12 @@
                     } else {
                         $.gritter.add({
                             title: "Modificar Registro",
-                            text: "¡Ya solicitaron eliminar este producto, está pendiente por aprobación.!",
+                            text: "¡Ya solicitaron eliminar este elemento, está pendiente por aprobación.!",
                             class_name: "growl-warning",
                             sticky: false,
                             time: ""
                         });
                     }
-
-                    e.stopPropagation();
-                });
             },
             
             consultaNombrePreparacion: function(){

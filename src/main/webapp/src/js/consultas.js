@@ -108,7 +108,7 @@
                 });
             },
             
-            verificarEstadoModificacion: function(dato, idMaestro){
+            verificarEstadoModificacion: function(dato, idMaestro, fila, formulario){
                 
                 $.ajax({
                     url: "../../../ServletPreparaciones",
@@ -123,9 +123,17 @@
                     mimeType: 'application/json',
                     success: function(response){
                         if (response === 'true'){
-                            return true;
+                            if (formulario === 'frmPrep') {
+                                frmPreparacion.eliminarLineaPrepFormEdicion(true, fila);
+                            } else if (formulario === 'frmAux') {
+                                frmAuxiliares.eliminarLineaPrepFormEdicion(true, fila);
+                            }
                         } else {
-                            return false;
+                            if (formulario === 'frmPrep') {
+                                frmPreparacion.eliminarLineaPrepFormEdicion(false, fila);
+                            } else if (formulario === 'frmAux') {
+                                frmAuxiliares.eliminarLineaPrepFormEdicion(false, fila);
+                            }
                         }
                     },
                     error: function(response, status, er) {
