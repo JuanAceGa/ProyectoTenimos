@@ -108,33 +108,41 @@
                 });
             },
             
-            verificarEstadoModificacion: function(dato, idMaestro, fila, formulario){
+            verificarEstadoModificacion: function(idMaestro, formulario){
+                var servlet = '';
+                
+                if (formulario === 'frmPrep') {
+                    servlet = '../../../ServletPreparaciones';
+                } else if (formulario === 'frmAux') {
+                    servlet = '../../../';
+                }
                 
                 $.ajax({
-                    url: "../../../ServletPreparaciones",
+                    url: servlet,
                     type: "GET",
                     dataType: 'json',
                     data: {
                         accion: 'verificarModificacion',
-                        dato: dato,
+                        //dato: dato,
                         idMaestro: idMaestro
                     },
                     contentType: 'application/json',
                     mimeType: 'application/json',
                     success: function(response){
-                        if (response === 'true'){
+                        //if (response === 'true'){
                             if (formulario === 'frmPrep') {
-                                frmPreparacion.eliminarLineaPrepFormEdicion(true, fila);
+                                frmPreparacion.cargarDatos(response, "solic");
+                                //frmPreparacion.eliminarLineaPrepFormEdicion(true, fila);
                             } else if (formulario === 'frmAux') {
-                                frmAuxiliares.eliminarLineaPrepFormEdicion(true, fila);
+                                //frmAuxiliares.eliminarLineaPrepFormEdicion(true, fila);
                             }
-                        } else {
+                        /*} else {
                             if (formulario === 'frmPrep') {
                                 frmPreparacion.eliminarLineaPrepFormEdicion(false, fila);
                             } else if (formulario === 'frmAux') {
                                 frmAuxiliares.eliminarLineaPrepFormEdicion(false, fila);
                             }
-                        }
+                        }*/
                     },
                     error: function(response, status, er) {
                         $.gritter.add({
@@ -144,9 +152,7 @@
                             sticky: false,
                             time: ""
                         });
-                    },
-                    async: false, // La petición es síncrona
-                    cache: false // No queremos usar la caché del navegador
+                    }
                 });
 
             },

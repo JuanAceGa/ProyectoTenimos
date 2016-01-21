@@ -65,6 +65,17 @@
                 for (var i = 0; i < oElementos.length; i++){
                     oElementos[i].val("");
                 }
+            }, 
+            
+            habilitarDeshabilitarCampos: function (oElementos, accion) {
+                
+                for (var i = 0; i < oElementos.length; i++){
+                    if (accion === 'hab') { 
+                        oElementos[i].attr('disabled', true);
+                    } else if (accion === 'des') {
+                        oElementos[i].attr('disabled', false);
+                    }
+                }
             }
         }
     })();
