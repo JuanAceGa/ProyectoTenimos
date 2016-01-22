@@ -39,7 +39,6 @@
             },
             
             destruirDataTable: function(tabla, t) {
-                var self = this;
                 tabla.fnDestroy();
                 
                 if (t === '1') {
@@ -458,7 +457,7 @@
                 return oArr;
             },
             
-            SolicitarModificarRegistro: function(oBas, oQmod, oQnue) {
+            SolicitarModificarRegistro: function(oBas, oQmod, oQnue, btnCerrar) {
                 var usuario = JSON.parse(sessionStorage.user);
                 var datos = new Object();
                 datos.idReg = oBas.idPrep;
@@ -482,7 +481,7 @@
                 }
                 
                 if (datos.nombreRegNue !== '' || datos.idFibraNue !== '' || datos.quimicoMod.length > 0 || datos.quimicoNue.length > 0) {
-                    consultas.solicitarModificarPreparacion(datos);
+                    consultas.solicitarModificarPreparacion(datos, btnCerrar);
                 } else {
                     $.gritter.add({
                         title: "Modificar Registro",
@@ -492,6 +491,87 @@
                         time: ""
                     });
                 }
+            },
+            
+            verificarSolicitudes: function(codigo, oElement, arrSolicitudes, arrB) {
+                var estado = false;
+                var solcNombre = false;
+                var solcFibra = false;
+                
+                for (var i = 0; i < arrSolicitudes.length; i++) {
+                    if (arrSolicitudes[i].nombreNue !== null && arrB.solcNombre === false) {
+                        u.habilitarDeshabilitarCampos(oElement[0], 'des');
+                        solcNombre = true;
+                        
+                        $.gritter.add({
+                            title: 'Nombre del Maestro',
+                            text: 'Ya solicitaron cambiar el nombre de este maestro, está pendiente por aprobación.',
+                            class_name: 'growl-warning',
+                            sticky: false,
+                            time: '60000',
+                            position: 'left'
+                        });
+                    } 
+                    if (arrSolicitudes[i].idFibraNue !== null && arrB.solcFibra === false) {
+                        u.habilitarDeshabilitarCampos(oElement[1], 'des');
+                        solcFibra = true;
+                        
+                        $.gritter.add({
+                            title: 'Fibra del Maestro',
+                            text: 'Ya solicitaron cambiar la fibra de este maestro, está pendiente por aprobación.',
+                            class_name: 'growl-warning',
+                            sticky: false,
+                            time: '60000'
+                        });
+                    }
+                    
+                    if (arrSolicitudes[i].codQuimicoAct === codigo && arrSolicitudes[i].tipo === 'eliminado') {
+                        estado = true;
+                        u.habilitarDeshabilitarCampos(oElement, 'des');
+                        
+                        $.gritter.add({
+                            title: "Eliminar Registro",
+                            text: "¡Ya solicitaron eliminar este elemento, está pendiente por aprobación.!",
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+
+                        break;
+                    }
+                    
+                    if (arrSolicitudes[i].codQuimicoAct === codigo && arrSolicitudes[i].tipo === 'modificado') {
+                        estado = true;
+                        u.habilitarDeshabilitarCampos(oElement, 'des');
+                        
+                        $.gritter.add({
+                            title: "Modificar Registro",
+                            text: "¡Ya solicitaron una modificación a este elemento, está pendiente por aprobación.!",
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+
+                        break;
+                    }
+                    
+                    if (arrSolicitudes[i].codQuimicoNue === codigo && arrSolicitudes[i].tipo === 'nuevo') {
+                        estado = true;
+                        u.habilitarDeshabilitarCampos(oElement, 'des');
+                        
+                        $.gritter.add({
+                            title: "Nuevo Registro",
+                            text: "¡Ya solicitaron agregar este elemento al maestro, está pendiente por aprobación.!",
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+
+                        break;
+                    }                    
+                }
+                
+                return {estado: estado, solcNombre: solcNombre, solcFibra: solcFibra};
             }
         }
     })();

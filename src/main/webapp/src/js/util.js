@@ -70,10 +70,10 @@
             habilitarDeshabilitarCampos: function (oElementos, accion) {
                 
                 for (var i = 0; i < oElementos.length; i++){
-                    if (accion === 'hab') { 
-                        oElementos[i].attr('disabled', true);
-                    } else if (accion === 'des') {
-                        oElementos[i].attr('disabled', false);
+                    if (accion === 'des') { 
+                        $(oElementos[i]).attr('disabled', true);
+                    } else if (accion === 'hab') {
+                        $(oElementos[i]).attr('disabled', false);
                     }
                 }
             }

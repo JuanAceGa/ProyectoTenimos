@@ -129,20 +129,11 @@
                     contentType: 'application/json',
                     mimeType: 'application/json',
                     success: function(response){
-                        //if (response === 'true'){
                             if (formulario === 'frmPrep') {
                                 frmPreparacion.cargarDatos(response, "solic");
-                                //frmPreparacion.eliminarLineaPrepFormEdicion(true, fila);
                             } else if (formulario === 'frmAux') {
                                 //frmAuxiliares.eliminarLineaPrepFormEdicion(true, fila);
                             }
-                        /*} else {
-                            if (formulario === 'frmPrep') {
-                                frmPreparacion.eliminarLineaPrepFormEdicion(false, fila);
-                            } else if (formulario === 'frmAux') {
-                                frmAuxiliares.eliminarLineaPrepFormEdicion(false, fila);
-                            }
-                        }*/
                     },
                     error: function(response, status, er) {
                         $.gritter.add({
@@ -157,7 +148,7 @@
 
             },
             
-            solicitarModificarPreparacion: function(datos) {
+            solicitarModificarPreparacion: function(datos, btnCerrar) {
                 
                 $.ajax({
                     url: "../../../ServletPreparaciones",
@@ -180,6 +171,7 @@
                                 sticky: false,
                                 time: ""
                             });
+                            $(btnCerrar).click();
                             //frmPreparacion.cargarDatos(response, "npr");
                             
                         } else {
