@@ -619,6 +619,7 @@
                     u.limpiarCampos(elementos);
                     elementos.splice(0, 1);
                     u.camposObligatorios(elementos, '3');
+                    elementos.push(self.$eNomPrep);
                     elementos.push(self.$eCbxfibraPrep);
                     u.habilitarDeshabilitarCampos(elementos, 'hab');
                     self.quimicosPorPrep = um.verRegistro(datos);
