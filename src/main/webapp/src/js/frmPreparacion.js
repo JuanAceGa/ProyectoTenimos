@@ -703,11 +703,12 @@
                     
                     for (var i = 0; i < self.oPreparaciones.length; i++) {
                         if (self.idPreparacion === self.oPreparaciones[i].idNomPreparacion) {
-                            nombre = self.oPreparaciones[i].nomPreparacion;
+                            //nombre = self.oPreparaciones[i].nomPreparacion;
+                            nombre = um.separarNombreDeFibra({nombre: self.oPreparaciones[i].nomPreparacion, fibra: self.oPreparaciones[i].idFibra.nomFibra});
                             idFib = self.oPreparaciones[i].idFibra.idFibra;
                             
-                            if (nombre !== (self.$eNomPrep.val() + " (" + self.$eCbxfibraPrep.val() + ")")) {
-                                nombreNue = self.$eNomPrep.val() + " (" + self.$eCbxfibraPrep.val() + ")";
+                            if (nombre !== self.$eNomPrep.val()) {
+                                nombreNue = self.$eNomPrep.val();
                             }
                             
                             if (idFib === idFibNue) {
