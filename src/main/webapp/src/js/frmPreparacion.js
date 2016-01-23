@@ -295,7 +295,8 @@
 
                     if (um.cantidadDeQuimico({val: self.$cantGrLtPrep.val(), input: 'grlt'})) {
                         b = false;
-                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Gramos por Litro', cuerpoMensaje: '...'});
+                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Gramos por Litro',
+                            cuerpoMensaje: 'La cantidad debe ser superior a 0.'});
 
                     } else if (um.cantidadDeQuimico({val: self.$cantPctjPrep.val(), input: 'pctj'})) {
                         b = false;
