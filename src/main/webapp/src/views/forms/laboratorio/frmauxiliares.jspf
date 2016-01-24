@@ -1,7 +1,7 @@
 
-<div class="row" id="rowAuxiliares">
+<div class="row" id="rowAuxiliar">
     <div class=" col-md-offset-1 col-md-10">
-        <form id="frmAuxiliares" class="form-horizontal">
+        <form id="frmAuxiliar" class="form-horizontal">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="panel-btns" id="frmMaestroAux">
@@ -14,15 +14,15 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="form-group col-md-6">
-                            <label class="col-sm-4 control-label">Nombre del Auxiliar <span class="asterisk">*</span></label>
+                            <label class="col-sm-4 control-label"> Nombre Auxiliar <span class="asterisk">*</span></label>
                             <div class="col-sm-8">
-                                <input type="text" name="nomAux" id="nomAux" class="form-control" placeholder="Nombre del auxiliar"/>
+                                <input type="text" name="nomAux" id="nomAux" class="form-control" placeholder="Nombre del Auxiliar" required />
                             </div>
                         </div>
                         <div class="form-group col-md-6">
                             <label class="col-sm-4 control-label">Fibra <span class="asterisk">*</span></label>
                             <div class="col-sm-8">
-                                <select id="cbxfibraAux" class="form-control">
+                                <select id="cbxfibraAux" class="form-control" required>
                                     <option>Seleccione una...</option>
                                     <option>Fibra</option>
                                 </select>
@@ -37,20 +37,19 @@
                                 <table class="table mb30" id="dataTableNewQAuxiliar">
                                     <thead>
                                         <tr>
-                                            <th class="col-md-3">Código del Quimico</th>
-                                            <th class="col-md-5">Nombre del Quimico</th>
-                                            <th class="col-md-2">Cant. Gr/Lt</th>
-                                            <th class="col-md-2">Cant. %/Kl</th>
-                                            <th class="col-md-2"></th>
-                                            <th class="col-md-2"></th>
+                                            <th class="col-md-3">Código del Químico <span class="asterisk">*</span></th>
+                                            <th class="col-md-5">Nombre del Químico <span class="asterisk">*</span></th>
+                                            <th class="col-md-2">Cant. Gr/Lt <span class="asterisk">*</span></th>
+                                            <th class="col-md-2">Cant. %/Kl <span class="asterisk">*</span></th>
+                                            <th class="col-md-1"></th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="tBodyNewQAuxiliar">
                                         <tr>
                                             <td>
                                                 <div class="form-group col-md-12">
                                                     <div class="col-sm-12">
-                                                        <input type="text" name="codQuimAux" id="codQuimAux" class="form-control" placeholder="Código del quimico" list="dlCodQuimAux"/>
+                                                        <input type="text" name="codQuimAux" id="codQuimAux" class="form-control" placeholder="Código" maxlength="4" list="dlCodQuimAux" required />
                                                         <datalist id="dlCodQuimAux"></datalist>
                                                     </div>
                                                 </div>
@@ -58,7 +57,7 @@
                                             <td>
                                                 <div class="form-group col-md-12">
                                                     <div class="col-sm-12">
-                                                        <input type="text" name="nomQuimAux" id="nomQuimAux" class="form-control" placeholder="Nombre del quimico" list="dlNomQuimAux"/>
+                                                        <input type="text" name="nomQuimAux" id="nomQuimAux" class="form-control" placeholder="Nombre del químico" list="dlNomQuimAux" required />
                                                         <datalist id="dlNomQuimAux"></datalist>
                                                     </div>
                                                 </div>
@@ -66,26 +65,21 @@
                                             <td>
                                                 <div class="form-group col-md-12">
                                                     <div class="col-sm-12">
-                                                        <input type="text" name="cantGrLtAux" id="cantGrLtAux" class="form-control" placeholder="Gr/Lt" />
+                                                        <input type="text" name="cantGrLtAux" id="cantGrLtAux" class="form-control" maxlength="16" placeholder="Gr/Lt" required />
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="form-group col-md-12">
                                                     <div class="col-sm-12">
-                                                        <input type="text" name="cantPctjAux" id="cantPctjAux" class="form-control" placeholder="%/Kl" />
+                                                        <input type="text" name="cantPctjAux" id="cantPctjAux" class="form-control" maxlength="9" placeholder="%/Kl" required />
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="table-action">
                                                 <div class="form-group col-md-12">
-                                                    <button type="button" class="btn" id="btnAddLineaAux"><i class="fa fa-check"></i></button>
+                                                    <button id="btnAddLineaAux" title="Agregar Químico" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button"><i class="fa fa-plus-square"></i></button>
                                                 </div>
-                                            </td>
-                                            <td class="table-action">
-                                                <!--<div class="form-group col-md-12">
-                                                    <button type="button" class="btn" id="btnAddLineaAux"><i class="fa fa-check"></i></button>
-                                                </div>-->
                                             </td>
                                         </tr>
                                     </tbody>
@@ -98,7 +92,7 @@
                 <div class="panel-footer">
                     <div class="row">
                         <div class="col-sm-9 col-sm-offset-5">
-                            <button class="btn btn-primary" id="btnSaveAux" type="button">Guardar</button>
+                            <button class="btn btn-success" type="button" id="btnSaveAux">Guardar</button>
                             <button type="reset" class="btn btn-default" id="btnCleanAux">Limpiar</button>
                         </div>
                     </div>
@@ -111,6 +105,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="panel-btns" id="tblMaestroAux">
+                    <!--<a href="#" class="panel-close">&times;</a>-->
                     <a href="#" class="minimize">&minus;</a>
                 </div>
                 <h4 class="panel-title">Listado de Maestros de Auxiliares</h4>
@@ -121,12 +116,13 @@
                     <table class="table" id="dataTableAuxiliar">
                         <thead>
                             <tr>
-                                <th class="col-md-1">Id. Aux.</th>
-                                <th class="col-md-3">Nombre del Auxiliar</th>
-                                <th class="col-md-3">Fibra</th>
-                                <th class="col-md-1">Coste</th>
-                                <th class="col-md-1">Ult. Fecha de Uso</th>
-                                <th class="col-md-1">Editar</th>
+                                <th class="col-md-1" style="text-align: center">Id. Aux.</th>
+                                <th class="col-md-4" style="text-align: center">Nombre del Auxiliar</th>
+                                <th class="col-md-1" style="text-align: center">Fibra</th>
+                                <th class="col-md-1" style="text-align: center">Coste</th>
+                                <th class="col-md-1" style="text-align: center">Ult. Fecha de Uso</th>
+                                <th class="col-md-1" style="text-align: center">Ver</th>
+                                <!--<th class="col-md-1"></th>-->
                             </tr>
                         </thead>
                     </table>
@@ -135,3 +131,108 @@
         </div><!-- panel -->
     </div><!-- col-md-10 -->                        
 </div><!--row -->
+
+<!-- Modal -->
+<div class="modal" id="modalEditAuxiliar" tabindex="-1" role="dia" aria-hidden="true">
+    <div class="modal-lg col-lg-offset-3">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Modificación de Auxiliares</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label class="col-sm-4 control-label">Nombre Auxiliar <span class="asterisk">*</span></label>
+                        <div class="col-sm-8">
+                            <input type="text" name="eNomAux" id="eNomAux" class="form-control" placeholder="Nombre del auxiliar" required />
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="col-sm-4 control-label">Fibra <span class="asterisk">*</span></label>
+                        <div class="col-sm-8">
+                            <select id="eCbxfibraAux" class="form-control" required>
+                                <option>Seleccione una...</option>
+                                <option>Fibra</option>
+                            </select>
+                            <label class="error" for="fibra"></label>
+                        </div>
+                    </div><!-- form-group -->
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-lg-offset-0">
+                        <div class="table-responsive">
+                            <table class="table mb30" id="tableEditAux">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-3">Código del Químico <span class="asterisk">*</span></th>
+                                        <th class="col-md-5">Nombre del Químico <span class="asterisk">*</span></th>
+                                        <th class="col-md-2">Cant. Gr/Lt <span class="asterisk">*</span></th>
+                                        <th class="col-md-2">Cant. %/Kl <span class="asterisk">*</span></th>
+                                        <th class="col-md-1"></th>
+                                        <th class="col-md-1"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tBodyEditAux">
+                                    <tr>
+                                        <td>
+                                            <div class="form-group col-md-12">
+                                                <div class="col-sm-12">
+                                                    <input type="text" name="eCodQuimAux" id="eCodQuimAux" class="form-control" placeholder="Código" maxlength="4" list="eDlCodQuimAux" required />
+                                                    <datalist id="eDlCodQuimAux"></datalist>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-md-12">
+                                                <div class="col-sm-12">
+                                                    <input type="text" name="eNomQuimAux" id="eNomQuimAux" class="form-control" placeholder="Nombre del químico" list="eDlNomQuimAux" required />
+                                                    <datalist id="eDlNomQuimAux"></datalist>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-md-12">
+                                                <div class="col-sm-12">
+                                                    <input type="text" name="eCantGrLtAux" id="eCantGrLtAux" class="form-control" maxlength="16" placeholder="Gr/Lt" required />
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group col-md-12">
+                                                <div class="col-sm-12">
+                                                    <input type="text" name="eCantPctjAux" id="eCantPctjAux" class="form-control" maxlength="9" placeholder="%/Kl" required />
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="table-action">
+                                            <div class="form-group col-md-12">
+                                                <button id="eBtnAddLineaAux" title="Agregar Químico" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button"><i class="fa fa-plus-square"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div><!-- table-responsive -->
+                    </div><!-- col-md-6 -->
+                </div>
+                <div class="row">
+                    <div class="form-group col-lg-12 col-lg-offset-0">
+                        <textarea placeholder="Motivo de modificación" class="form-control" rows="5" style="margin-top: 0px; margin-bottom: 0px; height: 112px;" required></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-lg-1 col-lg-offset-0">
+                        <button class="btn btn-success" type="button" id="eBtnEditAux">Modificar</button>
+                    </div>
+                    <div class="col-lg-11 col-lg-offset-0">
+                        <button class="btn btn-white" type="button" id="eBtnRestAux">Restaurar</button>
+                        <button type="reset" class="btn btn-default" data-dismiss="modal" id="eBtnCerrar">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div><!-- modal -->

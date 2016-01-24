@@ -56,8 +56,33 @@
                 });
             },
             
+            consultarNombreAuxiliar: function(nombre, tipo, idAux) {
+                $.ajax({
+                    url: '../../../ServletAuxiliares',
+                    type: 'GET',
+                    dataType: 'text',
+                    data: {
+                        accion: 'buscarNombre',
+                        tipo: tipo,
+                        idAux: idAux,
+                        nombre: nombre
+                    },
+                    success: function(data) {
+                        var response = JSON.parse(data);
+                        if (tipo === 'nuevo') {
+                            frmAuxiliares.agregarAuxiliar(response);
+                        } else if (tipo === 'editar') {
+                            frmAuxiliares.solicitarModificarAuxiliar(response);
+                        }
+                    },
+                    error: function(response, status, er) {
+                        console.log("error: " + response + " status: " + status + " er:" + er);
+                    }
+                });
+            },
+            
             guardarNuevaPreparacion: function(datos) {
-                
+                <REVISAR CUANDO LLAMAN ESTE METODO PARA HACERLO IGUAL PARA TODOS>
                 $.ajax({
                     url: "../../../ServletPreparaciones",
                     type: 'GET',

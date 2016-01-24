@@ -1,941 +1,732 @@
-(function (document, window, $, undefined){
-    (function (){
-        return ingreso = {
-            //variables: "",
-            URLgetUser: "http://localhost:8084/APPServiciosLaboratorio/rest/servicelab/getUser",
-            txtUser: $("#UserSignIn"),
-            txtPass: $("#PassSignIn"),
-            btnIngresar: $("#ingresar"),
-            modalMensaje: $("#myModal"),
-            tituloMensaje: $("#myModalLabel"),
-            cuerpoMensaje: $("#cuerpoMensaje"),  
-            
-            init: function (){
-                this.consultarUsuario();
-            },
-            
-            consultarUsuario: function (){
-                var self = this;
-                
-                $(self.btnIngresar).on("click", function (e) {
-                    e.preventDefault();
-                    
-                   $.ajax( self.URLgetUser, {
-                       type: "POST",
-                       data: "user=" + $(self.txtUser).val() + "&pass=" + $(self.txtPass).val() 
-                   })
-                   .done( function(data) {
-                       if (data.find) {
-                           localStorage.setItem("uss", JSON.stringify(data));
-                           window.location = "index.html";
-                           //menu.menuPrincipal();
-                       }else{
-                           try {
-                               self.tituloMensaje.text("Identificación de usuario");
-                               self.cuerpoMensaje.text("Nombre de usuario o contraseña inválidos.");
-                               self.modalMensaje.modal("show");
-                           } catch (e) {
-                               alert("Nombre de usuario o contraseña inválidos.");
-                           }
-                        }
-                    })
-                    .fail( function(err) {
-                        try {
-                            self.tituloMensaje.text("Conexión con el servidor");
-                            self.cuerpoMensaje.text("Ha ocurrido un problema con el servidor, favor intentar más tarde.");
-                            self.modalMensaje.modal("show");
-                        } catch (e) {
-                            alert("Ha ocurrido un problema con el servidor, favor intentar más tarde.");
-                        }
-                    });
-                });
-            }
-        };
-    })();
-    
+(function(document, window, $, undefined) {
     (function() {
-        return definirElementos = {
-            frmPreparacion: $("#frmPreparacion"),
-            dataTableNewQPreparacion: $("#dataTableNewQPreparacion"),
-            dataTablePreparacion: $('#dataTablePreparacion'),
-            frmAuxiliares: $("#frmAuxiliares"),
-            dataTableNewQAuxiliar: $("#dataTableNewQAuxiliar"),
-            dataTableAuxiliar: $("#dataTableAuxiliar"),
-            
-            init: function (){
-                this.iniciarDataTables();
-            },
-            
-            iniciarDataTables: function() {
-                var self = this;
-                
-                $(document).ready(function() {
-                    self.dataTableNewQPreparacion.dataTable({
-                        "bPaginate": false,
-                        "bFilter": false,
-                        "bSort": false,
-                        "bInfo": false,
-                        "bAutoWidth": false
-                    });
-                    
-                    self.dataTableNewQAuxiliar.dataTable({
-                        "bPaginate": false,
-                        "bFilter": false,
-                        "bSort": false,
-                        "bInfo": false,
-                        "bAutoWidth": false
-                    });
-                    
-                    self.dataTableAuxiliar.dataTable({
-                        "sPaginationType": "full_numbers",
-                        "bAutoWidth": false
-                    });
-                });
-            }
-        };
-    })();
-    
-    (function (){
-        return menu = {
-            user: "",
-            ubicacionActual: $("#ubicacionActual"),
-            nav: $("#nav"),
-            navLab: $("#navLab"),
-            nomUser: $("#nomUser"),
-            nomUser2: $("#nomUser2"),
-            rowPreparacion: $("#rowPreparacion"),
-            frmMaestroPrep: $("#frmMaestroPrep"),
-            tblMaestroPrep: $("#tblMaestroPrep"),
-            rowAuxiliares: $("#rowAuxiliares"),
-            frmMaestroAux: $("#frmMaestroAux"),
-            tblMaestroAux: $("#tblMaestroAux"),
+        return frmAuxiliar = {
+            //oFibras: {},
+            oQuimicos: {},
+            oAuxiliares: {},
+            $frmAuxiliar: $('#frmAuxiliar'),
+            $dataTableNewQAuxiliar: $('#dataTableNewQAuxiliar'),
+            $tBodyNewQAuxiliar: $('#tBodyNewQAuxiliar'),
+            $dataTableAuxiliar: $('#dataTableAuxiliar'),
+            $nomAux: $('#nomAux'),
+            $cbxfibraAux: $('#cbxfibraAux'),
+            $codQuimAux: $('#codQuimAux'),
+            $nomQuimAux: $('#nomQuimAux'),
+            $dlCodQuimAux: $('#dlCodQuimAux'),
+            $dlNomQuimAux: $('#dlNomQuimAux'),
+            $cantGrLtAux: $('#cantGrLtAux'),
+            $cantPctjAux: $('#cantPctjAux'),
+            $btnAddLineaAux: $('#btnAddLineaAux'),
+            $btnSaveAux: $('#btnSaveAux'),
+            $btnCleanAux: $('#btnCleanAux'),
+            $modalMensaje: $('#myModal'),
+            $tituloMensaje: $('#myModalLabel'),
+            $cuerpoMensaje: $('#cuerpoMensaje'),
+            $modalEditAux: $('#modalEditAuxiliar'),
+            $tableEditAux: $('#tableEditAux'),
+            $tBodyEditAux: $('#tableEditAux').find('tbody'),
+            $eCbxfibraAux: $('#eCbxfibraAux'),
+            $eCodQuimAux: $('#eCodQuimAux'),
+            $eNomQuimAux: $('#eNomQuimAux'),
+            $eNomAux: $('#eNomAux'),
+            $eDlCodQuimAux: $('#eDlCodQuimAux'),
+            $eDlNomQuimAux: $('#eDlNomQuimAux'),
+            $eCantGrLtAux: $('#eCantGrLtAux'),
+            $eCantPctjAux: $('#eCantPctjAux'),
+            $eTextArea: $('#modalEditAuxiliar').find('textarea'),
+            $eBtnAddLineaAux: $('#eBtnAddLineaAux'),
+            $eBtnModificar: $('#eBtnEditAux'),
+            $eBtnRestAux: $('#eBtnRestAux'),
+            $eBtnCerrar: $('#eBtnCerrar'),
+            $eBtnCerrar2: $('#modalEditAuxiliar').find('.modal-header .close'),
+            quimicosPorAux: [],
+            idAuxiliar: 0,
+            banderaModal: 0,
+            tipoEdicion: 'nuevo',
+            filaEditar: null,
+            eNuevosQuimicos: [],
+            eQuimicosModif: [],
+            solicitudesEnviadas: [],
+            solcNombre: false,
+            solcFibra: false,
             
             init: function() {
-                this.ocultarMenu();
-                this.ocultarFormularios();
-                this.cargarSesion();
-                this.menuPrincipal();
-                this.listaDeOpciones();
+                this.inhabilitarCampos();
+                this.coincidenciaQuimico();
+                this.formatoInput();
+                this.metodosUtiles();
+                this.limpiarFormulario();
+                this.pintarCamposObligatorios();
+                this.agregarLineaAuxiliar();
+                this.borrarLineaAuxiliar();
+                this.consultaNombreAuxiliar();
+                this.verAuxiliar();
+                this.modificarQuimicoAuxiliar();
+                this.cerrarModalEdicion();
             },
-            
-            ocultarMenu: function() {
+            cargarDatos: function(dato, opc) {
                 var self = this;
+                var data = JSON.parse(dato);
+                var elementos = [];
                 
-                $(self.navLab).hide();
-            },
-            
-            ocultarFormularios: function() {
-                var self = this;
-                
-                self.rowPreparacion.hide();
-                self.rowAuxiliares.hide();
-            },
-            
-            cargarSesion: function(){
-                var self = this;
-                
-                self.user = JSON.parse(localStorage.getItem("uss"));
-                //localStorage.removeItem("uss");
-                this.menuPrincipal();
-            },
-            
-            menuPrincipal: function() {
-                var self = this;
-                
-                
-                if (self.user != null) {
-                    if (self.user.permiso) {
-                        self.navLab.show();
-                    }
+                if (opc === 'f') {
+                    self.oFibras = data;
+                    elementos.push(self.$cbxfibraAux);
+                    elementos.push(self.$eCbxfibraAux);
+                    um.cargarComboBox(elementos, self.oFibras);
+                }
+
+                if (opc === 'q') {
+                    self.oQuimicos = data;
+                    elementos.push(self.$dlCodQuimAux);
+                    elementos.push(self.$dlNomQuimAux);
+                    um.cargarDataList(elementos, self.oQuimicos);
                     
-                    self.nomUser.text(this.nombre(self.user.nombre1, self.user.nombre2));
-                    self.nomUser2.text(self.nomUser);
+                    elementos = [];
+                    elementos.push(self.$eDlCodQuimAux);
+                    elementos.push(self.$eDlNomQuimAux);
+                    um.cargarDataList(elementos, self.oQuimicos);
+                }
+
+                if (opc === 'au') {
+                    self.oAuxiliares = data;
+                    um.renderDataTables(self.$dataTableAuxiliar, self.oAuxiliares, 'aux');
+                }
+
+                if (opc === 'npr') {
+                    if (data !== null) {
+                        self.oAuxiliares = "";
+                        self.oAuxiliares = data;
+                        um.destruirDataTable(self.$dataTableAuxiliar.dataTable(), '2');
+                        self.limpiarFormulario();
+                        um.renderDataTables(self.$dataTableAuxiliar, self.oAuxiliares, 'aux');
+                        self.pintarCamposObligatorios();
+                    }
+                }
+                
+                if (opc === 'solic') {
+                    if (data !== null) {
+                        self.solicitudesEnviadas = data;
+                        self.solcNombre = false;
+                        self.solcFibra = false;
+                        self.verificarSolicitudes();
+                    }
                 }
             },
-            
-            listaDeOpciones: function() {
+            inhabilitarCampos: function() {
                 var self = this;
-                self.nav.on("click", function(e) {
-                    var selec = e.toElement.textContent;
+
+                self.$btnSaveAux.attr('disabled', true);
+            },
+            coincidenciaQuimico: function() {
+                var self = this;                
+
+                $(self.$codQuimAux).on("keyup keypress change", function() {
+                    self.$nomQuimAux.val("");
+                    var elementos = [self.$codQuimAux, self.$nomQuimAux, self.$cantGrLtAux, self.$cantPctjAux];
+
+                    um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
+                });
+
+                $(self.$nomQuimAux).on('keyup keypress change', function() {
+                    self.$codQuimAux.val("");
+                    var elementos = [self.$nomQuimAux, self.$codQuimAux, self.$cantGrLtAux, self.$cantPctjAux];
                     
-                    switch (selec) {
-                        case "Dashboard":
-                            this.children[0].className = "active";
-                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-home'></i>Dashboard";
-                            self.ocultarMenu();
-                            self.ocultarFormularios();
-                            self.menuPrincipal();
-                            
-                            this.children[1].className = "";
-                            this.children[2].className = "nav-parent";
-                            
-                            break;
-                            
-                        case "Email":
-                            this.children[1].className = "active";
-                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-envelope-o'></i>Email";
-                            self.ocultarMenu();
-                            self.ocultarFormularios();
-                            self.menuPrincipal();
-                            
-                            this.children[0].className = "";
-                            this.children[2].className = "nav-parent";
-                            
-                            break;
-                            
-                        case "Maestro Preparación":
-                            this.children[2].className = "nav-parent active";
-                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Preparación";
-                            self.ocultarMenu();
-                            self.ocultarFormularios();
-                            self.menuPrincipal();
-                            
-                            self.rowPreparacion.show();
-                            self.frmMaestroPrep.children(".minimize").click();
-                            self.tblMaestroPrep.children(".minimize").click();
-                            
-                            this.children[0].className = "";
-                            this.children[1].className = "";
-                            break;
-                        
-                        case "Maestro Auxiliares":
-                            this.children[2].className = "nav-parent active";
-                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Auxiliares";
-                            self.ocultarMenu();
-                            self.ocultarFormularios();
-                            self.menuPrincipal();
-                            
-                            self.rowAuxiliares.show();
-                            self.frmMaestroAux.children(".minimize").click();
-                            self.tblMaestroAux.children(".minimize").click();
-                            
-                            this.children[0].className = "";
-                            this.children[1].className = "";
-                            break;
-                            
-                        case "Maestro Procesos Posteriores":
-                            /*this.children[2].className = "nav-parent active";
-                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / ";
-                            self.ocultarMenu();
-                            self.ocultarFormularios();
-                            self.menuPrincipal();
-                            
-                            self.rowPreparacion.show();
-                            self.frmMaestroPrep.children(".minimize").click();
-                            self.tblMaestroPrep.children(".minimize").click();
-                            
-                            this.children[0].className = "";
-                            this.children[1].className = "";
-                            break;*/
-                            
-                        case "Maestro Fibras":
-                            /*this.children[2].className = "nav-parent active";
-                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / ";
-                            self.ocultarMenu();
-                            self.ocultarFormularios();
-                            self.menuPrincipal();
-                            
-                            self.rowPreparacion.show();
-                            self.frmMaestroPrep.children(".minimize").click();
-                            self.tblMaestroPrep.children(".minimize").click();
-                            
-                            this.children[0].className = "";
-                            this.children[1].className = "";
-                            break;*/
+                    um.cargarCoincidenciaProductoQuimico('nom', elementos, self.oQuimicos);
+                });
+
+                $(self.$eCodQuimAux).on('keyup keypress change', function() {
+                    self.$eNomQuimAux.val("");
+                    self.tipoEdicion = 'nuevo';
+                    var elementos = [self.$eCodQuimAux, self.$eNomQuimAux, self.$eCantGrLtAux, self.$eCantPctjAux];
+                    
+                    um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
+                    
+                    elementos.push(self.$eBtnAddLineaAux);
+                    um.verificarSolicitudes(self.$eCodQuimAux.val(), elementos, self.solicitudesEnviadas, {});
+                    
+                });
+
+                $(self.$eNomQuimAux).on('keyup keypress change', function() {
+                    self.$eCodQuimAux.val("");
+                    self.tipoEdicion = 'nuevo';
+                    var elementos = [self.$eNomQuimAux, self.$eCodQuimAux, self.$eCantGrLtAux, self.$eCantPctjAux];
+                    
+                    um.cargarCoincidenciaProductoQuimico('nom', elementos, self.oQuimicos);
+                    
+                    elementos.push(self.$eBtnAddLineaAux);
+                    um.verificarSolicitudes(self.$eCodQuimAux.val(), elementos, self.solicitudesEnviadas, {});
+                });
+            },
+            formatoInput: function() {
+                var self = this;
+
+                self.$cantGrLtAux.inputNumber({
+                    allowDecimals: true,
+                    allowNegative: false,
+                    allowLeadingZero: false,
+                    thousandSep: ',',
+                    decimalSep: '.',
+                    maxDecimalDigits: 4
+                });
+
+                self.$cantPctjAux.inputNumber({
+                    allowDecimals: true,
+                    allowNegative: false,
+                    allowLeadingZero: false,
+                    thousandSep: ',',
+                    decimalSep: '.',
+                    maxDecimalDigits: 5
+                });
+
+                self.$eCantGrLtAux.inputNumber({
+                    allowDecimals: true,
+                    allowNegative: false,
+                    allowLeadingZero: false,
+                    thousandSep: ',',
+                    decimalSep: '.',
+                    maxDecimalDigits: 4
+                });
+
+                self.$eCantPctjAux.inputNumber({
+                    allowDecimals: true,
+                    allowNegative: false,
+                    allowLeadingZero: false,
+                    thousandSep: ',',
+                    decimalSep: '.',
+                    maxDecimalDigits: 5
+                });
+            },
+            metodosUtiles: function() {
+                var self = this;
+
+                self.$nomAux.on('keyup keypress', function() {
+                    self.$nomAux.val(self.$nomAux.val().toUpperCase());
+                });
+
+                self.$nomQuimAux.on('keyup keypress', function() {
+                    self.$nomQuimAux.val(self.$nomQuimAux.val().toUpperCase());
+                });
+
+                self.$eNomAux.on('keyup keypress', function() {
+                    self.$eNomAux.val(self.$eNomAux.val().toUpperCase());
+                });
+
+                self.$eNomQuimAux.on('keyup keypress', function() {
+                    self.$eNomQuimAux.val(self.$eNomQuimAux.val().toUpperCase());
+                });
+
+                self.$codQuimAux.on('keypress', function(eve) {
+                    if (eve.keyCode < 48 || eve.keyCode > 57) {
+                        eve.preventDefault();
                     }
                 });
-            },
-            
-            nombre: function(nom1, nom2) {
-                var len;
-                
-                len = nom1.length;
-                
-                nom1 = nom1.toLowerCase();
-                nom1 = nom1.substr(0,1).toUpperCase() + nom1.substr(1, len);
-                
-                len = nom2.length;
-                
-                nom2 = nom2.toLowerCase();
-                nom2 = nom2.substr(0,1).toUpperCase() + nom2.substr(1, len);
-                
-                if (nom1 != "" && nom2 != "") {
-                    return nom1 + " " + nom2;
-                } else if (nom1 != "" && nom2 == "") {
-                    return nom1;
-                }
-            }
-        };
-    })();
-    
-    (function (){
-        return cargarInformacion = {
-            URLgetFibras: "http://localhost:8084/APPServiciosLaboratorio/rest/servicelab/getFibras",
-            URLgetProductosQuimicos: "http://localhost:8084/APPServiciosLaboratorio/rest/servicelab/getProductosQuimicos",
-            URLgetPreparaciones: "http://localhost:8084/APPServiciosLaboratorio/rest/servicelab/getPreparaciones",
-            btnNewPrep: $("#btnNewPrep"),
-            idPrep: $("#idPrep"),
-            nomPrep: $("#nomPrep"),
-            cbxfibraPrep: $("#cbxfibraPrep"),
-            codQuimPrep: $("#codQuimPrep"),
-            nomQuimPrep: $("#nomQuimPrep"),
-            dlCodQuimPrep: $("#dlCodQuimPrep"),
-            dlNomQuimPrep: $("#dlNomQuimPrep"),
-            cantGrLtPrep: $("#cantGrLtPrep"),
-            cantPctjPrep: $("#cantPctjPrep"),
-            btnAddLineaPrep: $("#btnAddLineaPrep"),
-            btnSavePrep: $("#btnSavePrep"),
-            btnCleanPrep: $("#btnCleanPrep"),
-            btnNewAux: $("#btnNewAux"),
-            idAux: $("#idAux"),
-            nomAux: $("#nomAux"),
-            cbxfibraAux: $("#cbxfibraAux"),
-            codQuimAux: $("#codQuimAux"),
-            nomQuimAux: $("#nomQuimAux"),
-            dlCodQuimAux: $("#dlCodQuimAux"),
-            dlNomQuimAux: $("#dlNomQuimAux"),
-            cantGrLtAux: $("#cantGrLtAux"),
-            cantPctjAux: $("#cantPctjAux"),
-            btnAddLineaAux: $("#btnAddLineaAux"),
-            btnSaveAux: $("#btnSaveAux"),
-            btnCleanAux: $("#btnCleanAux"),
-            dataTablePreparacion: $('#dataTablePreparacion'),
-            dataTableAuxiliar: $("#dataTableAuxiliar"),
-            tBodyTablePreparacion: $("#tBodyTablePreparacion"),
-            productosQuim: [],
-            fibras: [],
-            preparaciones: [],
-            
-            init: function() {
-                this.deshabilitarCampos();
-                this.consultarMateriales();
-                this.solicitarCodigo();
-                this.cargarCoincidenciasProdQuimPreparacion();
-                this.cargarCoincidenciasProdQuimAuxiliares();
-                this.cargarDataTables();
-                this.convertirMinusToMayus();
-                this.limpiarFormularios();
-            },
-            
-            deshabilitarCampos: function() {
-                var self = this;
-                
-                /*FORMULARIO MAESTRO PREPARACION*/
-                self.idPrep.attr("disabled", true);
-                self.nomPrep.attr("disabled", true);
-                self.cbxfibraPrep.attr("disabled", true);
-                self.codQuimPrep.attr("disabled", true);
-                self.nomQuimPrep.attr("disabled", true);
-                self.cantGrLtPrep.attr("disabled", true);
-                self.cantPctjPrep.attr("disabled", true);
-                self.btnAddLineaPrep.attr("disabled", true);
-                self.btnSavePrep.attr("disabled", true);
-                
-                /*FORMULARIO MAESTRO AUXILIARES*/
-                self.idAux.attr("disabled", true);
-                self.nomAux.attr("disabled", true);
-                self.cbxfibraAux.attr("disabled", true);
-                self.codQuimAux.attr("disabled", true);
-                self.nomQuimAux.attr("disabled", true);
-                self.cantGrLtAux.attr("disabled", true);
-                self.cantPctjAux.attr("disabled", true);
-                self.btnAddLineaAux.attr("disabled", true);
-                self.btnSaveAux.attr("disabled", true);
-            },
-            
-            consultarMateriales: function() {
-                var self = this;
-                
-             /* CONSULTA DE TODAS LAS FIBRAS, LLEGA CODIGO FIBRA Y NOMBRE DE LA FIBRA*/
-                $.getJSON(self.URLgetFibras, function( data ){
-                    self.fibras = data;
-                    self.cargarCombos( data );
-                });
-                
-             /* CONSULTA DE TODOS LOS PRODUCTOS QUIMICOS Y COLORANTES, */
-                $.getJSON(self.URLgetProductosQuimicos, function( data ) {
-                    self.cargarCodigosAndNombresProductQuim( data );
-                });
-            
-             /* CONSULTA DE TODOS LAS PREPARACIONES, */
-                $.getJSON(self.URLgetPreparaciones, function( data ) {
-                    self.cargarDataTables(data);
-                });
-            },
-            
-            cargarDataTables: function(data) {
-                var self = this;
-                var i = 0;
-                var datos = [];
-                
-                
-                $("#dataTablePreparacion tr:gt(0)").remove();
-                
-                if (data != undefined) {
-                    for (i = 0; i < data.length; i++) {
-                        
-                        var fila = document.createElement("tr");
-                        var idPrep = document.createElement("td"); 
-                        var nomPrep = document.createElement("td"); 
-                        var fibra = document.createElement("td"); 
-                        var costo = document.createElement("td"); 
-                        var ultFechaUso = document.createElement("td"); 
-                        var edit = document.createElement("td"); 
-                        var view = document.createElement("td");
-                        
-                        $(idPrep).text(data[i].idPrep);
-                        $(nomPrep).text(data[i].nomPrep.toUpperCase());
-                        $(fibra).text(function() {
-                            for(var x = 0; x < self.fibras.length; x++){
-                                if(data[i].codFibra == self.fibras[x].codFibra){
-                                    return self.fibras[x].nomFibra.toUpperCase();
-                                }
-                            }
-                        });
-                        $(costo).text(data[i].costo);
-                        $(ultFechaUso).text(data[i].ultFechaUso);
-                        $(edit).text("E");
-                        $(view).text("F");
-                        
-                        $(fila).append(idPrep);
-                        $(fila).append(nomPrep);
-                        $(fila).append(fibra);
-                        $(fila).append(costo);
-                        $(fila).append(ultFechaUso);
-                        $(fila).append(edit);
-                        $(fila).append(view);
-                        
-                        $(self.tBodyTablePreparacion).append(fila);
+
+                self.$eCodQuimAux.on('keypress', function(eve) {
+                    if (eve.keyCode < 48 || eve.keyCode > 57) {
+                        eve.preventDefault();
                     }
-                    
-                    self.dataTablePreparacion.dataTable({
-                        "sPaginationType": "full_numbers",
-                        "bAutoWidth": false,
-                    });
-                } 
-                
-            },
-            
-            cargarCombos: function(data) {
-                var self = this;
-                
-             /* LIMPIANDO COMBOBOX DE LOS FORMULARIO */
-                $(self.cbxfibraPrep).empty();
-                $(self.cbxfibraAux).empty();           
-             /***************************************/
-                
-             /* INICIO DE CARGA DE INFORMACION PARA LOS COMBOBOX QUE CONTIENEN LA MISMA INFORMACION */
-                var option = document.createElement("option");          //PARA FORMULARIO PREPARACION
-                var option2 = document.createElement("option");         // PARA FORMULARIO AUXILIARES
-                
-                $(option).text("Seleccione una...");
-                $(option2).text("Seleccione una...");
-                
-                $(self.cbxfibraPrep).append(option);
-                $(self.cbxfibraAux).append(option2);
-                
-                data.forEach( function( fibra ) {
-                    option = document.createElement("option");
-                    option2 = document.createElement("option");
-                    var str = fibra.nomFibra;
-                    $(option).text(str.toUpperCase());
-                    $(option2).text(str.toUpperCase());
-                    
-                    $(self.cbxfibraPrep).append(option);
-                    $(self.cbxfibraAux).append(option2);
-                } );
-             /***************************************************************************************/
-            },
-            
-            cargarCodigosAndNombresProductQuim: function( data ) {
-                var self = this;
-                
-                self.productosQuim = data;
-                
-             /* CARGAR DATALIST DE CODIGOS DE LOS FORMULARIO */
-                data.forEach( function(codigo) {
-                    var optCodQ = document.createElement("option");
-                    var optCodQ2 = document.createElement("option");
-                    
-                    optCodQ.value = codigo.codProducto;
-                    optCodQ2.value = codigo.codProducto;
-                    
-                    self.dlCodQuimPrep.append(optCodQ);
-                    self.dlCodQuimAux.append(optCodQ2);
                 });
-                
-                data.forEach( function( producto ) {
-                    var optNomQ = document.createElement("option");
-                    var optNomQ2 = document.createElement("option");
-                    
-                    optNomQ.value = producto.nomProducto;
-                    optNomQ2.value = producto.nomProducto;
-                    
-                    self.dlNomQuimPrep.append(optNomQ);
-                    self.dlNomQuimAux.append(optNomQ2);
-                });   
-            },
-            
-            solicitarCodigo: function() {
-                var self = this;
-                
-                $(self.btnNewPrep).on( "click", function( e ) {
+
+                self.$btnCleanAux.on('click', function(e) {
                     e.preventDefault();
-                    
-                    //$.getJSON();
-                    
-                    self.idPrep.val(1);                    
-                    if (self.idPrep.val() != "") {
-                        self.nomPrep.attr("disabled", false);
-                        self.cbxfibraPrep.attr("disabled", false);
-                        self.codQuimPrep.attr("disabled", false);
-                        self.nomQuimPrep.attr("disabled", false);
-                        self.btnAddLineaPrep.attr("disabled", false);
-                    }
+
+                    self.limpiarFormulario();
                 });
                 
-                $(self.btnNewAux).on( "click", function( e ) {
-                    e.preventDefault();
-                    
-                    //$.getJSON();
-                    
-                    self.idAux.val(1);
-                    if (self.idAux.val() != "") {
-                        self.nomAux.attr("disabled", false);
-                        self.cbxfibraAux.attr("disabled", false);
-                        self.codQuimAux.attr("disabled", false);
-                        self.nomQuimAux.attr("disabled", false);
-                        self.btnAddLineaAux.attr("disabled", false);
-                    }
+                self.$eBtnRestAux.on('click', function(e) {
+                   e.preventDefault();
+                   
+                   var elementos = [self.$eCodQuimAux, self.$eNomQuimAux, self.$eCantGrLtAux, self.$eCantPctjAux];
+                   u.limpiarCampos(elementos);
+                   elementos.push(self.$eBtnAddLineaAux);
+                   u.habilitarDeshabilitarCampos(elementos, "hab");
+                   u.camposObligatorios(elementos, '3');
+                   self.tipoEdicion = 'nuevo';
                 });
+
+            },
+            limpiarFormulario: function() {
+                var self = this;
+                
+                self.$cbxfibraAux.val("Seleccione una...");
+                var elementos = [self.$nomAux, self.$codQuimAux, self.$nomQuimAux, self.$cantGrLtAux, self.$cantPctjAux];
+                u.limpiarCampos(elementos);
+
+                $('#dataTableNewQAuxiliar tr:gt(1)').remove();
+                self.quimicosPorAux = [];
+                self.eNuevosQuimicos = [];
+                self.eQuimicosModif = [];
+                self.pintarCamposObligatorios();
+                self.inhabilitarCampos();
             },
             
-            cargarCoincidenciasProdQuimPreparacion: function () {
-                var self = this;
-                var data = [];
-                
-             /* FORMULARIO MAESTRO DE PREPARACION */
-                $(self.codQuimPrep).on( "keyup change", function() {
-                    self.nomQuimPrep.val("");
-                    
-                    if (self.codQuimPrep.val() !== "" && self.codQuimPrep.val().length >= 4) {
-                        data = self.buscarCoincidenciasProdQuim("cod", self.codQuimPrep.val());
-                        if (data != null) {
-                            self.nomQuimPrep.val(data.nomProducto);
-                                    
-                            if (data.grLt) {
-                                self.cantGrLtPrep.attr("disabled", false);
-                                self.cantPctjPrep.val("");
-                                self.cantPctjPrep.attr("disabled", true);
-                            } else {
-                                self.cantGrLtPrep.val("");
-                                self.cantGrLtPrep.attr("disabled", true);
-                                self.cantPctjPrep.attr("disabled", false);
-                            }   
-                        }
-                    }
-                });
-                
-                $(self.nomQuimPrep).on( "keyup change", function() {
-                    self.codQuimPrep.val("");
-                    
-                    if (self.nomQuimPrep.val() !== "" && self.nomQuimPrep.val().length >= 4) {
-                        data = self.buscarCoincidenciasProdQuim("nom", self.nomQuimPrep.val());
-                        if(data != null) {
-                            self.codQuimPrep.val(data.codProducto);
-                                    
-                            if (data.grLt) {
-                                self.cantGrLtPrep.attr("disabled", false);
-                                self.cantPctjPrep.val("");
-                                self.cantPctjPrep.attr("disabled", true);
-                            } else {
-                                self.cantGrLtPrep.val("");
-                                self.cantGrLtPrep.attr("disabled", true);
-                                self.cantPctjPrep.attr("disabled", false);
-                            }
-                        }
-                    }
-                });
-            },
-            
-            cargarCoincidenciasProdQuimAuxiliares: function() {
-                var self = this;
-                var data = [];
-                
-                $(self.codQuimAux).on( "keyup change", function() {
-                    self.nomQuimAux.val("");
-                    
-                    if (self.codQuimAux.val() !== "" && self.codQuimAux.val().length >= 4) {
-                        data = self.buscarCoincidenciasProdQuim("cod", self.codQuimAux.val());
-                        if (data != null) {
-                            self.nomQuimAux.val(data.nomProducto);
-                                    
-                            if (data.grLt) {
-                                self.cantGrLtAux.attr("disabled", false);
-                                self.cantPctjAux.val("");
-                                self.cantPctjAux.attr("disabled", true);
-                            } else {
-                                self.cantGrLtAux.val("");
-                                self.cantGrLtAux.attr("disabled", true);
-                                self.cantPctjAux.attr("disabled", false);
-                            }   
-                        }
-                    }
-                });
-                
-                $(self.nomQuimAux).on( "keyup change", function() {
-                    self.codQuimAux.val("");
-                    
-                    if (self.nomQuimAux.val() !== "" && self.nomQuimAux.val().length >= 4) {
-                        data = self.buscarCoincidenciasProdQuim("nom", self.nomQuimAux.val());
-                        if(data != null) {
-                            self.codQuimAux.val(data.codProducto);
-                                    
-                            if (data.grLt) {
-                                self.cantGrLtAux.attr("disabled", false);
-                                self.cantPctjAux.val("");
-                                self.cantPctjAux.attr("disabled", true);
-                            } else {
-                                self.cantGrLtAux.val("");
-                                self.cantGrLtAux.attr("disabled", true);
-                                self.cantPctjAux.attr("disabled", false);
-                            }   
-                        }
-                    }
-                });
-            },
-            
-            buscarCoincidenciasProdQuim: function( tipo, quimico ) {
-                var self = this;
-                var dato = null;
-                
-                if (tipo == "cod"){                    
-                    self.productosQuim.forEach( function( data ) {
-                        if(data.codProducto === quimico) {
-                            dato = data;
-                        }
-                    });
-                } else if (tipo == "nom") {
-                    self.productosQuim.forEach( function( data ) {
-                        if (data.nomProducto === quimico) {
-                            dato = data;
-                        }
-                    });
-                }
-                return dato;
-            },
-            
-            convertirMinusToMayus: function() {
-                var self = this;
-                
-                $(self.nomPrep).on("keyup", function() {
-                    self.nomPrep.val(self.nomPrep.val().toUpperCase());
-                });
-                
-                $(self.nomQuimPrep).on("keyup", function() {
-                    self.nomQuimPrep.val(self.nomQuimPrep.val().toUpperCase());
-                });
-                
-                $(self.nomAux).on("keyup", function() {
-                    self.nomAux.val(self.nomAux.val().toUpperCase());
-                });
-                
-                $(self.nomQuimAux).on("keyup", function() {
-                    self.nomQuimAux.val(self.nomQuimAux.val().toUpperCase());
-                });
-            }, 
-            
-            limpiarFormularios: function() {
-                var self = this;
-                
-                self.btnCleanPrep.on("click", function( e ) {
-                    e.preventDefault();
-                    
-                    self.idPrep.val("");
-                    self.nomPrep.val("");
-                    self.cbxfibraPrep.val("Seleccione una...");
-                    self.codQuimPrep.val("");
-                    self.nomQuimPrep.val("");
-                    self.cantGrLtPrep.val("");
-                    self.cantPctjPrep.val("");
-                    
-                    self.deshabilitarCampos();
-                });
-                
-                self.btnCleanAux.on("click", function( e ) {
-                    e.preventDefault();
-                    
-                    self.idAux.val("");
-                    self.nomAux.val("");
-                    self.cbxfibraAux.val("Seleccione una...");
-                    self.codQuimAux.val("");
-                    self.nomQuimAux.val("");
-                    self.cantGrLtAux.val("");
-                    self.cantPctjAux.val("");
-                    
-                    self.deshabilitarCampos();
-                });
-            }
-        };
-    })();
-    
-    (function (){
-        return validarCamposFrm = {
-            modalMensaje: $("#myModal"),
-            tituloMensaje: $("#myModalLabel"),
-            cuerpoMensaje: $("#cuerpoMensaje"),  
-            frmPreparacion: $("#frmPreparacion"),
-            btnNewPrep: $("#btnNewPrep"),
-            idPrep: $("#idPrep"),
-            nomPrep: $("#nomPrep"),
-            cbxfibraPrep: $("#cbxfibraPrep"),
-            codQuimPrep: $("#codQuimPrep"),
-            nomQuimPrep: $("#nomQuimPrep"),
-            cantGrLtPrep: $("#cantGrLtPrep"),
-            cantPctjPrep: $("#cantPctjPrep"),
-            btnAddLineaPrep: $("#btnAddLineaPrep"),
-            btnSavePrep: $("#btnSavePrep"),
-            frmAuxiliares: $("#frmAuxiliares"),
-            btnNewAux: $("#btnNewAux"),
-            idAux: $("#idAux"),
-            nomAux: $("#nomAux"),
-            cbxfibraAux: $("#cbxfibraAux"),
-            codQuimAux: $("#codQuimAux"),
-            nomQuimAux: $("#nomQuimAux"),
-            cantGrLtAux: $("#cantGrLtAux"),
-            cantPctjAux: $("#cantPctjAux"),
-            btnAddLineaAux: $("#btnAddLineaAux"),
-            btnSaveAux: $("#btnSaveAux"),
-            
-            /*Frm Preparacion
-            idPrep
-            btnNewPrep
-            nomPrep
-            cbxfibraPrep
-            dataTableNewQPreparacion
-            codQuimPrep
-            nomQuimPrep
-            cantGrLtPrep
-            cantPctjPrep
-            btnAddLineaPrep
-            btnEditLinePrep
-            btnTrahsLinePrep
-            btnSavePrep
-            dataTablePreparacion
-            btnEditAllPrep*/
-            
-            /*Frm Auxiliares
-            idAux
-            btnNewAux
-            nomAux
-            cbxfibraAux
-            dataTableNewQAuxiliar
-            codQuimAux
-            nomQuimAux
-            cantGrLtAux
-            cantPctjAux
-            btnAddLineaAux
-            btnEditLineAux
-            btnTrahsLineAux
-            btnSaveAux
-            dataTableAuxiliar
-            btnEditAllAuxiliar*/
-            
-            init: function (){
-                this.camposObligatorios();
-            },
-            
-            camposObligatorios: function() {
-                var self = this;
-                
-             /* FORMULARIO MAESTRO PREPARACIÓN PARA AGREGAR LINEA DE QUIMICO */
-                self.btnAddLineaPrep.on("click", function (e) {
-                    e.preventDefault();
-                    var vacios = 3;
-                    
-                    if (self.codQuimPrep.val() == "") {
-                        self.codQuimPrep.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        self.codQuimPrep.closest('.form-group').removeClass('has-error');
-                        vacios--;
-                    }
-                    
-                    if (self.nomQuimPrep.val() == "") {
-                        self.nomQuimPrep.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        self.nomQuimPrep.closest('.form-group').removeClass('has-error');
-                        vacios--;
-                    }
-                    
-                    if (self.cantGrLtPrep[0].disabled == false && self.cantGrLtPrep.val() == "") {
-                        self.cantGrLtPrep.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        if (self.cantGrLtPrep[0].disabled != true) {
-                            self.cantGrLtPrep.closest('.form-group').removeClass('has-error');
-                            vacios--;
-                        }
-                    }
-                    
-                    if (self.cantPctjPrep[0].disabled == false && self.cantPctjPrep.val() == "") {
-                        self.cantPctjPrep.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        if(self.cantPctjPrep[0].disabled != true) {
-                            self.cantPctjPrep.closest('.form-group').removeClass('has-error');
-                            vacios--;
-                        }
-                    }
-                    
-                    if (vacios > 0) {
-                        self.mensajeObligatoriedad({
-                            "titulo": "Campos obligatorios",
-                            "cuerpoMensaje": "Los campos resaltados con rojo son obligatorios, favor diligenciar el campo."
-                        });
-                    }
-                    
-                });
-                
-             /* FORMULARIO MAESTRO PREPARACIÓN PARA GUARDAR TODA LA PREPARACIÓN */
-                self.btnSavePrep.on("click", function(e) {
-                    e.preventDefault();
-                    var vacios = 3;
-                    
-                    if (self.idPrep.val() == "") {
-                        self.idPrep.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        self.idPrep.closest('.form-group').removeClass('has-error');
-                        vacios--;
-                    }
-                    
-                    if (self.nomPrep.val() == "") {
-                        self.nomPrep.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        self.nomPrep.closest('.form-group').removeClass('has-error');
-                        vacios--;
-                    }
-                    
-                    if (self.cbxfibraPrep.val() == "Seleccione una...") {
-                        self.cbxfibraPrep.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        self.cbxfibraPrep.closest('.form-group').removeClass('has-error');
-                        vacios--;
-                    }
-                    
-                    if (vacios > 0) {
-                        self.mensajeObligatoriedad({
-                            "titulo": "Campos obligatorios",
-                            "cuerpoMensaje": "Los campos resaltados con rojo son obligatorios, favor diligenciar el campo."
-                        });
-                    }
-                });
-                
-             /* FORMULARIO MAESTRO AUXILIARES PARA AGREGAR LINEA DE QUIMICO */
-                self.btnAddLineaAux.on("click", function (e) {
-                    e.preventDefault();
-                    var vacios = 3;
-                    
-                    if (self.codQuimAux.val() == "") {
-                        self.codQuimAux.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        self.codQuimAux.closest('.form-group').removeClass('has-error');
-                        vacios--;
-                    }
-                    
-                    if (self.nomQuimAux.val() == "") {
-                        self.nomQuimAux.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        self.nomQuimAux.closest('.form-group').removeClass('has-error');
-                        vacios--;
-                    }
-                    
-                    if (self.cantGrLtAux[0].disabled == false && self.cantGrLtAux.val() == "") {
-                        self.cantGrLtAux.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        if (self.cantGrLtAux[0].disabled != true) {
-                            self.cantGrLtAux.closest('.form-group').removeClass('has-error');
-                            vacios--;
-                        }
-                    }
-                    
-                    if (self.cantPctjAux[0].disabled == false && self.cantPctjAux.val() == "") {
-                        self.cantPctjAux.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        if(self.cantPctjAux[0].disabled != true) {
-                            self.cantPctjAux.closest('.form-group').removeClass('has-error');
-                            vacios--;
-                        }
-                    }
-                    
-                    if (vacios > 0) {
-                        self.mensajeObligatoriedad({
-                            "titulo": "Campos obligatorios",
-                            "cuerpoMensaje": "Los campos resaltados con rojo son obligatorios, favor diligenciar el campo."
-                        });
-                    }
-                    
-                });   
-                
-             /* FORMULARIO MAESTRO AUXILIARES PARA GUARDAR TODO */
-                self.btnSaveAux.on("click", function(e){
-                    e.preventDefault();
-                    var vacios = 3;
-                    
-                    if (self.idAux.val() == "") {
-                        self.idAux.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        self.idAux.closest('.form-group').removeClass('has-error');
-                        vacios--;
-                    }
-                    
-                    if (self.nomAux.val() == "") {
-                        self.nomAux.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        self.nomAux.closest('.form-group').removeClass('has-error');
-                        vacios--;
-                    }
-                    
-                    if (self.cbxfibraAux.val() == "Seleccione una...") {
-                        self.cbxfibraAux.closest('.form-group').removeClass('has-success').addClass('has-error');
-                    } else {
-                        self.cbxfibraAux.closest('.form-group').removeClass('has-error');
-                        vacios--;
-                    }
-                    
-                    if (vacios > 0) {
-                        self.mensajeObligatoriedad({
-                            "titulo": "Campos obligatorios",
-                            "cuerpoMensaje": "Los campos resaltados con rojo son obligatorios, favor diligenciar el campo."
-                        });
-                    }
-                });
+            pintarCamposObligatorios: function() {
+              var self = this;
+              var campos = [self.$nomAux, self.$cbxfibraAux, self.$codQuimAux, self.$nomQuimAux, self.$cantGrLtAux, self.$cantPctjAux];
+              
+              u.camposObligatorios(campos, '1');
             },
             
             mensajeObligatoriedad: function(mensaje) {
                 var self = this;
-                
+
                 try {
-                    self.tituloMensaje.text(mensaje.titulo);
-                    self.cuerpoMensaje.text(mensaje.cuerpoMensaje);
-                    self.modalMensaje.modal("show");
+                    self.$tituloMensaje.text(mensaje.titulo);
+                    self.$cuerpoMensaje.text(mensaje.cuerpoMensaje);
+                    self.$modalMensaje.modal("show");
                 } catch (e) {
                     alert(mensaje.cuerpoMensaje);
                 }
+            },
+            
+            agregarLineaAuxiliar: function() {
+                var self = this;
+                
+                self.$btnAddLineaAux.on('click', function(e) {
+                    e.preventDefault();
+                    var campObligQuim = false;
+                    var elementos = [self.$codQuimAux, self.$nomQuimAux, self.$cantGrLtAux, self.$cantPctjAux];
+
+                    campObligQuim = u.camposObligatorios(elementos, '2');
+
+                    var b = true;
+
+                    if (um.cantidadDeQuimico({val: self.$cantGrLtAux.val(), input: 'grlt'})) {
+                        b = false;
+                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Gramos por Litro',
+                            cuerpoMensaje: 'La cantidad debe ser superior a 0.'});
+
+                    } else if (um.cantidadDeQuimico({val: self.$cantPctjAux.val(), input: 'pctj'})) {
+                        b = false;
+                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Porcentaje por Kilo',
+                            cuerpoMensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'});
+                    }
+
+                    if (b && campObligQuim) {
+                        
+                        var d = um.noRepetirQuimicos({
+                            tipo: '+', 
+                            codQ: self.$codQuimAux.val(),
+                            cant1: parseFloat(self.$cantGrLtAux.val()),
+                            cant2: parseFloat(self.$cantPctjAux.val()),
+                            maestro: 'aux', 
+                            codQpermitido: '1550'},
+                            self.quimicosPorAux);
+                            
+                        if (!d.existe) {
+                            
+                            self.quimicosPorAux.push({codQ: self.$codQuimAux.val(), cant1: parseFloat(self.$cantGrLtAux.val()), cant2: parseFloat(self.$cantPctjAux.val())});
+                            
+                            um.agregarLinea(
+                                    self.$tBodyNewQAuxiliar,
+                                    {tipo: self.tipoEdicion,
+                                    codQuim: self.$codQuimAux.val(),
+                                    nomQuim: self.$nomQuimAux.val(),
+                                    cantGrLt: self.$cantGrLtAux.val(),
+                                    cantPctj: self.$cantPctjAux.val()});
+                            
+                            u.limpiarCampos([self.$codQuimAux, self.$nomQuimAux, self.$cantGrLtAux, self.$cantPctjAux]);
+
+                            self.$btnSaveAux.attr('disabled', false);
+                        } else {
+                            self.mensajeObligatoriedad({titulo: 'Registro de Químicos',
+                            cuerpoMensaje: 'No puede agregar más de una vez un mismo químico.'});
+                        }
+                    }
+                });
+                
+                self.$eBtnAddLineaAux.on('click', function(e) {
+                    e.preventDefault();
+                    var campObligQuim = false;
+                    var campos = [self.$eCodQuimAux, self.$eNomQuimAux, self.$eCantGrLtAux, self.$eCantPctjAux];
+
+                    campObligQuim = u.camposObligatorios(campos, '2');
+
+                    var b = true;
+                    
+                    if (um.cantidadDeQuimico({val: self.$eCantGrLtAux.val(), input: 'grlt'})) {
+                        b = false;
+                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Gramos por Litro', 
+                            cuerpoMensaje: 'Los gramos debe ser superior a 0.'});
+
+                    } else if (um.cantidadDeQuimico({val: self.$eCantPctjAux.val(), input: 'pctj'})) {
+                        b = false;
+                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Porcentaje por Kilo',
+                            cuerpoMensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'});
+                    }
+                    
+                    if (b && campObligQuim) {
+                        var d = false;
+                        var oDatos = {
+                            tipo: self.tipoEdicion,
+                            codQuim: self.$eCodQuimAux.val(),
+                            nomQuim: self.$eNomQuimAux.val(),
+                            cantGrLt: self.$eCantGrLtAux.val(),
+                            cantPctj: self.$eCantPctjAux.val()
+                        }
+                                  
+                        if (self.tipoEdicion === 'nuevo') {
+                            self.filaEditar = self.$tBodyEditAux;
+                            
+                            if(parseFloat(self.$eCantGrLtAux.val()) > 0) {
+                                var gr = parseFloat(self.$eCantGrLtAux.val());
+                                var pctj = 0;
+                                
+                            } else {
+                                var gr = 0;
+                                var pctj = parseFloat(self.$eCantPctjAux.val())
+                            }
+                            
+                            var d = um.noRepetirQuimicos({
+                                    tipo: '+', 
+                                    codQ: self.$eCodQuimAux.val(),
+                                    cant1: gr,
+                                    cant2: pctj,
+                                    maestro: 'aux', 
+                                    codQpermitido: '1550'},
+                                    self.quimicosPorAux);
+                            if (!d.existe) {
+                                self.quimicosPorAux.push({codQ: self.$eCodQuimAux.val(), cant1: gr, cant2: pctj});
+                                self.eNuevosQuimicos.push({codQ: self.$eCodQuimAux.val(), cant1: gr, cant2: pctj});
+                            }
+                            
+                        } else {
+                            var q = {
+                                codQ: self.$eCodQuimAux.val(),
+                                cantGrLt: parseFloat(self.filaEditar[0].cells[2].textContent),
+                                cantPctj: parseFloat(self.filaEditar[0].cells[3].textContent),
+                                cantGrLtNue: self.$eCantGrLtAux.val(),
+                                cantPctjNue: self.$eCantPctjAux.val(),
+                                tipo: 'mod'
+                            };
+                            self.eQuimicosModif = um.modificarRegistro(q, self.eQuimicosModif);
+                        }
+                        
+                        if (!d.existe) {
+                            
+                            um.agregarLinea(self.filaEditar, oDatos);
+                            
+                            u.limpiarCampos([self.$eCodQuimAux, self.$eNomQuimAux, self.$eCantGrLtAux, self.$eCantPctjAux])
+                            self.$eCodQuimAux.attr('disabled', false);
+                            self.$eNomQuimAux.attr('disabled', false);
+                            self.filaEditar = null;
+                            
+                       } else {
+                            self.mensajeObligatoriedad({titulo: 'Registro de Químicos',
+                            cuerpoMensaje: 'No puede agregar más de una vez un mismo químico.'});
+                        }
+                    }
+                });
+            },
+            borrarLineaAuxiliar: function() {
+                var self = this;
+                
+                self.$dataTableNewQAuxiliar.on('click', '#btnDelLineaAux', function(e) {
+                    var fila = $(this).closest('tr');
+                    fila.remove();
+                    var d = um.noRepetirQuimicos({
+                        tipo: '-', 
+                        codQ: fila[0].cells[0].textContent, 
+                        maestro: 'aux', 
+                        codQpermitido: ''}, 
+                        self.quimicosPorAux); 
+                    
+                    self.quimicosPorAux = d.oQuim;
+
+                    if ($('#dataTableNewQAuxiliar tbody tr').length - 1 == 0) {
+                        self.$btnSaveAux.attr('disabled', true);
+                    }
+
+                    e.stopPropagation();
+                });
+                
+                self.$tBodyEditAux.on('click', '#btnDelLinea', function (e){
+                    var d;
+                    var fila = $(this).closest('tr');
+                    var codigo = fila[0].cells[0].textContent;
+                    var r = um.verificarSolicitudes(codigo, [], self.solicitudesEnviadas, {});
+                    
+                    if (!r.estado) {
+                        fila.remove();
+                        d = um.noRepetirQuimicos({
+                            tipo: '-',
+                            codQ: fila[0].cells[0].textContent,
+                            cant1: parseFloat(fila[0].cells[2].textContent),
+                            cant2: parseFloat(fila[0].cells[3].textContent),
+                            maestro: 'aux',
+                            codQpermitido: ''},
+                        self.quimicosPorAux);
+
+                        self.quimicosPorAux = d.oQuim;
+
+                        d = um.noRepetirQuimicos({
+                            tipo: '-',
+                            codQ: fila[0].cells[0].textContent,
+                            cant1: parseFloat(fila[0].cells[2].textContent),
+                            cant2: parseFloat(fila[0].cells[3].textContent),
+                            maestro: 'aux',
+                            codQpermitido: ''},
+                        self.eNuevosQuimicos);
+
+                        self.eNuevosQuimicos = d.oQuim;
+
+                        for (var i = 0; i < self.eQuimicosModif.length; i++) {
+                            if (self.eQuimicosModif[i].codQ === fila[0].cells[0].textContent) {
+                                self.eQuimicosModif[i].tipo = 'eli';
+                                break;
+                            }
+                        }
+                    }
+                    
+                    e.stopPropagation();
+                });
+            },
+            
+            consultaNombreAuxiliar: function(){
+                var self = this;
+
+                self.$btnSaveAux.on("click", function(e) {
+                    e.preventDefault();
+                    var campOblig = false;
+                    var campos = [self.$nomAux, self.$cbxfibraAux];
+
+                    campOblig = u.camposObligatorios(campos, '2');
+
+                    var b = true;
+
+                    if (um.cantidadDeQuimico({val: self.$cantGrLtAux.val(), input: 'grlt'})) {
+                        b = false;
+                    } else if (um.cantidadDeQuimico({val: self.$cantPctjAux.val(), input: 'pctj'})) {
+                        b = false;
+                    }
+
+                    if (b && campOblig) {                        
+                        consultas.consultarNombreAuxiliar(self.$nomAux.val() + " (" + self.$cbxfibraAux.val() + ")", 'nuevo', 0);
+                    }
+                });
+                
+                self.$eBtnModificar.on("click", function(e) {
+                    e.preventDefault();
+                    var campOblig = false;
+                    var campos = [self.$eNomAux, self.$eCbxfibraAux, self.$eTextArea];
+
+                    campOblig = u.camposObligatorios(campos, '2');
+
+                    var b = true;
+
+                    if (um.cantidadDeQuimico({val: self.$eCantGrLtAux.val(), input: 'grlt'})) {
+                        b = false;
+                    } else if (um.cantidadDeQuimico({val: self.$eCantPctjAux.val(), input: 'pctj'})) {
+                        b = false;
+                    }
+
+                    if (b && campOblig) {
+                        consultas.consultarNombreAuxiliar(self.$eNomAux.val() + " (" + self.$eCbxfibraAux.val() + ")", 'editar', self.idAuxiliar);
+                    }
+                });
+            },
+            
+            agregarAuxiliar: function(response) {
+                var self = this;
+
+                if (response === 'true') {
+                    self.mensajeObligatoriedad({
+                        titulo: 'Nombre de Auxiliar Existente.',
+                        cuerpoMensaje: 'Ya hay un nombre de auxiliar para la fibra seleccionada, por favor intente nuevamente.'
+                    });
+                
+                } else if (response === 'false') {
+                    var nombre = self.$nomAux.val() + " (" + self.$cbxfibraAux.val() + ")";
+                    
+                    for (var i = 0; self.oFibras.length; i++) {
+                        if (self.oFibras[i].nomFibra === self.$cbxfibraAux.val()) {
+                            var idFib = "" + self.oFibras[i].idFibra;
+                            break;
+                        }
+                    }
+                    
+                    um.guardarRegistro({form: 'aux', tabla: self.$dataTableNewQAuxiliar, nombre: nombre, idFib: idFib});
+                    
+                }
+            },
+            verAuxiliar: function() {
+                var self = this;
+
+                self.$dataTableAuxiliar.on('click', '#btnView', function (e) {
+                    self.banderaModal = 1;
+                    var fila = $(this).closest('tr');
+                    self.idAuxiliar = parseInt(fila[0].cells[0].textContent);
+                    var elementos = [self.$eNomAux, self.$eCodQuimAux, self.$eNomQuimAux, self.$eCantGrLtAux, self.$eCantPctjAux];
+                    consultas.verificarEstadoModificacion(fila[0].cells[0].textContent, 'frmAux');
+                    var datos = {
+                        frm: 'aux',
+                        idReg: parseInt(fila[0].cells[0].textContent),
+                        registros: self.oAuxiliares,
+                        quimicos: self.oQuimicos,
+                        eNombre: self.$eNomAux,
+                        eNombreFib: self.$eCbxfibraAux,
+                        eTabla: self.$tBodyEditAux,
+                        eModal: self.$modalEditAux
+                    }
+                    
+                    $("#tableEditAux tr:gt(1)").remove();
+                    u.limpiarCampos(elementos);
+                    elementos.splice(0, 1);
+                    u.camposObligatorios(elementos, '3');
+                    elementos.push(self.$eNomAux);
+                    elementos.push(self.$eCbxfibraAux);
+                    u.habilitarDeshabilitarCampos(elementos, 'hab');
+                    self.quimicosPorAux = um.verRegistro(datos);
+                    
+                    for (var i = 0; i < self.quimicosPorAux.length; i++) {
+                        var q = {
+                            codQ: self.quimicosPorAux[i].codQ,
+                            cantGrLt: self.quimicosPorAux[i].cant1,
+                            cantPctj: self.quimicosPorAux[i].cant2,
+                            cantGrLtNue: -1,
+                            cantPctjNue: -1,
+                            tipo: ''
+                        };
+                         self.eQuimicosModif.push(q);
+                    }
+                    
+                    e.stopPropagation();
+                });
+                    
+            },
+            
+            verificarSolicitudes: function() {
+                var self = this;
+                var elementos = [self.$eNomAux, self.$eCbxfibraAux];
+                var estado = um.verificarSolicitudes('', elementos, self.solicitudesEnviadas, {solcNombre: self.solcNombre, solcFibra: self.solcFibra});
+                
+                self.solcNombre = estado.solcNombre;
+                self.solcFibra = estado.solcFibra;
+            },
+            
+            modificarQuimicoAuxiliar: function() {
+                var self = this;
+                
+                self.$tBodyEditAux.on('click', '#eBtnEditLinea', function (e) {
+                    var fila = $(this).closest('tr');
+                    self.tipoEdicion = 'editar';
+                    self.filaEditar = fila;
+                    var r = um.verificarSolicitudes(fila[0].cells[0].textContent, [], self.solicitudesEnviadas, {});
+                    
+                    if (!r.estado) {
+                        self.$eCodQuimAux.val(parseInt(fila[0].cells[0].textContent));
+                        self.$eNomQuimAux.val(fila[0].cells[1].textContent);
+                        self.$eCantGrLtAux.val(fila[0].cells[2].textContent);
+                        self.$eCantPctjAux.val(fila[0].cells[3].textContent);
+
+                        var elementos = [self.$eCodQuimAux, self.$eNomQuimAux, self.$eCantGrLtAux, self.$eCantPctjAux];
+                        um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
+                        self.$eCodQuimAux.attr('disabled', true);
+                        self.$eNomQuimAux.attr('disabled', true);
+
+                        u.camposObligatorios(elementos, '2');
+                    }
+                                   
+                    e.stopPropagation();
+                });
+
+            },
+            
+            solicitarModificarAuxiliar: function(response) {
+                var self = this;
+                
+                if (response === 'true') {
+                    self.mensajeObligatoriedad({
+                        titulo: 'Nombre de Auxiliar Existente.',
+                        cuerpoMensaje: 'Ya hay un nombre de Auxiliar para la fibra seleccionada, por favor intente nuevamente.'
+                    });
+                
+                } else if (response === 'false') {
+                    var nombre = '';
+                    var nombreNue = '';
+                    var idFib = '';
+                    var idFibNue = '';
+                    
+                    var coment = self.$eTextArea.val();
+                    
+                    for (var i = 0; self.oFibras.length; i++) {
+                        if (self.oFibras[i].nomFibra === self.$eCbxfibraAux.val()) {
+                            var idFibNue = self.oFibras[i].idFibra;
+                            break;
+                        }
+                    }
+                    
+                    for (var i = 0; i < self.oAuxiliares.length; i++) {
+                        if (self.idAuxiliar === self.oAuxiliares[i].idNomAuxiliar) {
+                            nombre = um.separarNombreDeFibra({nombre: self.oAuxiliares[i].nomAuxiliar, fibra: self.oAuxiliares[i].idFibra.nomFibra});
+                            idFib = self.oAuxiliares[i].idFibra.idFibra;
+                            
+                            if (nombre !== self.$eNomAux.val()) {
+                                nombreNue = self.$eNomAux.val();
+                            }
+                            
+                            if (idFib === idFibNue) {
+                                idFibNue = '';
+                            }
+                            break;
+                        }
+                    }
+                    
+                    um.SolicitarModificarRegistro({tabla: self.$tableEditAux, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idAux: self.idAuxiliar, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar);
+                }
+            },
+            
+            cerrarModalEdicion: function() {
+                var self = this;
+                
+                $(document).on('click', function(e) {
+                    e.preventDefault();
+
+                    if (self.banderaModal === 1 && self.$modalEditAux.is(':hidden')) {
+                        self.quimicosPorAux = [];
+                        self.banderaModal = 0;
+                        self.tipoEdicion = 'nuevo';
+                        self.$eTextArea.val('');
+                        self.eNuevosQuimicos = [];
+                        self.eQuimicosModif = [];
+                    }
+                });
+                
+               self.$modalEditAux.on('keydown', function(e){
+                    if (self.banderaModal === 1 && self.$modalEditAux.is(':visible') && e.keyCode === 27) {
+                        self.quimicosPorAux = [];
+                        self.banderaModal = 0;
+                        self.tipoEdicion = 'nuevo';
+                        self.$eTextArea.val('');
+                        self.eNuevosQuimicos = [];
+                        self.eQuimicosModif = [];
+                    }
+                });
+                
+                self.$eBtnCerrar.on('click', function(e) {
+                    e.preventDefault();
+                    self.quimicosPorAux = [];
+                    self.banderaModal = 0;
+                    self.tipoEdicion = 'nuevo';
+                    self.$eTextArea.val('');
+                    self.eNuevosQuimicos = [];
+                    self.eQuimicosModif = [];
+                });
+                
+                self.$eBtnCerrar2.on('click', function(e) {
+                    e.preventDefault();
+                    self.quimicosPorAux = [];
+                    self.banderaModal = 0;
+                    self.tipoEdicion = 'nuevo';
+                    self.$eTextArea.val('');
+                    self.eNuevosQuimicos = [];
+                    self.eQuimicosModif = [];
+                });
             }
         };
     })();
-    
-    /*
-    (function (){
-        return nombreFuncion = {
-        
-        };
-    })();
-    */
-    
-    ingreso.init();
-    definirElementos.init();
-    menu.init();
-    cargarInformacion.init();
-    validarCamposFrm.init();
 
-})(document, window, jQuery);
+    frmAuxiliar.init();
 
+})(document, window, jQuery)

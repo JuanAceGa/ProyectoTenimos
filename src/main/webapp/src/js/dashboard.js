@@ -10,7 +10,7 @@
             rowPreparacion: $("#rowPreparacion"),
             frmMaestroPrep: $("#frmMaestroPrep"),
             tblMaestroPrep: $("#tblMaestroPrep"),
-            rowAuxiliares: $("#rowAuxiliares"),
+            rowAuxiliares: $("#rowAuxiliar"),
             frmMaestroAux: $("#frmMaestroAux"),
             tblMaestroAux: $("#tblMaestroAux"),
             $contenido: $("#contenido"),

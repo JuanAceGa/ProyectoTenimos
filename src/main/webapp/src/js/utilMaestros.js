@@ -44,35 +44,52 @@
                 if (t === '1') {
                     $('#dataTablePreparacion tr:gt(0)').remove();
                 } else if (t === '2') {
-                    
+                    $('#dataTableAuxiliar tr:gt(0)').remove();
                 }
             },
             
-            renderDataTables: function(tabla, oDatos) {
+            renderDataTables: function(tabla, oDatos, tipo) {
                 var i;
 
                 for (i = 0; i < oDatos.length; i++) {
                     oDatos[i].btnView = '<div class="form-group col-md-5">' +
-                                            '<button id="btnViewPrep" title="Ver/Editar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
+                                            '<button id="btnView" title="Ver/Editar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
                                                 '<i class="glyphicon glyphicon-eye-open"></i>' +
                                             '</button>' +
                                        '</div>';
                 }
-
-                $(tabla).dataTable({
-                    data: oDatos,
-                    columns: [
-                        {data: 'idNomPreparacion', className: 'center'},
-                        {data: 'nomPreparacion', className: 'left'},
-                        {data: 'idFibra.codFibra', className: 'center'},
-                        {data: 'costoPreparacion', className: 'right'},
-                        {data: 'fechaUso', className: 'center'},
-                        {data: 'btnView'}
-                    ],
-                    sPaginationType: 'full_numbers',
-                    bAutoWidth: false
-                });
-
+                
+                if (tipo === 'prep') {
+                    
+                    $(tabla).dataTable({
+                        data: oDatos,
+                        columns: [
+                            {data: 'idNomPreparacion', className: 'center'},
+                            {data: 'nomPreparacion', className: 'left'},
+                            {data: 'idFibra.codFibra', className: 'center'},
+                            {data: 'costoPreparacion', className: 'right'},
+                            {data: 'fechaUso', className: 'center'},
+                            {data: 'btnView'}
+                        ],
+                        sPaginationType: 'full_numbers',
+                        bAutoWidth: false
+                    });
+                } else if (tipo === 'aux') {
+                    
+                    $(tabla).dataTable({
+                        data: oDatos,
+                        columns: [
+                            {data: 'idNomAuxiliar', className: 'center'},
+                            {data: 'nomAuxiliar', className: 'left'},
+                            {data: 'idFibra.codFibra', className: 'center'},
+                            {data: 'costoAuxiliar', className: 'right'},
+                            {data: 'fechaUso', className: 'center'},
+                            {data: 'btnView'}
+                        ],
+                        sPaginationType: 'full_numbers',
+                        bAutoWidth: false
+                    });
+                }
             },
             
             cargarCoincidenciaProductoQuimico: function(tipo, elemento, oDatos) {
@@ -195,7 +212,7 @@
                                         '<td style="text-align: center">:cantPctj:</td>' +
                                         '<td>' +
                                             '<div class="form-group col-md-12">' +
-                                                '<button type="button" class="btn" id="btnDelLineaPrep">' +
+                                                '<button type="button" class="btn" id="btnDelLinea">' +
                                                     '<i class="fa fa-trash-o"></i>' +
                                                 '</button>' +
                                             '</div>' +
@@ -364,14 +381,14 @@
                                     '<td style="text-align: center">:cantPctj:</td>' +
                                     '<td>' +
                                         '<div class="form-group col-md-12">' +
-                                            '<button type="button" class="btn" id="btnDelLineaPrep">' +
+                                            '<button type="button" class="btn" id="btnDelLinea">' +
                                                 '<i class="fa fa-trash-o"></i>' +
                                             '</button>' +
                                         '</div>' +
                                     '</td>' +
                                     '<td>' +
                                         '<div class="form-group col-md-12">' +
-                                            '<button type="button" class="btn" id="eBtnEditLineaPrep">' +
+                                            '<button type="button" class="btn" id="eBtnEditLinea">' +
                                                 '<span class="glyphicon glyphicon-edit"></span>' +
                                             '</button>' +
                                         '</div>' +

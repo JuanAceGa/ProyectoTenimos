@@ -91,7 +91,7 @@
 
                 if (opc === 'pr') {
                     self.oPreparaciones = data;
-                    um.renderDataTables(self.$dataTablePreparacion, self.oPreparaciones);
+                    um.renderDataTables(self.$dataTablePreparacion, self.oPreparaciones, 'prep');
                 }
 
                 if (opc === 'npr') {
@@ -100,7 +100,7 @@
                         self.oPreparaciones = data;
                         um.destruirDataTable(self.$dataTablePreparacion.dataTable(), '1');
                         self.limpiarFormulario();
-                        um.renderDataTables(self.$dataTablePreparacion, self.oPreparaciones);
+                        um.renderDataTables(self.$dataTablePreparacion, self.oPreparaciones, 'prep');
                         self.pintarCamposObligatorios();
                     }
                 }
@@ -423,7 +423,7 @@
             borrarLineaPreparacion: function() {
                 var self = this;
                 
-                self.$dataTableNewQPreparacion.on('click', '#btnDelLineaPrep', function(e) {
+                self.$dataTableNewQPreparacion.on('click', '#btnDelLinea', function(e) {
                     var fila = $(this).closest('tr');
                     fila.remove();
                     var d = um.noRepetirQuimicos({
@@ -442,7 +442,7 @@
                     e.stopPropagation();
                 });
                 
-                self.$tBodyEditPrep.on('click', '#btnDelLineaPrep', function (e){
+                self.$tBodyEditPrep.on('click', '#btnDelLinea', function (e){
                     var d;
                     var fila = $(this).closest('tr');
                     var codigo = fila[0].cells[0].textContent;
@@ -482,51 +482,6 @@
                     
                     e.stopPropagation();
                 });
-            },
-            
-            eliminarLineaPrepFormEdicion: function(estado, fila) {
-                var self = this;
-                var d;
-                
-                if (!estado) {
-                        fila.remove();
-                        d = um.noRepetirQuimicos({
-                            tipo: '-',
-                            codQ: fila[0].cells[0].textContent,
-                            cant1: parseFloat(fila[0].cells[2].textContent),
-                            cant2: parseFloat(fila[0].cells[3].textContent),
-                            maestro: 'prep',
-                            codQpermitido: ''},
-                        self.quimicosPorPrep);
-
-                        self.quimicosPorPrep = d.oQuim;
-
-                        d = um.noRepetirQuimicos({
-                            tipo: '-',
-                            codQ: fila[0].cells[0].textContent,
-                            cant1: parseFloat(fila[0].cells[2].textContent),
-                            cant2: parseFloat(fila[0].cells[3].textContent),
-                            maestro: 'prep',
-                            codQpermitido: ''},
-                        self.eNuevosQuimicos);
-
-                        self.eNuevosQuimicos = d.oQuim;
-
-                        for (var i = 0; i < self.eQuimicosModif.length; i++) {
-                            if (self.eQuimicosModif[i].codQ === fila[0].cells[0].textContent) {
-                                self.eQuimicosModif[i].tipo = 'eli';
-                                break;
-                            }
-                        }
-                    } else {
-                        $.gritter.add({
-                            title: "Eliminar Registro",
-                            text: "¡Ya solicitaron eliminar este elemento, está pendiente por aprobación.!",
-                            class_name: "growl-warning",
-                            sticky: false,
-                            time: ""
-                        });
-                    }
             },
             
             consultaNombrePreparacion: function(){
@@ -599,7 +554,7 @@
             verPreparacion: function() {
                 var self = this;
 
-                self.$dataTablePreparacion.on('click', '#btnViewPrep', function (e) {
+                self.$dataTablePreparacion.on('click', '#btnView', function (e) {
                     self.banderaModal = 1;
                     var fila = $(this).closest('tr');
                     self.idPreparacion = parseInt(fila[0].cells[0].textContent);
@@ -654,7 +609,7 @@
             modificarQuimicoPreparacion: function() {
                 var self = this;
                 
-                self.$tBodyEditPrep.on('click', '#eBtnEditLineaPrep', function (e) {
+                self.$tBodyEditPrep.on('click', '#eBtnEditLinea', function (e) {
                     var fila = $(this).closest('tr');
                     self.tipoEdicion = 'editar';
                     self.filaEditar = fila;

@@ -37,8 +37,8 @@
                                 <table class="table mb30" id="dataTableNewQPreparacion">
                                     <thead>
                                         <tr>
-                                            <th class="col-md-3">Código del Quimico <span class="asterisk">*</span></th>
-                                            <th class="col-md-5">Nombre del Quimico <span class="asterisk">*</span></th>
+                                            <th class="col-md-3">Código del Químico <span class="asterisk">*</span></th>
+                                            <th class="col-md-5">Nombre del Químico <span class="asterisk">*</span></th>
                                             <th class="col-md-2">Cant. Gr/Lt <span class="asterisk">*</span></th>
                                             <th class="col-md-2">Cant. %/Kl <span class="asterisk">*</span></th>
                                             <th class="col-md-1"></th>
@@ -49,7 +49,7 @@
                                             <td>
                                                 <div class="form-group col-md-12">
                                                     <div class="col-sm-12">
-                                                        <input type="text" name="codQuimPrep" id="codQuimPrep" class="form-control" placeholder="Código del quimico" maxlength="4" list="dlCodQuimPrep" required />
+                                                        <input type="text" name="codQuimPrep" id="codQuimPrep" class="form-control" placeholder="Código" maxlength="4" list="dlCodQuimPrep" required />
                                                         <datalist id="dlCodQuimPrep"></datalist>
                                                     </div>
                                                 </div>
@@ -57,7 +57,7 @@
                                             <td>
                                                 <div class="form-group col-md-12">
                                                     <div class="col-sm-12">
-                                                        <input type="text" name="nomQuimPrep" id="nomQuimPrep" class="form-control" placeholder="Nombre del quimico" list="dlNomQuimPrep" required />
+                                                        <input type="text" name="nomQuimPrep" id="nomQuimPrep" class="form-control" placeholder="Nombre del químico" list="dlNomQuimPrep" required />
                                                         <datalist id="dlNomQuimPrep"></datalist>
                                                     </div>
                                                 </div>
@@ -165,8 +165,8 @@
                             <table class="table mb30" id="tableEditPrep">
                                 <thead>
                                     <tr>
-                                        <th class="col-md-3">Código del Quimico <span class="asterisk">*</span></th>
-                                        <th class="col-md-5">Nombre del Quimico <span class="asterisk">*</span></th>
+                                        <th class="col-md-3">Código del Químico <span class="asterisk">*</span></th>
+                                        <th class="col-md-5">Nombre del Químico <span class="asterisk">*</span></th>
                                         <th class="col-md-2">Cant. Gr/Lt <span class="asterisk">*</span></th>
                                         <th class="col-md-2">Cant. %/Kl <span class="asterisk">*</span></th>
                                         <th class="col-md-1"></th>
@@ -178,7 +178,7 @@
                                         <td>
                                             <div class="form-group col-md-12">
                                                 <div class="col-sm-12">
-                                                    <input type="text" name="eCodQuimPrep" id="eCodQuimPrep" class="form-control" placeholder="Código del quimico" maxlength="4" list="eDlCodQuimPrep" required />
+                                                    <input type="text" name="eCodQuimPrep" id="eCodQuimPrep" class="form-control" placeholder="Código" maxlength="4" list="eDlCodQuimPrep" required />
                                                     <datalist id="eDlCodQuimPrep"></datalist>
                                                 </div>
                                             </div>
@@ -186,7 +186,7 @@
                                         <td>
                                             <div class="form-group col-md-12">
                                                 <div class="col-sm-12">
-                                                    <input type="text" name="eNomQuimPrep" id="eNomQuimPrep" class="form-control" placeholder="Nombre del quimico" list="eDlNomQuimPrep" required />
+                                                    <input type="text" name="eNomQuimPrep" id="eNomQuimPrep" class="form-control" placeholder="Nombre del químico" list="eDlNomQuimPrep" required />
                                                     <datalist id="eDlNomQuimPrep"></datalist>
                                                 </div>
                                             </div>
