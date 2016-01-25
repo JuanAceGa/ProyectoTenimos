@@ -258,36 +258,43 @@
                     }
                     
                 } else if (d.tipo === "-") {
+                    var oQuim = new Array();
                     if (d.maestro === 'prep') {
                         for (var i = 0; i < oQuimicos.length; i++) {
-                            if (oQuimicos[i].codQ === d.codQ) {
-                                if (i === 0) {
-                                    oQuimicos.splice(0, 1);
-                                    break;
-                                } else {
-                                    oQuimicos.splice(i, i);
-                                    break;
-                                }
+                            if (oQuimicos[i].codQ !== d.codQ) {
+                                oQuim.push(oQuimicos[i]);
                             }
                         }
                     } else if (d.maestro === 'aux') {
+                        var del = 0;
+                        
                         for (var i = 0; i < oQuimicos.length; i++) {
-                            if ((oQuimicos[i].codQ === d.codQ && oQuimicos[i].cant1 === d.cant1 && oQuimicos[i].cant2 === d.cant2)) {
-                                if (i === 0) {
-                                    oQuimicos.splice(0, 1);
-                                    break;
-                                } else {
-                                    oQuimicos.splice(i, i);
-                                    break;
-                                }
-                            }
+                            if (i !== d.pos) {
+                               oQuim.push(oQuimicos[i]);
+                            } 
                         }
+                        
+                        
+                        /*for (var i = 0; i < oQuimicos.length; i++) {
+                            if (d.codQpermitido === d.codQ && oQuimicos[i].codQ === d.codQ && oQuimicos[i].cant1 === d.cant1 && del === 0) {
+                                del = 1;
+                                
+                            } else if (d.codQpermitido === d.codQ && oQuimicos[i].codQ === d.codQ && oQuimicos[i].cant1 === d.cant1 && del === 1) {
+                                oQuim.push(oQuimicos[i]);
+                            
+                            } else if (d.codQpermitido === d.codQ && oQuimicos[i].codQ === d.codQ && oQuimicos[i].cant1 !== d.cant1) {
+                                oQuim.push(oQuimicos[i]);
+                                
+                            } else if (oQuimicos[i].codQ !== d.codQ) {
+                                oQuim.push(oQuimicos[i]);
+                            }
+                        }*/
                     }
                 }
-                return {existe: existe, oQuim: oQuimicos};
+                return {existe: existe, oQuim: oQuim};
             },
             
-            guardarRegistro: function(d) {
+            guardarRegistro: function(d, servlet) {
                 var self = this;
                 var datos = new Object();
                 
@@ -300,7 +307,7 @@
                     
                     datos = self.obtenerDatosTabla(d.tabla, datos, 'nuevo');
                     
-                    consultas.guardarNuevoMaestro(datos, 'ServletPreparaciones');
+                    consultas.guardarNuevoMaestro(datos, servlet);
                 //} else if (d.form === 'aux') {
                     
                 //}
@@ -433,6 +440,39 @@
                     
                 } else if (oDatos.frm === 'aux'){
                     
+                    for (var i = 0; i < oDatos.registros.length; i++) {
+                        if (oDatos.registros[i].idNomAuxiliar === oDatos.idReg) {
+                            
+                            oDatos.eNombre.val(self.separarNombreDeFibra({
+                                nombre: oDatos.registros[i].nomAuxiliar,  
+                                fibra: oDatos.registros[i].idFibra.nomFibra
+                            }));
+                            
+                            oDatos.eNombreFib.val(oDatos.registros[i].idFibra.nomFibra);
+
+                            for (var j = 0; j < oDatos.registros[i].auxiliarCollection.length; j++) {
+                                for (var k = 0; k < oDatos.quimicos.length; k++) {
+
+                                    if (oDatos.registros[i].auxiliarCollection[j].codQuimico === oDatos.quimicos[k].codProduct) {                                        
+                                        resp.push({
+                                            codQ: oDatos.registros[i].auxiliarCollection[j].codQuimico,
+                                            cant1: parseFloat(oDatos.registros[i].auxiliarCollection[j].cantGr),
+                                            cant2: parseFloat(oDatos.registros[i].auxiliarCollection[j].cantPtj)
+                                        });
+                                        var newTr = trTemplate
+                                            .replace(':codQuim:', oDatos.registros[i].auxiliarCollection[j].codQuimico)
+                                            .replace(':cantGrLt:', oDatos.registros[i].auxiliarCollection[j].cantGr)
+                                            .replace(':cantPctj:', oDatos.registros[i].auxiliarCollection[j].cantPtj)
+                                            .replace(':nomQuim:', oDatos.quimicos[k].nomProducto);
+                                        break;
+                                    }
+                                }
+                                oDatos.eTabla.append($(newTr));
+                            }
+                            break;
+                        }
+                    }
+                    oDatos.eModal.modal('show', 'slow');
                 }
                 
                 return resp;
@@ -446,7 +486,6 @@
                 
                 for (var i = 0; i < oArr.length; i++) {
                     if (reg.codQ === oArr[i].codQ) {
-                        
                         if (oArr[i].cantGrLt > 0) {
                             if (parseFloat(reg.cantGrLtNue) !== oArr[i].cantGrLt) {
                                 oArr[i].tipo = reg.tipo;
@@ -477,7 +516,7 @@
             SolicitarModificarRegistro: function(oBas, oQmod, oQnue, btnCerrar, servlet) {
                 var usuario = JSON.parse(sessionStorage.user);
                 var datos = new Object();
-                datos.idReg = oBas.idPrep;
+                datos.idReg = oBas.idMaestro;
                 datos.nombreReg = oBas.nombre;
                 datos.nombreRegNue = oBas.nombreNue;
                 datos.idFibra = oBas.idFib;

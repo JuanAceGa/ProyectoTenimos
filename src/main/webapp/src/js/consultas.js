@@ -140,7 +140,7 @@
                 if (formulario === 'frmPrep') {
                     servlet = '../../../ServletPreparaciones';
                 } else if (formulario === 'frmAux') {
-                    servlet = '../../../';
+                    servlet = '../../../ServletAuxiliares';
                 }
                 
                 $.ajax({
@@ -156,9 +156,9 @@
                     mimeType: 'application/json',
                     success: function(response){
                             if (formulario === 'frmPrep') {
-                                frmPreparacion.cargarDatos(response, "solic");
+                                frmPreparacion.cargarDatos(response, 'solic');
                             } else if (formulario === 'frmAux') {
-                                //frmAuxiliares.eliminarLineaPrepFormEdicion(true, fila);
+                                frmAuxiliar.cargarDatos(response, 'solic');
                             }
                     },
                     error: function(response, status, er) {

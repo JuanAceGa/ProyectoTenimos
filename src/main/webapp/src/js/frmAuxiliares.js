@@ -422,14 +422,27 @@
             borrarLineaAuxiliar: function() {
                 var self = this;
                 
-                self.$dataTableNewQAuxiliar.on('click', '#btnDelLineaAux', function(e) {
+                self.$dataTableNewQAuxiliar.on('click', '#btnDelLinea', function(e) {
                     var fila = $(this).closest('tr');
                     fila.remove();
+                    
+                    /*var d = um.noRepetirQuimicos({
+                        tipo: '-', 
+                        codQ: fila[0].cells[0].textContent,
+                        cant1: parseFloat(fila[0].cells[2].textContent),
+                        cant2: parseFloat(fila[0].cells[3].textContent),
+                        maestro: 'aux', 
+                        codQpermitido: '1550'}, 
+                        self.quimicosPorAux); */
+                        
                     var d = um.noRepetirQuimicos({
                         tipo: '-', 
-                        codQ: fila[0].cells[0].textContent, 
+                        codQ: fila[0].cells[0].textContent,
+                        cant1: parseFloat(fila[0].cells[2].textContent),
+                        cant2: parseFloat(fila[0].cells[3].textContent),
                         maestro: 'aux', 
-                        codQpermitido: ''}, 
+                        codQpermitido: '1550',
+                        pos: (fila[0].rowIndex - 2)},
                         self.quimicosPorAux); 
                     
                     self.quimicosPorAux = d.oQuim;
@@ -444,39 +457,58 @@
                 self.$tBodyEditAux.on('click', '#btnDelLinea', function (e){
                     var d;
                     var fila = $(this).closest('tr');
+                    var rowIndex = fila[0].rowIndex;
                     var codigo = fila[0].cells[0].textContent;
                     var r = um.verificarSolicitudes(codigo, [], self.solicitudesEnviadas, {});
                     
                     if (!r.estado) {
-                        fila.remove();
+                        /*d = um.noRepetirQuimicos({
+                            tipo: '-',
+                            codQ: fila[0].cells[0].textContent,
+                            cant1: parseFloat(fila[0].cells[2].textContent),
+                            cant2: parseFloat(fila[0].cells[3].textContent),
+                            maestro: 'aux',
+                            codQpermitido: '1550'},
+                        self.quimicosPorAux);*/
+                        
                         d = um.noRepetirQuimicos({
                             tipo: '-',
                             codQ: fila[0].cells[0].textContent,
                             cant1: parseFloat(fila[0].cells[2].textContent),
                             cant2: parseFloat(fila[0].cells[3].textContent),
                             maestro: 'aux',
-                            codQpermitido: ''},
+                            codQpermitido: '1550',
+                            pos: (rowIndex - 2)},
                         self.quimicosPorAux);
-
+                        
                         self.quimicosPorAux = d.oQuim;
-
+                        <HAY QUE MODIFICAR AQUI>
+                        console.log('fila: ' + rowIndex);
+                        console.log('pos: ' + (rowIndex - 2));
+                        console.log('longitud arreglo nuevosQuimicos: ' + self.eNuevosQuimicos.length);
+                        console.log('longitud arreglo quimicosPorMaestro: ' + self.quimicosPorAux.length);
+                        console.log('posicion final: ' + ((rowIndex - 2) - (self.eNuevosQuimicos.length - self.quimicosPorAux.length)));
+                        
                         d = um.noRepetirQuimicos({
                             tipo: '-',
                             codQ: fila[0].cells[0].textContent,
                             cant1: parseFloat(fila[0].cells[2].textContent),
                             cant2: parseFloat(fila[0].cells[3].textContent),
                             maestro: 'aux',
-                            codQpermitido: ''},
+                            codQpermitido: '',
+                            pos: (rowIndex - 2) - self.quimicosPorAux.length},
                         self.eNuevosQuimicos);
 
                         self.eNuevosQuimicos = d.oQuim;
-
+                        
                         for (var i = 0; i < self.eQuimicosModif.length; i++) {
                             if (self.eQuimicosModif[i].codQ === fila[0].cells[0].textContent) {
                                 self.eQuimicosModif[i].tipo = 'eli';
                                 break;
                             }
                         }
+                        
+                        fila.remove();
                     }
                     
                     e.stopPropagation();
@@ -546,7 +578,7 @@
                         }
                     }
                     
-                    um.guardarRegistro({form: 'aux', tabla: self.$dataTableNewQAuxiliar, nombre: nombre, idFib: idFib});
+                    um.guardarRegistro({form: 'aux', tabla: self.$dataTableNewQAuxiliar, nombre: nombre, idFib: idFib}, 'ServletAuxiliares');
                     
                 }
             },
@@ -610,6 +642,7 @@
                 
                 self.$tBodyEditAux.on('click', '#eBtnEditLinea', function (e) {
                     var fila = $(this).closest('tr');
+                    console.log(fila[0].rowIndex);
                     self.tipoEdicion = 'editar';
                     self.filaEditar = fila;
                     var r = um.verificarSolicitudes(fila[0].cells[0].textContent, [], self.solicitudesEnviadas, {});
@@ -673,7 +706,7 @@
                         }
                     }
                     
-                    um.SolicitarModificarRegistro({tabla: self.$tableEditAux, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idAux: self.idAuxiliar, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar, 'ServletAuxiliares');
+                    um.SolicitarModificarRegistro({tabla: self.$tableEditAux, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idAuxiliar, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar, 'ServletAuxiliares');
                 }
             },
             

@@ -428,7 +428,9 @@
                     fila.remove();
                     var d = um.noRepetirQuimicos({
                         tipo: '-', 
-                        codQ: fila[0].cells[0].textContent, 
+                        codQ: fila[0].cells[0].textContent,
+                        cant1: '',
+                        cant2: '',
                         maestro: 'prep', 
                         codQpermitido: ''}, 
                         self.quimicosPorPrep); 
@@ -547,7 +549,7 @@
                         }
                     }
                     
-                    um.guardarRegistro({form: 'prep', tabla: self.$dataTableNewQPreparacion, nombre: nombre, idFib: idFib});
+                    um.guardarRegistro({form: 'prep', tabla: self.$dataTableNewQPreparacion, nombre: nombre, idFib: idFib}, 'ServletPreparaciones');
                     
                 }
             },
@@ -675,7 +677,7 @@
                         }
                     }
                     
-                    um.SolicitarModificarRegistro({tabla: self.$tableEditPrep, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idPrep: self.idPreparacion, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar, 'ServletPreparaciones');
+                    um.SolicitarModificarRegistro({tabla: self.$tableEditPrep, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idPreparacion, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar, 'ServletPreparaciones');
                 }
             },
             
