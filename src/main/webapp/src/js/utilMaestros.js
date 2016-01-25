@@ -291,7 +291,7 @@
                 var self = this;
                 var datos = new Object();
                 
-                if (d.form === 'prep') {
+                //if (d.form === 'prep') {
                     datos.nombre = d.nombre;
                     datos.idFib = d.idFib;
                     datos.codQuimico = null;
@@ -300,10 +300,10 @@
                     
                     datos = self.obtenerDatosTabla(d.tabla, datos, 'nuevo');
                     
-                    consultas.guardarNuevaPreparacion(datos);
-                } else if (d.form === 'aux') {
+                    consultas.guardarNuevoMaestro(datos, 'ServletPreparaciones');
+                //} else if (d.form === 'aux') {
                     
-                }
+                //}
             },
             
             obtenerDatosTabla: function(tabla, oArr, tipo) {
@@ -474,7 +474,7 @@
                 return oArr;
             },
             
-            SolicitarModificarRegistro: function(oBas, oQmod, oQnue, btnCerrar) {
+            SolicitarModificarRegistro: function(oBas, oQmod, oQnue, btnCerrar, servlet) {
                 var usuario = JSON.parse(sessionStorage.user);
                 var datos = new Object();
                 datos.idReg = oBas.idPrep;
@@ -498,7 +498,9 @@
                 }
                 
                 if (datos.nombreRegNue !== '' || datos.idFibraNue !== '' || datos.quimicoMod.length > 0 || datos.quimicoNue.length > 0) {
-                    consultas.solicitarModificarPreparacion(datos, btnCerrar);
+                    
+                    consultas.solicitarModificarMaestro(datos, btnCerrar, servlet);
+                    
                 } else {
                     $.gritter.add({
                         title: "Modificar Registro",

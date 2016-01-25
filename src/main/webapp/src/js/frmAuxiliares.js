@@ -93,7 +93,7 @@
                     um.renderDataTables(self.$dataTableAuxiliar, self.oAuxiliares, 'aux');
                 }
 
-                if (opc === 'npr') {
+                if (opc === 'nau') {
                     if (data !== null) {
                         self.oAuxiliares = "";
                         self.oAuxiliares = data;
@@ -502,7 +502,7 @@
                     }
 
                     if (b && campOblig) {                        
-                        consultas.consultarNombreAuxiliar(self.$nomAux.val() + " (" + self.$cbxfibraAux.val() + ")", 'nuevo', 0);
+                        consultas.consultarNombreMaestros(self.$nomAux.val() + " (" + self.$cbxfibraAux.val() + ")", 'nuevo', 0, 'ServletAuxiliares');
                     }
                 });
                 
@@ -522,7 +522,7 @@
                     }
 
                     if (b && campOblig) {
-                        consultas.consultarNombreAuxiliar(self.$eNomAux.val() + " (" + self.$eCbxfibraAux.val() + ")", 'editar', self.idAuxiliar);
+                        consultas.consultarNombreMaestros(self.$eNomAux.val() + " (" + self.$eCbxfibraAux.val() + ")", 'editar', self.idAuxiliar, 'ServletAuxiliares');
                     }
                 });
             },
@@ -673,7 +673,7 @@
                         }
                     }
                     
-                    um.SolicitarModificarRegistro({tabla: self.$tableEditAux, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idAux: self.idAuxiliar, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar);
+                    um.SolicitarModificarRegistro({tabla: self.$tableEditAux, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idAux: self.idAuxiliar, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar, 'ServletAuxiliares');
                 }
             },
             

@@ -503,7 +503,7 @@
                     }
 
                     if (b && campObligPrep) {                        
-                        consultas.consultarNombrePreparacion(self.$nomPrep.val() + " (" + self.$cbxfibraPrep.val() + ")", 'nuevo', 0);
+                        consultas.consultarNombreMaestros(self.$nomPrep.val() + " (" + self.$cbxfibraPrep.val() + ")", 'nuevo', 0, 'ServletPreparaciones');
                     }
                 });
                 
@@ -523,7 +523,7 @@
                     }
 
                     if (b && campObligPrep) {
-                        consultas.consultarNombrePreparacion(self.$eNomPrep.val() + " (" + self.$eCbxfibraPrep.val() + ")", 'editar', self.idPreparacion);
+                        consultas.consultarNombreMaestros(self.$eNomPrep.val() + " (" + self.$eCbxfibraPrep.val() + ")", 'editar', self.idPreparacion, 'ServletPreparaciones');
                     }
                 });
             },
@@ -675,7 +675,7 @@
                         }
                     }
                     
-                    um.SolicitarModificarRegistro({tabla: self.$tableEditPrep, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idPrep: self.idPreparacion, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar);
+                    um.SolicitarModificarRegistro({tabla: self.$tableEditPrep, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idPrep: self.idPreparacion, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar, 'ServletPreparaciones');
                 }
             },
             

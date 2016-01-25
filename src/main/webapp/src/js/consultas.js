@@ -5,14 +5,14 @@
             init: function() {
                 this.consultarFibras();
                 this.consultarQuimicosPrepAux();
-                this.consultarPreparaciones();
+                this.consultarMaestros();
             },
             
             consultarFibras: function() {
                 
                 $.get("../../../ServletFibras", function(response) {
                     frmPreparacion.cargarDatos(response, "f");
-                    //frmAuxiliares.cargarDatos(response, "f");
+                    frmAuxiliar.cargarDatos(response, 'f');
                 });
             },
             
@@ -20,34 +20,54 @@
                 
                 $.get("../../../ServletProdFormulacion", {accion: "quimicos"}, function(response) {
                     frmPreparacion.cargarDatos(response, "q");
-                    //frmAuxiliares.cargarDatos(response, "q");
+                    frmAuxiliar.cargarDatos(response, "q");
                 });
             },
             
-            consultarPreparaciones: function() {
+            consultarMaestros: function() {
                 
                 $.get("../../../ServletPreparaciones", {accion: "buscar"}, function(response) {
                     frmPreparacion.cargarDatos(response, "pr");
                 });
+                
+                $.get("../../../ServletAuxiliares", {accion: "buscar"}, function(response) {
+                    frmAuxiliar.cargarDatos(response, "au");
+                });
             },
             
-            consultarNombrePreparacion: function(nombre, tipo, idPrep) {
+            consultarNombreMaestros: function(nombre, tipo, idMaestro, servlet) {
+                
                 $.ajax({
-                    url: '../../../ServletPreparaciones',
+                    url: '../../../' + servlet,
                     type: 'GET',
                     dataType: 'text',
                     data: {
                         accion: 'buscarNombre',
                         tipo: tipo,
-                        idPrep: idPrep,
+                        idMaestro: idMaestro,
                         nombre: nombre
                     },
                     success: function(data) {
                         var response = JSON.parse(data);
                         if (tipo === 'nuevo') {
-                            frmPreparacion.agregarPreparacion(response);
+                            
+                            if (servlet === 'ServletPreparaciones') {
+                                frmPreparacion.agregarPreparacion(response);
+                            }
+                            
+                            if (servlet === 'ServletAuxiliares') {
+                                frmAuxiliar.agregarAuxiliar(response);
+                            }
+                            
                         } else if (tipo === 'editar') {
-                            frmPreparacion.solicitarModificarPreparacion(response);
+                            
+                            if (servlet === 'ServletPreparaciones') {
+                                frmPreparacion.solicitarModificarPreparacion(response);
+                            }
+                            
+                            if (servlet === 'ServletAuxiliares') {
+                                frmAuxiliar.solicitarModificarAuxiliar(response);
+                            }
                         }
                     },
                     error: function(response, status, er) {
@@ -55,36 +75,10 @@
                     }
                 });
             },
-            
-            consultarNombreAuxiliar: function(nombre, tipo, idAux) {
+                      
+            guardarNuevoMaestro: function(datos, servlet) {
                 $.ajax({
-                    url: '../../../ServletAuxiliares',
-                    type: 'GET',
-                    dataType: 'text',
-                    data: {
-                        accion: 'buscarNombre',
-                        tipo: tipo,
-                        idAux: idAux,
-                        nombre: nombre
-                    },
-                    success: function(data) {
-                        var response = JSON.parse(data);
-                        if (tipo === 'nuevo') {
-                            frmAuxiliares.agregarAuxiliar(response);
-                        } else if (tipo === 'editar') {
-                            frmAuxiliares.solicitarModificarAuxiliar(response);
-                        }
-                    },
-                    error: function(response, status, er) {
-                        console.log("error: " + response + " status: " + status + " er:" + er);
-                    }
-                });
-            },
-            
-            guardarNuevaPreparacion: function(datos) {
-                <REVISAR CUANDO LLAMAN ESTE METODO PARA HACERLO IGUAL PARA TODOS>
-                $.ajax({
-                    url: "../../../ServletPreparaciones",
+                    url: '../../../' + servlet,
                     type: 'GET',
                     dataType: 'json',
                     data: {
@@ -105,7 +99,14 @@
                                 sticky: false,
                                 time: ""
                             });
-                            frmPreparacion.cargarDatos(response, "npr");
+                            
+                            if (servlet === 'ServletPreparaciones') {
+                                frmPreparacion.cargarDatos(response, "npr");
+                            }
+                            
+                            if (servlet === 'ServletAuxiliares') {
+                                frmAuxiliar.cargarDatos(response, "nau");
+                            }
                             
                         } else {
                             $.gritter.add({
@@ -173,14 +174,14 @@
 
             },
             
-            solicitarModificarPreparacion: function(datos, btnCerrar) {
+            solicitarModificarMaestro: function(datos, btnCerrar, servlet) {
                 
                 $.ajax({
-                    url: "../../../ServletPreparaciones",
+                    url: '../../../' + servlet,
                     type: 'GET',
                     dataType: 'json',
                     data: {
-                        accion: "editarPreparacion",
+                        accion: "editarMaestro",
                         datos: JSON.stringify(datos)
                     },
                     contentType: 'application/json',
@@ -197,7 +198,6 @@
                                 time: ""
                             });
                             $(btnCerrar).click();
-                            //frmPreparacion.cargarDatos(response, "npr");
                             
                         } else {
                             $.gritter.add({
