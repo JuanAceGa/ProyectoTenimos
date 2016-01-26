@@ -206,6 +206,7 @@
                 <div class="contentpanel" id="contenido">
                     <jsp:include page="../forms/laboratorio/frmpreparacion.jspf"></jsp:include>
                     <jsp:include page="../forms/laboratorio/frmauxiliares.jspf"></jsp:include>
+                    <jsp:include page="../forms/laboratorio/frmprocesospost.jspf"></jsp:include>
                 </div><!-- contentpanel -->
             </div><!-- mainpanel -->
         </section>
@@ -239,6 +240,7 @@
         <script src="../../js/utilMaestros.js"></script>
         <script src="../../js/frmPreparacion.js"></script>
         <script src="../../js/frmAuxiliares.js"></script>
+        <script src="../../js/frmProcesosPost.js"></script>
         <script src="../../js/consultas.js"></script>
         <script src="../../js/dashboard.js"></script>
     </body>

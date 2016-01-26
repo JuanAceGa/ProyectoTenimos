@@ -261,21 +261,24 @@
                     var oQuim = new Array();
                     if (d.maestro === 'prep') {
                         for (var i = 0; i < oQuimicos.length; i++) {
+                            if (i !== d.pos) {
+                               oQuim.push(oQuimicos[i]);
+                            }
+                        }
+                        
+                        /*for (var i = 0; i < oQuimicos.length; i++) {
                             if (oQuimicos[i].codQ !== d.codQ) {
                                 oQuim.push(oQuimicos[i]);
                             }
-                        }
+                        }*/
                     } else if (d.maestro === 'aux') {
-                        var del = 0;
-                        
                         for (var i = 0; i < oQuimicos.length; i++) {
                             if (i !== d.pos) {
                                oQuim.push(oQuimicos[i]);
                             } 
                         }
-                        
-                        
-                        /*for (var i = 0; i < oQuimicos.length; i++) {
+                        /*var del = 0;
+                         for (var i = 0; i < oQuimicos.length; i++) {
                             if (d.codQpermitido === d.codQ && oQuimicos[i].codQ === d.codQ && oQuimicos[i].cant1 === d.cant1 && del === 0) {
                                 del = 1;
                                 

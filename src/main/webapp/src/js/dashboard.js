@@ -13,6 +13,9 @@
             rowAuxiliares: $("#rowAuxiliar"),
             frmMaestroAux: $("#frmMaestroAux"),
             tblMaestroAux: $("#tblMaestroAux"),
+            rowProcPos: $("#rowProcPos"),
+            frmMaestroProcPos: $("#frmMaestroProcPos"),
+            tblMaestroProcPos: $("#tblMaestroProcPos"),
             $contenido: $("#contenido"),
             
             init: function() {
@@ -34,6 +37,7 @@
                 
                 self.rowPreparacion.hide();
                 self.rowAuxiliares.hide();
+                self.rowProcPos.hide();
             },
             
             cargarSesion: function(){
@@ -120,19 +124,19 @@
                             break;
                             
                         case "Maestro Procesos Posteriores":
-                            /*this.children[2].className = "nav-parent active";
-                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / ";
+                            this.children[2].className = "nav-parent active";
+                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Procesos Posteriores";
                             self.ocultarMenu();
                             self.ocultarFormularios();
                             self.menuPrincipal();
                             
-                            self.rowPreparacion.show();
-                            self.frmMaestroPrep.children(".minimize").click();
-                            self.tblMaestroPrep.children(".minimize").click();
+                            self.rowProcPos.show();
+                            self.frmMaestroProcPos.children(".minimize").click();
+                            self.tblMaestroProcPos.children(".minimize").click();
                             
                             this.children[0].className = "";
                             this.children[1].className = "";
-                            break;*/
+                            break;
                             
                         case "Maestro Fibras":
                             /*this.children[2].className = "nav-parent active";

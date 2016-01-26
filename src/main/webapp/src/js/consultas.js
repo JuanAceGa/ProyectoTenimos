@@ -10,28 +10,34 @@
             
             consultarFibras: function() {
                 
-                $.get("../../../ServletFibras", function(response) {
-                    frmPreparacion.cargarDatos(response, "f");
+                $.get('../../../ServletFibras', function(response) {
+                    frmPreparacion.cargarDatos(response, 'f');
                     frmAuxiliar.cargarDatos(response, 'f');
+                    frmProcPos.cargarDatos(response, 'f');
                 });
             },
             
             consultarQuimicosPrepAux: function() {
                 
-                $.get("../../../ServletProdFormulacion", {accion: "quimicos"}, function(response) {
-                    frmPreparacion.cargarDatos(response, "q");
-                    frmAuxiliar.cargarDatos(response, "q");
+                $.get('../../../ServletProdFormulacion', {accion: 'quimicos'}, function(response) {
+                    frmPreparacion.cargarDatos(response, 'q');
+                    frmAuxiliar.cargarDatos(response, 'q');
+                    frmProcPos.cargarDatos(response, 'q')
                 });
             },
             
             consultarMaestros: function() {
                 
-                $.get("../../../ServletPreparaciones", {accion: "buscar"}, function(response) {
-                    frmPreparacion.cargarDatos(response, "pr");
+                $.get('../../../ServletPreparaciones', {accion: 'buscar'}, function(response) {
+                    frmPreparacion.cargarDatos(response, 'pr');
                 });
                 
-                $.get("../../../ServletAuxiliares", {accion: "buscar"}, function(response) {
-                    frmAuxiliar.cargarDatos(response, "au");
+                $.get('../../../ServletAuxiliares', {accion: 'buscar'}, function(response) {
+                    frmAuxiliar.cargarDatos(response, 'au');
+                });
+                
+                $.get('../../../ServletProcesosPost', {accion: 'buscar'}, function(response) {
+                    frmProcPos.cargarDatos(response, 'pp');
                 });
             },
             
@@ -59,6 +65,10 @@
                                 frmAuxiliar.agregarAuxiliar(response);
                             }
                             
+                            if (servlet === 'ServletProcesosPost') {
+                                frmProcPos.agregarProcPos(response);
+                            }
+                            
                         } else if (tipo === 'editar') {
                             
                             if (servlet === 'ServletPreparaciones') {
@@ -67,6 +77,10 @@
                             
                             if (servlet === 'ServletAuxiliares') {
                                 frmAuxiliar.solicitarModificarAuxiliar(response);
+                            }
+                            
+                            if (servlet === 'ServletProcesosPost') {
+                                frmProcPos.solicitarModificarProcPos(response);
                             }
                         }
                     },
@@ -101,11 +115,15 @@
                             });
                             
                             if (servlet === 'ServletPreparaciones') {
-                                frmPreparacion.cargarDatos(response, "npr");
+                                frmPreparacion.cargarDatos(response, 'npr');
                             }
                             
                             if (servlet === 'ServletAuxiliares') {
-                                frmAuxiliar.cargarDatos(response, "nau");
+                                frmAuxiliar.cargarDatos(response, 'nau');
+                            }
+                            
+                            if (servlet === 'ServletProcesosPost') {
+                                frmProcPos.cargarDatos(response, 'npp');
                             }
                             
                         } else {
@@ -136,7 +154,7 @@
             
             verificarEstadoModificacion: function(idMaestro, formulario){
                 var servlet = '';
-                
+                <AQUI>
                 if (formulario === 'frmPrep') {
                     servlet = '../../../ServletPreparaciones';
                 } else if (formulario === 'frmAux') {
