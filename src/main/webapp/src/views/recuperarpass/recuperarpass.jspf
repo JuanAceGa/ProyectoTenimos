@@ -1,0 +1,31 @@
+<!-- Modal -->
+<div class="modal fade" id="recPass" tabindex="-1" role="dialog" aria-labelledby="recPassLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Recuperar Contraseña</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <!--<label class="col-sm-4 control-label"> Nombre Preparación <span class="asterisk">*</span></label>-->
+                        <div class="col-sm-12">
+                            <input type="text" name="idUser" id="idUser" class="form-control" placeholder="Id para ingreso al sistema" required />
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <!--<label class="col-sm-4 control-label"> Nombre Preparación <span class="asterisk">*</span></label>-->
+                        <div class="col-sm-12">
+                            <input type="text" name="identUser" id="identUser" class="form-control" placeholder="Número de identificación" required />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-info" id="btnEnviar">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>

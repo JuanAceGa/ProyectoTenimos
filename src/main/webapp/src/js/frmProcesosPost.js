@@ -3,7 +3,7 @@
         return frmProcPos = {
             oFibras: {},
             oQuimicos: {},
-            oAuxiliares: {},
+            oProcPos: {},
             $frmProcPos: $('#frmProcPos'),
             $dataTableNewQProcPos: $('#dataTableNewQProcPos'),
             $tBodyNewQProcPos: $('#tBodyNewQProcPos'),
@@ -70,7 +70,10 @@
                 var elementos = [];
                 
                 if (opc === 'f') {
-                    self.oFibras = data;
+                    if ($.type(data) !== 'array') {
+                        self.oFibras = JSON.parse(data);
+                    }
+                    
                     elementos.push(self.$cbxfibraProcPos);
                     elementos.push(self.$eCbxfibraProcPos);
                     um.cargarComboBox(elementos, self.oFibras);
@@ -89,17 +92,17 @@
                 }
 
                 if (opc === 'pp') {
-                    self.oAuxiliares = data;
-                    um.renderDataTables(self.$dataTableProcPos, self.oAuxiliares, 'aux');
+                    self.oProcPos = data;
+                    um.renderDataTables(self.$dataTableProcPos, self.oProcPos, 'pp');
                 }
 
                 if (opc === 'npp') {
                     if (data !== null) {
-                        self.oAuxiliares = "";
-                        self.oAuxiliares = data;
-                        um.destruirDataTable(self.$dataTableProcPos.dataTable(), '2');
+                        self.oProcPos = "";
+                        self.oProcPos = data;
+                        um.destruirDataTable(self.$dataTableProcPos.dataTable(), '3');
                         self.limpiarFormulario();
-                        um.renderDataTables(self.$dataTableProcPos, self.oAuxiliares, 'aux');
+                        um.renderDataTables(self.$dataTableProcPos, self.oProcPos, 'pp');
                         self.pintarCamposObligatorios();
                     }
                 }
@@ -253,7 +256,7 @@
                 var elementos = [self.$nomProcPos, self.$codQuimProcPos, self.$nomQuimProcPos, self.$cantGrLtProcPos, self.$cantPctjProcPos];
                 u.limpiarCampos(elementos);
 
-                $('#dataTableNewQAuxiliar tr:gt(1)').remove();
+                $('#dataTableNewQProcPos tr:gt(1)').remove();
                 self.quimicosPorProcPos = [];
                 self.eNuevosQuimicos = [];
                 self.eQuimicosModif = [];
@@ -310,7 +313,7 @@
                             codQ: self.$codQuimProcPos.val(),
                             cant1: parseFloat(self.$cantGrLtProcPos.val()),
                             cant2: parseFloat(self.$cantPctjProcPos.val()),
-                            maestro: 'aux', 
+                            maestro: 'pp', 
                             codQpermitido: '1550'},
                             self.quimicosPorProcPos);
                             
@@ -383,7 +386,7 @@
                                     codQ: self.$eCodQuimProcPos.val(),
                                     cant1: gr,
                                     cant2: pctj,
-                                    maestro: 'aux', 
+                                    maestro: 'pp', 
                                     codQpermitido: '1550'},
                                     self.quimicosPorProcPos);
                             if (!d.existe) {
@@ -431,7 +434,7 @@
                         codQ: fila[0].cells[0].textContent,
                         cant1: parseFloat(fila[0].cells[2].textContent),
                         cant2: parseFloat(fila[0].cells[3].textContent),
-                        maestro: 'aux', 
+                        maestro: 'pp', 
                         codQpermitido: '1550',
                         pos: (rowIndex - 2)},
                         self.quimicosPorProcPos); 
@@ -440,7 +443,7 @@
                     
                     fila.remove();
                     
-                    if ($('#dataTableNewQAuxiliar tbody tr').length - 1 == 0) {
+                    if ($('#dataTableNewQProcPos tbody tr').length - 1 == 0) {
                         self.$btnSaveProcPos.attr('disabled', true);
                     }
 
@@ -462,7 +465,7 @@
                             codQ: fila[0].cells[0].textContent,
                             cant1: parseFloat(fila[0].cells[2].textContent),
                             cant2: parseFloat(fila[0].cells[3].textContent),
-                            maestro: 'aux',
+                            maestro: 'pp',
                             codQpermitido: '1550',
                             pos: (rowIndex - 2)},
                         self.quimicosPorProcPos);
@@ -474,7 +477,7 @@
                             codQ: fila[0].cells[0].textContent,
                             cant1: parseFloat(fila[0].cells[2].textContent),
                             cant2: parseFloat(fila[0].cells[3].textContent),
-                            maestro: 'aux',
+                            maestro: 'pp',
                             codQpermitido: '',
                             pos: posN},
                         self.eNuevosQuimicos);
@@ -514,7 +517,7 @@
                     }
 
                     if (b && campOblig) {                        
-                        consultas.consultarNombreMaestros(self.$nomProcPos.val() + " (" + self.$cbxfibraProcPos.val() + ")", 'nuevo', 0, 'ServletAuxiliares');
+                        consultas.consultarNombreMaestros(self.$nomProcPos.val() + " (" + self.$cbxfibraProcPos.val() + ")", 'nuevo', 0, 'ServletProcesosPost');
                     }
                 });
                 
@@ -536,10 +539,10 @@
                         }
 
                         if (b && campOblig) {
-                            consultas.consultarNombreMaestros(self.$eNomProcPos.val() + " (" + self.$eCbxfibraProcPos.val() + ")", 'editar', self.idProcPos, 'ServletAuxiliares');
+                            consultas.consultarNombreMaestros(self.$eNomProcPos.val() + " (" + self.$eCbxfibraProcPos.val() + ")", 'editar', self.idProcPos, 'ServletProcesosPost');
                         }
                     } else {
-                        consultas.consultarNombreMaestros('', 'editar', self.idProcPos, 'ServletAuxiliares');
+                        consultas.consultarNombreMaestros('', 'editar', self.idProcPos, 'ServletProcesosPost');
                     }
                 });
             },
@@ -549,8 +552,8 @@
 
                 if (response === 'true') {
                     self.mensajeObligatoriedad({
-                        titulo: 'Nombre de Auxiliar Existente.',
-                        cuerpoMensaje: 'Ya hay un nombre de auxiliar para la fibra seleccionada, por favor intente nuevamente.'
+                        titulo: 'Nombre de Proceso Posterior Existente.',
+                        cuerpoMensaje: 'Ya hay un nombre de proceso posterior para la fibra seleccionada, por favor intente nuevamente.'
                     });
                 
                 } else if (response === 'false') {
@@ -563,8 +566,7 @@
                         }
                     }
                     
-                    um.guardarRegistro({form: 'aux', tabla: self.$dataTableNewQProcPos, nombre: nombre, idFib: idFib}, 'ServletAuxiliares');
-                    
+                    um.guardarRegistro({form: '', tabla: self.$dataTableNewQProcPos, nombre: nombre, idFib: idFib}, 'ServletProcesosPost');
                 }
             },
             verProcPos: function() {
@@ -575,11 +577,11 @@
                     var fila = $(this).closest('tr');
                     self.idProcPos = parseInt(fila[0].cells[0].textContent);
                     var elementos = [self.$eNomProcPos, self.$eCodQuimProcPos, self.$eNomQuimProcPos, self.$eCantGrLtProcPos, self.$eCantPctjProcPos];
-                    consultas.verificarEstadoModificacion(fila[0].cells[0].textContent, 'frmAux');
+                    consultas.verificarEstadoModificacion(fila[0].cells[0].textContent, 'ServletProcesosPost');
                     var datos = {
-                        frm: 'aux',
+                        frm: 'pp',
                         idReg: parseInt(fila[0].cells[0].textContent),
-                        registros: self.oAuxiliares,
+                        registros: self.oProcPos,
                         quimicos: self.oQuimicos,
                         eNombre: self.$eNomProcPos,
                         eNombreFib: self.$eCbxfibraProcPos,
@@ -587,7 +589,7 @@
                         eModal: self.$modalEditProcPos
                     }
                     
-                    $("#tableEditAux tr:gt(1)").remove();
+                    $("#tableEditProcPos tr:gt(1)").remove();
                     u.limpiarCampos(elementos);
                     elementos.splice(0, 1);
                     u.camposObligatorios(elementos, '3');
@@ -655,8 +657,8 @@
                 
                 if (response === 'true') {
                     self.mensajeObligatoriedad({
-                        titulo: 'Nombre de Auxiliar Existente.',
-                        cuerpoMensaje: 'Ya hay un nombre de Auxiliar para la fibra seleccionada, por favor intente nuevamente.'
+                        titulo: 'Nombre de Procesos Posteriores Existente.',
+                        cuerpoMensaje: 'Ya hay un nombre de proceso posterior para la fibra seleccionada, por favor intente nuevamente.'
                     });
                 
                 } else if (response === 'false') {
@@ -674,10 +676,10 @@
                         }
                     }
                     
-                    for (var i = 0; i < self.oAuxiliares.length; i++) {
-                        if (self.idProcPos === self.oAuxiliares[i].idNomAuxiliar) {
-                            nombre = um.separarNombreDeFibra({nombre: self.oAuxiliares[i].nomAuxiliar, fibra: self.oAuxiliares[i].idFibra.nomFibra});
-                            idFib = self.oAuxiliares[i].idFibra.idFibra;
+                    for (var i = 0; i < self.oProcPos.length; i++) {
+                        if (self.idProcPos === self.oProcPos[i].idNomProcPost) {
+                            nombre = um.separarNombreDeFibra({nombre: self.oProcPos[i].nomProcPost, fibra: self.oProcPos[i].idFibra.nomFibra});
+                            idFib = self.oProcPos[i].idFibra.idFibra;
                             
                             if (nombre !== self.$eNomProcPos.val()) {
                                 nombreNue = self.$eNomProcPos.val();
@@ -690,7 +692,7 @@
                         }
                     }
                     
-                    um.SolicitarModificarRegistro({tabla: self.$tableEditProcPos, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idProcPos, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$modalEditProcPos.find('#eBtnCerrar'), 'ServletAuxiliares');
+                    um.SolicitarModificarRegistro({tabla: self.$tableEditProcPos, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idProcPos, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$modalEditProcPos.find('#eBtnCerrar'), 'ServletProcesosPost');
                 }
             },
             

@@ -7,9 +7,15 @@
             $modalMensaje: $("#myModal"),
             $tituloMensaje: $("#myModalLabel"),
             $cuerpoMensaje: $("#cuerpoMensaje"),
+            $recPass: $('#frmSignIn').find('a'),
+            $modalRecPass: $('#recPass'),
+            $txtRecPassIdUser: $('#idUser'),
+            $txtRecPassIdentUser: $('#identUser'),
+            $btnRecPassEnviar: $('#btnEnviar'),
             
             init: function (){
                 this.consultarUsuario();
+                this.recuperarContraseña();
             },
             
             consultarUsuario: function() {
@@ -42,6 +48,19 @@
                             }
                         }
                     });
+                });
+            },
+            
+            recuperarContraseña: function() {
+                var self = this;
+                
+                self.$recPass.on('click', function(e) {
+                    e.preventDefault();                   
+                    self.$modalRecPass.modal('show');
+                });
+                
+                self.$btnRecPassEnviar.on('click', function(e) {
+                    e.preventDefault();
                 });
             }
         };

@@ -35,31 +35,32 @@
                     </div><!-- col-sm-7 -->
 
                     <div class="col-md-5">
-                        <form method="post">
+                        <form method="post" id="frmSignIn">
                             <h4 class="nomargin">Ingresar</h4>
                             <p class="mt5 mb20">Entrar y acceder a su cuenta</p>
 
-                            <input type="text" class="form-control uname" placeholder="Usuario" id="UserSignIn" name="UserSignIn" />
-                            <input type="password" class="form-control pword" placeholder="Password" id="PassSignIn" name="PassSignIn" />
+                            <input type="text" class="form-control uname" placeholder="Usuario" id="UserSignIn" name="UserSignIn"/>
+                            <input type="password" class="form-control pword" placeholder="Password" id="PassSignIn" name="PassSignIn"/>
                             <a href="#"><small>Olvido su contraseña?</small></a>
                             <button class="btn btn-success btn-block" id="ingresar">Ingresar</button>
                         </form>
                     </div><!-- col-sm-5 -->
                 </div><!-- row -->
 
-                <div class="signup-footer">
-                    <!--<div class="pull-left">
+                <!--<div class="signup-footer">
+                    <div class="pull-left">
                         &copy; 2014. All Rights Reserved. Bracket Bootstrap 3 Admin Template
                     </div>
                     <div class="pull-right">
                         Created By: <a href="http://themepixels.com/" target="_blank">ThemePixels</a>
-                    </div>-->
-                </div>
+                    </div>
+                </div>-->
             </div><!-- signin -->
         </section>
         
         <!-- Modal -->
         <jsp:include page="src/views/modal.alert/modalMensajeAlert.jspf" />
+        <jsp:include page="src/views/recuperarpass/recuperarpass.jspf" />
         
         <script src="src/js/lib/jquery-1.10.2.min.js"></script>
         <script src="src/js/lib/jquery-migrate-1.2.1.min.js"></script>

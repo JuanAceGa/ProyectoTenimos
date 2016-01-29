@@ -19,7 +19,9 @@
                             campos[i].closest('.form-group').removeClass('has-success').addClass('has-error');
                         }
 
-                    } else if (estado === '2') {
+                    } 
+                    
+                    if (estado === '2') {
 
                         for (var i = 0; i < campos.length; i++) {
                             if ($(campos[i][0]).attr('disabled')) {
@@ -41,11 +43,14 @@
                                 cuerpoMensaje: 'Los campos resaltados con rojo son obligatorios, favor diligenciar el campo.'
                             });
                         }
-                    } else if (estado === '3') {
+                    } 
+                    
+                    if (estado === '3') {
                         for (var i = 0; i < campos.length; i++) {
                             campos[i].closest('.form-group').removeClass('has-error has-success');
                         }
                     }
+                    
                     return resp;
                 }
             },

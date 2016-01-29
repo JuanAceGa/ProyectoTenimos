@@ -10,11 +10,22 @@
             
             consultarFibras: function() {
                 
-                $.get('../../../ServletFibras', function(response) {
-                    frmPreparacion.cargarDatos(response, 'f');
-                    frmAuxiliar.cargarDatos(response, 'f');
-                    frmProcPos.cargarDatos(response, 'f');
+                $.ajax({
+                    url: '../../../ServletFibras',
+                    type: 'GET',
+                    dataType: 'text',
+                    data: {accion: 'buscar'},
+                    success: function(response) {
+                        frmPreparacion.cargarDatos(response, 'f');
+                        frmAuxiliar.cargarDatos(response, 'f');
+                        frmProcPos.cargarDatos(response, 'f');
+                        frmFibra.cargarDatos(response, 'f');
+                    },
+                    error: function(response, status, er) {
+                        console.log("error: " + response + " status: " + status + " er:" + er);
+                    }
                 });
+                
             },
             
             consultarQuimicosPrepAux: function() {
@@ -69,6 +80,10 @@
                                 frmProcPos.agregarProcPos(response);
                             }
                             
+                            if (servlet === 'ServletFibras') {
+                                frmFibra.agregarFibra(response);
+                            }
+                            
                         } else if (tipo === 'editar') {
                             
                             if (servlet === 'ServletPreparaciones') {
@@ -81,6 +96,10 @@
                             
                             if (servlet === 'ServletProcesosPost') {
                                 frmProcPos.solicitarModificarProcPos(response);
+                            }
+                            
+                            if (servlet === 'ServletFibras') {
+                                frmFibra.solicitarModificarFibra(response);
                             }
                         }
                     },
@@ -126,6 +145,10 @@
                                 frmProcPos.cargarDatos(response, 'npp');
                             }
                             
+                            if (servlet === 'ServletFibras') {
+                                frmFibra.cargarDatos(response, 'nf');
+                            }
+                            
                         } else {
                             $.gritter.add({
                                 title: "Registro No Guardado",
@@ -146,23 +169,14 @@
                             sticky: false,
                             time: ""
                         });
-                        
-                        //console.log("error: " + response + " status: " + status + " er:" + er);
                     }
                 });
             },
             
-            verificarEstadoModificacion: function(idMaestro, formulario){
-                var servlet = '';
-                <AQUI>
-                if (formulario === 'frmPrep') {
-                    servlet = '../../../ServletPreparaciones';
-                } else if (formulario === 'frmAux') {
-                    servlet = '../../../ServletAuxiliares';
-                }
+            verificarEstadoModificacion: function(idMaestro, servlet){
                 
                 $.ajax({
-                    url: servlet,
+                    url: '../../../' + servlet,
                     type: "GET",
                     dataType: 'json',
                     data: {
@@ -173,10 +187,20 @@
                     contentType: 'application/json',
                     mimeType: 'application/json',
                     success: function(response){
-                            if (formulario === 'frmPrep') {
+                            if (servlet === 'ServletPreparaciones') {
                                 frmPreparacion.cargarDatos(response, 'solic');
-                            } else if (formulario === 'frmAux') {
+                            }
+                            
+                            if (servlet === 'ServletAuxiliares') {
                                 frmAuxiliar.cargarDatos(response, 'solic');
+                            }
+                            
+                            if (servlet === 'ServletProcesosPost') {
+                                frmProcPos.cargarDatos(response, 'solic');
+                            }
+                            
+                            if (servlet === 'ServletFibras') {
+                                frmFibra.cargarDatos(response, 'solic');
                             }
                     },
                     error: function(response, status, er) {
@@ -237,8 +261,6 @@
                             sticky: false,
                             time: ""
                         });
-                        
-                        //console.log("error: " + response + " status: " + status + " er:" + er);
                     }
                 });
             }

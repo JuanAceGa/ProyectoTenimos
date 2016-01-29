@@ -16,6 +16,9 @@
             rowProcPos: $("#rowProcPos"),
             frmMaestroProcPos: $("#frmMaestroProcPos"),
             tblMaestroProcPos: $("#tblMaestroProcPos"),
+            rowFibra: $("#rowFibra"),
+            frmMaestroFibra: $("#frmMaestroFibra"),
+            tblMaestroFibra: $("#tblMaestroFibra"),
             $contenido: $("#contenido"),
             
             init: function() {
@@ -38,6 +41,7 @@
                 self.rowPreparacion.hide();
                 self.rowAuxiliares.hide();
                 self.rowProcPos.hide();
+                self.rowFibra.hide();
             },
             
             cargarSesion: function(){
@@ -72,9 +76,9 @@
                         case "Dashboard":
                             this.children[0].className = "active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-home'></i>Dashboard";
-                            self.ocultarMenu();
+                            //self.ocultarMenu();
                             self.ocultarFormularios();
-                            self.menuPrincipal();
+                            //self.menuPrincipal();
                             
                             this.children[1].className = "";
                             this.children[2].className = "nav-parent";
@@ -84,9 +88,9 @@
                         case "Email":
                             this.children[1].className = "active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-envelope-o'></i>Email";
-                            self.ocultarMenu();
+                            //self.ocultarMenu();
                             self.ocultarFormularios();
-                            self.menuPrincipal();
+                            //self.menuPrincipal();
                             
                             this.children[0].className = "";
                             this.children[2].className = "nav-parent";
@@ -96,9 +100,9 @@
                         case "Maestro Preparación":
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Preparación";
-                            self.ocultarMenu();
+                            //self.ocultarMenu();
                             self.ocultarFormularios();
-                            self.menuPrincipal();
+                            //self.menuPrincipal();
                             
                             self.rowPreparacion.show();
                             self.frmMaestroPrep.children(".minimize").click();
@@ -111,9 +115,9 @@
                         case "Maestro Auxiliares":
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Auxiliares";
-                            self.ocultarMenu();
+                            //self.ocultarMenu();
                             self.ocultarFormularios();
-                            self.menuPrincipal();
+                            //self.menuPrincipal();
                             
                             self.rowAuxiliares.show();
                             self.frmMaestroAux.children(".minimize").click();
@@ -126,9 +130,9 @@
                         case "Maestro Procesos Posteriores":
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Procesos Posteriores";
-                            self.ocultarMenu();
+                            //self.ocultarMenu();
                             self.ocultarFormularios();
-                            self.menuPrincipal();
+                            //self.menuPrincipal();
                             
                             self.rowProcPos.show();
                             self.frmMaestroProcPos.children(".minimize").click();
@@ -139,19 +143,19 @@
                             break;
                             
                         case "Maestro Fibras":
-                            /*this.children[2].className = "nav-parent active";
-                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / ";
-                            self.ocultarMenu();
+                            this.children[2].className = "nav-parent active";
+                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Fibras";
+                            //self.ocultarMenu();
                             self.ocultarFormularios();
-                            self.menuPrincipal();
+                            //self.menuPrincipal();
                             
-                            self.rowPreparacion.show();
-                            self.frmMaestroPrep.children(".minimize").click();
-                            self.tblMaestroPrep.children(".minimize").click();
+                            self.rowFibra.show();
+                            self.frmMaestroFibra.children(".minimize").click();
+                            self.tblMaestroFibra.children(".minimize").click();
                             
                             this.children[0].className = "";
                             this.children[1].className = "";
-                            break;*/
+                            break;
                     }
                 });
             },
@@ -164,10 +168,14 @@
                 nom1 = nom1.toLowerCase();
                 nom1 = nom1.substr(0,1).toUpperCase() + nom1.substr(1, len);
                 
-                len = nom2.length;
+                try {
+                    len = nom2.length;
                 
-                nom2 = nom2.toLowerCase();
-                nom2 = nom2.substr(0,1).toUpperCase() + nom2.substr(1, len);
+                    nom2 = nom2.toLowerCase();
+                    nom2 = nom2.substr(0,1).toUpperCase() + nom2.substr(1, len);
+                } catch (e) {
+                    nom2 = '';
+                }
                 
                 if (nom1 !== "" && nom2 !== "") {
                     return nom1 + " " + nom2;

@@ -207,11 +207,11 @@
                     <jsp:include page="../forms/laboratorio/frmpreparacion.jspf"></jsp:include>
                     <jsp:include page="../forms/laboratorio/frmauxiliares.jspf"></jsp:include>
                     <jsp:include page="../forms/laboratorio/frmprocesospost.jspf"></jsp:include>
+                    <jsp:include page="../forms/laboratorio/frmfibras.jspf"></jsp:include>
                 </div><!-- contentpanel -->
             </div><!-- mainpanel -->
         </section>
         
-        <!-- Modal -->
         <jsp:include page="../modal.alert/modalMensajeAlert.jspf"></jsp:include>
         
         <script src="../../js/lib/jquery-1.10.2.min.js"></script>
@@ -241,6 +241,7 @@
         <script src="../../js/frmPreparacion.js"></script>
         <script src="../../js/frmAuxiliares.js"></script>
         <script src="../../js/frmProcesosPost.js"></script>
+        <script src="../../js/frmFibras.js"></script>
         <script src="../../js/consultas.js"></script>
         <script src="../../js/dashboard.js"></script>
     </body>

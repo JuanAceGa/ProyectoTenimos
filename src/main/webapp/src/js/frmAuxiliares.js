@@ -70,7 +70,9 @@
                 var elementos = [];
                 
                 if (opc === 'f') {
-                    self.oFibras = data;
+                    if ($.type(data) !== 'array') {
+                        self.oFibras = JSON.parse(data);
+                    }
                     elementos.push(self.$cbxfibraAux);
                     elementos.push(self.$eCbxfibraAux);
                     um.cargarComboBox(elementos, self.oFibras);
@@ -575,7 +577,7 @@
                     var fila = $(this).closest('tr');
                     self.idAuxiliar = parseInt(fila[0].cells[0].textContent);
                     var elementos = [self.$eNomAux, self.$eCodQuimAux, self.$eNomQuimAux, self.$eCantGrLtAux, self.$eCantPctjAux];
-                    consultas.verificarEstadoModificacion(fila[0].cells[0].textContent, 'frmAux');
+                    consultas.verificarEstadoModificacion(fila[0].cells[0].textContent, 'ServletAuxiliares');
                     var datos = {
                         frm: 'aux',
                         idReg: parseInt(fila[0].cells[0].textContent),

@@ -2,9 +2,9 @@
     (function() {
         return um = {
             cargarComboBox: function(oCbx, oDatos) {
-                var option = document.createElement('option');
-
+                
                 for (var i = 0; i < oCbx.length; i++) {
+                    var option = document.createElement('option');
                     oCbx[i].empty();
                     
                     $(option).text('Seleccione una...');
@@ -17,7 +17,7 @@
                             $(option).text(fibra.nomFibra);
                             oCbx[i].append(option);
                         }
-                    })
+                    });
                     
                 }
             },
@@ -43,8 +43,18 @@
                 
                 if (t === '1') {
                     $('#dataTablePreparacion tr:gt(0)').remove();
-                } else if (t === '2') {
+                } 
+                
+                if (t === '2') {
                     $('#dataTableAuxiliar tr:gt(0)').remove();
+                }
+                
+                if (t === '3') {
+                    $('#dataTableProcPos tr:gt(0)').remove();
+                }
+                
+                if (t === '4') {
+                    $('#dataTableFibra tr:gt(0)').remove();
                 }
             },
             
@@ -74,7 +84,9 @@
                         sPaginationType: 'full_numbers',
                         bAutoWidth: false
                     });
-                } else if (tipo === 'aux') {
+                }
+                
+                if (tipo === 'aux') {
                     
                     $(tabla).dataTable({
                         data: oDatos,
@@ -88,6 +100,36 @@
                         ],
                         sPaginationType: 'full_numbers',
                         bAutoWidth: false
+                    });
+                }
+                
+                if (tipo === 'pp') {
+                    $(tabla).dataTable({
+                        data: oDatos,
+                        columns: [
+                            {data: 'idNomProcPost', className: 'center'},
+                            {data: 'nomProcPost', className: 'center'},
+                            {data: 'idFibra.codFibra', className: 'center'},
+                            {data: 'costoProcPost', className: 'center'},
+                            {data: 'fechaUso', className: 'center'},
+                            {data: 'btnView', className: 'center'}
+                        ],
+                        sPaginationType: 'full_numbers',
+                        dAutoWidth: false
+                    });
+                }
+                
+                if (tipo === 'f') {
+                    $(tabla).dataTable({
+                        data: oDatos,
+                        columns: [
+                            {data: 'idFibra', className: 'center'},
+                            {data: 'nomFibra', className: 'center'},
+                            {data: 'codFibra', className: 'center'},
+                            {data: 'btnView', className: 'center'}
+                        ],
+                        sPaginationType: 'full_numbers',
+                        dAutoWidth: false
                     });
                 }
             },
@@ -241,14 +283,16 @@
                 var existe = false;
                 
                 if (d.tipo === "+") {
-                    if (d.maestro === 'prep') {
+                    if (d.maestro !== 'aux') {
                         for (var i = 0; i < oQuimicos.length; i++) {
                             if (oQuimicos[i].codQ === d.codQ) {
                                 existe = true;
                                 break;
                             }
                         }
-                    } else if (d.maestro === 'aux') {
+                    }
+                    
+                    if (d.maestro === 'aux') {
                         for (var i = 0; i < oQuimicos.length; i++) {
                             if ((oQuimicos[i].codQ === d.codQ) && (oQuimicos[i].codQ !== d.codQpermitido)) {
                                 existe = true;
@@ -256,43 +300,26 @@
                             }
                         }
                     }
-                    
-                } else if (d.tipo === "-") {
+                }
+                
+                if (d.tipo === "-") {                    
                     var oQuim = new Array();
-                    if (d.maestro === 'prep') {
+                    
+                    //if (d.maestro === 'prep') {
                         for (var i = 0; i < oQuimicos.length; i++) {
                             if (i !== d.pos) {
                                oQuim.push(oQuimicos[i]);
                             }
                         }
-                        
-                        /*for (var i = 0; i < oQuimicos.length; i++) {
-                            if (oQuimicos[i].codQ !== d.codQ) {
-                                oQuim.push(oQuimicos[i]);
-                            }
-                        }*/
-                    } else if (d.maestro === 'aux') {
+                    //} 
+                    
+                    /*if (d.maestro === 'aux') {
                         for (var i = 0; i < oQuimicos.length; i++) {
                             if (i !== d.pos) {
                                oQuim.push(oQuimicos[i]);
                             } 
                         }
-                        /*var del = 0;
-                         for (var i = 0; i < oQuimicos.length; i++) {
-                            if (d.codQpermitido === d.codQ && oQuimicos[i].codQ === d.codQ && oQuimicos[i].cant1 === d.cant1 && del === 0) {
-                                del = 1;
-                                
-                            } else if (d.codQpermitido === d.codQ && oQuimicos[i].codQ === d.codQ && oQuimicos[i].cant1 === d.cant1 && del === 1) {
-                                oQuim.push(oQuimicos[i]);
-                            
-                            } else if (d.codQpermitido === d.codQ && oQuimicos[i].codQ === d.codQ && oQuimicos[i].cant1 !== d.cant1) {
-                                oQuim.push(oQuimicos[i]);
-                                
-                            } else if (oQuimicos[i].codQ !== d.codQ) {
-                                oQuim.push(oQuimicos[i]);
-                            }
-                        }*/
-                    }
+                    }*/
                 }
                 return {existe: existe, oQuim: oQuim};
             },
@@ -301,24 +328,20 @@
                 var self = this;
                 var datos = new Object();
                 
-                //if (d.form === 'prep') {
-                    datos.nombre = d.nombre;
-                    datos.idFib = d.idFib;
-                    datos.codQuimico = null;
-                    datos.cantGr = null;
-                    datos.cantPtj = null;
-                    
-                    datos = self.obtenerDatosTabla(d.tabla, datos, 'nuevo');
-                    
-                    consultas.guardarNuevoMaestro(datos, servlet);
-                //} else if (d.form === 'aux') {
-                    
-                //}
+                datos.nombre = d.nombre;
+                datos.idFib = d.idFib;
+                datos.codQuimico = null;
+                datos.cantGr = null;
+                datos.cantPtj = null;
+
+                datos = self.obtenerDatosTabla(d.tabla, datos, 'nuevo');
+
+                consultas.guardarNuevoMaestro(datos, servlet);
             },
             
             obtenerDatosTabla: function(tabla, oArr, tipo) {
                 
-                if (tipo === 'nuevo') {
+                if (tipo === 'nuevo' && tabla !== '') {
                     $(tabla).find('tbody tr').each(function(index) {
                         if (index > 0) {
                             $(this).children('td').each(function(index2) {
@@ -355,7 +378,7 @@
                     oArr.cantGr = oArr.cantGr.split(";");
                     oArr.cantPtj = oArr.cantPtj.split(";");
                 
-                } else if (tipo === 'editar') {
+                } else if (tipo === 'editar' && tabla !== '') {
                     $(tabla).find('tbody tr').each(function(index) {
                         if (index > 0) {
                             var f = {codQuimicoNue: '', cantGrNue: '', cantPtjNue: ''};
@@ -441,7 +464,9 @@
                     }
                     oDatos.eModal.modal('show', 'slow');
                     
-                } else if (oDatos.frm === 'aux'){
+                } 
+                
+                if (oDatos.frm === 'aux'){
                     
                     for (var i = 0; i < oDatos.registros.length; i++) {
                         if (oDatos.registros[i].idNomAuxiliar === oDatos.idReg) {
@@ -477,6 +502,56 @@
                     }
                     oDatos.eModal.modal('show', 'slow');
                 }
+                
+                if (oDatos.frm === 'pp'){
+                    
+                    for (var i = 0; i < oDatos.registros.length; i++) {
+                        if (oDatos.registros[i].idNomProcPost === oDatos.idReg) {
+                            
+                            oDatos.eNombre.val(self.separarNombreDeFibra({
+                                nombre: oDatos.registros[i].nomProcPost,  
+                                fibra: oDatos.registros[i].idFibra.nomFibra
+                            }));
+                            
+                            oDatos.eNombreFib.val(oDatos.registros[i].idFibra.nomFibra);
+
+                            for (var j = 0; j < oDatos.registros[i].procesosPosterioresCollection.length; j++) {
+                                for (var k = 0; k < oDatos.quimicos.length; k++) {
+
+                                    if (oDatos.registros[i].procesosPosterioresCollection[j].codQuimico === oDatos.quimicos[k].codProduct) {                                        
+                                        resp.push({
+                                            codQ: oDatos.registros[i].procesosPosterioresCollection[j].codQuimico,
+                                            cant1: parseFloat(oDatos.registros[i].procesosPosterioresCollection[j].cantGr),
+                                            cant2: parseFloat(oDatos.registros[i].procesosPosterioresCollection[j].cantPtj)
+                                        });
+                                        var newTr = trTemplate
+                                            .replace(':codQuim:', oDatos.registros[i].procesosPosterioresCollection[j].codQuimico)
+                                            .replace(':cantGrLt:', oDatos.registros[i].procesosPosterioresCollection[j].cantGr)
+                                            .replace(':cantPctj:', oDatos.registros[i].procesosPosterioresCollection[j].cantPtj)
+                                            .replace(':nomQuim:', oDatos.quimicos[k].nomProducto);
+                                        break;
+                                    }
+                                }
+                                oDatos.eTabla.append($(newTr));
+                            }
+                            break;
+                        }
+                    }
+                    oDatos.eModal.modal('show', 'slow');
+                }
+                
+                if (oDatos.frm === 'f'){
+                    
+                    for (var i = 0; i < oDatos.registros.length; i++) {
+                        if (oDatos.registros[i].idFibra === oDatos.idReg) {
+                            
+                            oDatos.eNombre.val(oDatos.registros[i].codFibra);
+                            oDatos.eNombreFib.val(oDatos.registros[i].nomFibra);
+                            break;
+                        }
+                    }
+                    oDatos.eModal.modal('show', 'slow');
+                }   
                 
                 return resp;
             },
