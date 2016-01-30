@@ -79,6 +79,12 @@
                                 <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Fibras</a></li>
                             </ul>
                         </li>
+                        <li class="nav-parent" id="navProd"><a href="#"><i class="fa fa-gears"></i><span>Producción</span></a>
+                            <ul class="children" >
+                                <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Procesos</a></li>
+                                <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Curvas</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div><!-- leftpanelinner -->
             </div><!-- leftpanel -->
@@ -208,6 +214,7 @@
                     <jsp:include page="../forms/laboratorio/frmauxiliares.jspf"></jsp:include>
                     <jsp:include page="../forms/laboratorio/frmprocesospost.jspf"></jsp:include>
                     <jsp:include page="../forms/laboratorio/frmfibras.jspf"></jsp:include>
+                    <jsp:include page="../forms/produccion/frmprocesos.jspf"></jsp:include>
                 </div><!-- contentpanel -->
             </div><!-- mainpanel -->
         </section>
