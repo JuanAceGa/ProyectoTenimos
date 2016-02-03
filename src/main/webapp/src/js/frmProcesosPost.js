@@ -83,12 +83,12 @@
                     self.oQuimicos = data;
                     elementos.push(self.$dlCodQuimProcPos);
                     elementos.push(self.$dlNomQuimProcPos);
-                    um.cargarDataList(elementos, self.oQuimicos);
+                    um.cargarDataList(elementos, self.oQuimicos, 'q');
                     
                     elementos = [];
                     elementos.push(self.$eDlCodQuimProcPos);
                     elementos.push(self.$eDlNomQuimProcPos);
-                    um.cargarDataList(elementos, self.oQuimicos);
+                    um.cargarDataList(elementos, self.oQuimicos, 'q');
                 }
 
                 if (opc === 'pp') {

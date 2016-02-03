@@ -33,7 +33,7 @@
                 $.get('../../../ServletProdFormulacion', {accion: 'quimicos'}, function(response) {
                     frmPreparacion.cargarDatos(response, 'q');
                     frmAuxiliar.cargarDatos(response, 'q');
-                    frmProcPos.cargarDatos(response, 'q')
+                    frmProcPos.cargarDatos(response, 'q');
                 });
             },
             
@@ -49,6 +49,15 @@
                 
                 $.get('../../../ServletProcesosPost', {accion: 'buscar'}, function(response) {
                     frmProcPos.cargarDatos(response, 'pp');
+                });
+                
+                $.get('../../../ServletCurvas', {accion: 'buscar'}, function(response) {
+                    frmProceso.cargarDatos(response, 'c');
+                    frmCurva.cargarDatos(response, 'c');
+                });
+                
+                $.get('../../../ServletProcesos', {accion: 'buscar'}, function(response) {
+                    frmProceso.cargarDatos(response, 'pr');
                 });
             },
             
@@ -82,6 +91,14 @@
                             
                             if (servlet === 'ServletFibras') {
                                 frmFibra.agregarFibra(response);
+                            }
+                            
+                            if (servlet === 'ServletProcesos') {
+                                frmProceso.agregarProceso(response);
+                            }
+                            
+                            if (servlet === 'ServletCurvas') {
+                                frmCurva.agregarCurva(response);
                             }
                             
                         } else if (tipo === 'editar') {
@@ -147,6 +164,14 @@
                             
                             if (servlet === 'ServletFibras') {
                                 frmFibra.cargarDatos(response, 'nf');
+                            }
+                            
+                            if (servlet === 'ServletProcesos') {
+                                frmProceso.cargarDatos(response, 'npr');
+                            }
+                            
+                            if (servlet === 'ServletCurvas') {
+                                frmCurva.cargarDatos(response, 'nc');
                             }
                             
                         } else {

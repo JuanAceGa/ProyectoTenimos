@@ -22,20 +22,33 @@
                 }
             },
             
-            cargarDataList: function(oElement, oDatos) {
-                var optionCodQ;
-                var optionNomQ;
+            cargarDataList: function(oElement, oDatos, tipo) {
+                var option1;
+                var option2;
 
-                oDatos.forEach(function(quimico) {
-                    optionCodQ = document.createElement('option');
-                    optionNomQ = document.createElement('option');
+                if (tipo === 'q') {
+                    oDatos.forEach(function(quimico) {
+                        option1 = document.createElement('option');
+                        option2 = document.createElement('option');
 
-                    optionCodQ.value = quimico.codProduct;
-                    optionNomQ.value = quimico.nomProducto;
+                        option1.value = quimico.codProduct;
+                        option2.value = quimico.nomProducto;
 
-                    oElement[0].append(optionCodQ);
-                    oElement[1].append(optionNomQ);
-                });
+                        oElement[0].append(option1);
+                        oElement[1].append(option2);
+                    });
+                } else if (tipo === 'c') {
+                    oDatos.forEach(function(curva) {
+                        option1 = document.createElement('option');
+                        option2 = document.createElement('option');
+
+                        option1.value = curva.idCurva;
+                        option2.value = curva.nomCurva;
+
+                        oElement[0].append(option1);
+                        oElement[1].append(option2);
+                    });
+                }
             },
             
             destruirDataTable: function(tabla, t) {
@@ -55,6 +68,14 @@
                 
                 if (t === '4') {
                     $('#dataTableFibra tr:gt(0)').remove();
+                }
+                
+                if (t === '5') {
+                    $('#dataTableProceso tr:gt(0)').remove();
+                }
+                
+                if (t === '6') {
+                    $('#dataTableCurva tr:gt(0)').remove();
                 }
             },
             
@@ -132,6 +153,37 @@
                         dAutoWidth: false
                     });
                 }
+                
+                if (tipo === 'proc') {
+                    $(tabla).dataTable({
+                        data: oDatos,
+                        columns: [
+                            {data: 'idProceso', className: 'center'},
+                            {data: 'nomProceso', className: 'left'},
+                            {data: 'idCurvas', className: 'center'},
+                            {data: 'tiempoEst', className: 'center'},
+                            {data: 'btnView', className: 'center'}
+                        ],
+                        sPaginationType: 'full_numbers',
+                        dAutoWidth: false
+                    });
+                }
+                
+                if (tipo === 'c') {
+                    $(tabla).dataTable({
+                        data: oDatos,
+                        columns: [
+                            {data: 'idCurva', className: 'center'},
+                            {data: 'nomCurva', className: 'left'},
+                            {data: 'tiempoCurva', className: 'center'},
+                            {data: 'llenadoCurva', className: 'center'},
+                            {data: 'rinseCurva', className: 'center'},
+                            {data: 'btnView', className: 'center'}
+                        ],
+                        sPaginationType: 'full_numbers',
+                        dAutoWidth: false
+                    });
+                }
             },
             
             cargarCoincidenciaProductoQuimico: function(tipo, elemento, oDatos) {
@@ -162,7 +214,6 @@
             },
             
             buscarCoincidenciaProductosQuimicos: function(tipo, quimico, oDatos) {
-                var self = this;
                 var dato = null;
 
                 if (tipo === 'cod') {
@@ -174,6 +225,57 @@
                 } else if (tipo === 'nom') {
                     oDatos.forEach(function(data) {
                         if (data.nomProducto === quimico) {
+                            dato = data;
+                        }
+                    });
+                }
+                return dato;
+            },
+            
+            cargarCoincidenciaCurvas: function(tipo, elementos, oDatos) {
+                var self = this;
+                var data = [];
+                var cellTiempo = elementos[2][0].cells[2];
+                var cellLlenado = elementos[2][0].cells[3];
+                var cellRinse = elementos[2][0].cells[4];
+                
+                cellTiempo.textContent = "";
+                cellLlenado.textContent = "";
+                cellRinse.textContent = "";
+                
+                if (elementos[0].val() !== "" && elementos[0].val().length >= 1) {
+                    elementos[1].val("");
+                    
+                    data = self.buscarCoincidenciaCurvas(tipo, elementos[0].val(), oDatos);
+                    if (data != null) {
+                        if (tipo === 'cod') {
+                            elementos[1].val(data.nomCurva);
+                            cellTiempo.textContent = data.tiempoCurva;
+                            cellLlenado.textContent = data.llenadoCurva;
+                            cellRinse.textContent = data.rinseCurva;
+                            
+                        } else if (tipo === 'nom') {
+                            elementos[1].val(data.idCurva);
+                            cellTiempo.textContent = data.tiempoCurva;
+                            cellLlenado.textContent = data.llenadoCurva;
+                            cellRinse.textContent = data.rinseCurva;
+                        }
+                    }
+                }
+            },
+            
+            buscarCoincidenciaCurvas: function(tipo, curva, oDatos) {
+                var dato = null;
+
+                if (tipo === 'cod') {
+                    oDatos.forEach(function(data) {
+                        if (data.idCurva === parseInt(curva)) {
+                            dato = data;
+                        }
+                    });
+                } else if (tipo === 'nom') {
+                    oDatos.forEach(function(data) {
+                        if (data.nomCurva === curva) {
                             dato = data;
                         }
                     });
@@ -328,78 +430,136 @@
                 var self = this;
                 var datos = new Object();
                 
-                datos.nombre = d.nombre;
-                datos.idFib = d.idFib;
-                datos.codQuimico = null;
-                datos.cantGr = null;
-                datos.cantPtj = null;
+                if (d.form === ''){
+                    datos.nombre = d.nombre;
+                    datos.idFib = d.idFib;
+                    datos.codQuimico = null;
+                    datos.cantGr = null;
+                    datos.cantPtj = null;
 
-                datos = self.obtenerDatosTabla(d.tabla, datos, 'nuevo');
+                    datos = self.obtenerDatosTabla(d.tabla, datos, {frm: d.form, tipo: 'nuevo'});
+                    
+                } else if (d.form === 'proceso') {
+                    datos.nombre = d.nombre;
+                    datos.idCurvas = null;
+                    
+                    datos = self.obtenerDatosTabla(d.tabla, datos, {frm: d.form, tipo: 'nuevo'});
+                
+                } else if (d.form === 'curva') {
+                    datos.nombre = d.nombre;
+                    datos.tiempo = d.tiempo;
+                    datos.llenado = d.llenado;
+                    datos.rinse = d.rinse;
+                }
 
                 consultas.guardarNuevoMaestro(datos, servlet);
             },
             
-            obtenerDatosTabla: function(tabla, oArr, tipo) {
+            obtenerDatosTabla: function(tabla, oArr, t) {
                 
-                if (tipo === 'nuevo' && tabla !== '') {
-                    $(tabla).find('tbody tr').each(function(index) {
-                        if (index > 0) {
-                            $(this).children('td').each(function(index2) {
-                                switch (index2) {
-                                    case 0: //Código Quimico
-                                        if (oArr.codQuimico === null) {
-                                            oArr.codQuimico = $(this).text();
-                                        } else {
-                                            oArr.codQuimico += ";" + $(this).text();
-                                        }
-                                        break;
-                                    case 1: //Nombre Quimico                                            
-                                        break;
-                                    case 2: //Cantidad Gr
-                                        if (oArr.cantGr === null) {
-                                            oArr.cantGr = $(this).text();
-                                        } else {
-                                            oArr.cantGr += ";" + $(this).text();
-                                        }
-                                        break;
-                                    case 3: //Cantidad Porcentaje
-                                        if (oArr.cantPtj === null) {
-                                            oArr.cantPtj = $(this).text();
-                                        } else {
-                                            oArr.cantPtj += ";" + $(this).text();
-                                        }
-                                        break;
-                                }
-                            });
-                        }
-                    });
+                if (t.frm === '') {
+                    if (t.tipo === 'nuevo' && tabla !== '') {
+                        $(tabla).find('tbody tr').each(function(index) {
+                            if (index > 0) {
+                                $(this).children('td').each(function(index2) {
+                                    switch (index2) {
+                                        case 0: //Código Quimico
+                                            if (oArr.codQuimico === null) {
+                                                oArr.codQuimico = $(this).text();
+                                            } else {
+                                                oArr.codQuimico += ";" + $(this).text();
+                                            }
+                                            break;
+                                        case 2: //Cantidad Gr
+                                            if (oArr.cantGr === null) {
+                                                oArr.cantGr = $(this).text();
+                                            } else {
+                                                oArr.cantGr += ";" + $(this).text();
+                                            }
+                                            break;
+                                        case 3: //Cantidad Porcentaje
+                                            if (oArr.cantPtj === null) {
+                                                oArr.cantPtj = $(this).text();
+                                            } else {
+                                                oArr.cantPtj += ";" + $(this).text();
+                                            }
+                                            break;
+                                    }
+                                });
+                            }
+                        });
 
-                    oArr.codQuimico = oArr.codQuimico.split(";");
-                    oArr.cantGr = oArr.cantGr.split(";");
-                    oArr.cantPtj = oArr.cantPtj.split(";");
-                
-                } else if (tipo === 'editar' && tabla !== '') {
-                    $(tabla).find('tbody tr').each(function(index) {
-                        if (index > 0) {
-                            var f = {codQuimicoNue: '', cantGrNue: '', cantPtjNue: ''};
-                            $(this).children('td').each(function(index2) {
-                                switch (index2) {
-                                    case 0: //Código Quimico
-                                        f.codQuimicoNue = $(this).text();
-                                        break;
-                                    case 1: //Nombre Quimico                                            
-                                        break;
-                                    case 2: //Cantidad Gr
-                                        f.cantGrNue = $(this).text();
-                                        break;
-                                    case 3: //Cantidad Porcentaje
-                                        f.cantPtjNue = $(this).text();
-                                        break;
-                                }
-                            });
-                            oArr.preparacionCollectionNue.push(f);
-                        }
-                    });
+                        oArr.codQuimico = oArr.codQuimico.split(";");
+                        oArr.cantGr = oArr.cantGr.split(";");
+                        oArr.cantPtj = oArr.cantPtj.split(";");
+                    
+                    } else if (t.tipo === 'editar' && tabla !== '') {
+                        $(tabla).find('tbody tr').each(function(index) {
+                            if (index > 0) {
+                                var f = {codQuimicoNue: '', cantGrNue: '', cantPtjNue: ''};
+                                $(this).children('td').each(function(index2) {
+                                    switch (index2) {
+                                        case 0: //Código Quimico
+                                            f.codQuimicoNue = $(this).text();
+                                            break;
+                                        case 2: //Cantidad Gr
+                                            f.cantGrNue = $(this).text();
+                                            break;
+                                        case 3: //Cantidad Porcentaje
+                                            f.cantPtjNue = $(this).text();
+                                            break;
+                                    }
+                                });
+                                oArr.preparacionCollectionNue.push(f);
+                            }
+                        });
+                    }
+                        
+                } else if (t.frm === 'proceso') {
+                    
+                    if (t.tipo === 'nuevo' && tabla !== '') {
+                        $(tabla).find('tbody tr').each(function(index) {
+                            if (index > 0) {
+                                $(this).children('td').each(function(index2) {
+                                    switch (index2) {
+                                        case 0: //Id Curva
+                                            if (oArr.idCurvas === null) {
+                                                oArr.idCurvas = $(this).text();
+                                            } else {
+                                                oArr.idCurvas += "-" + $(this).text();
+                                            }
+                                            break;
+                                    }
+                                });
+                            }
+                        });
+                        
+                    } else if (t.tipo === 'editar' && tabla !== '') {
+                        /*$(tabla).find('tbody tr').each(function(index) {
+                            if (index > 0) {
+                                var f = {codQuimicoNue: '', cantGrNue: '', cantPtjNue: ''};
+                                $(this).children('td').each(function(index2) {
+                                    switch (index2) {
+                                        case 0: //Código Quimico
+                                            f.codQuimicoNue = $(this).text();
+                                            break;
+                                        case 1: //Nombre Quimico                                            
+                                            break;
+                                        case 2: //Cantidad Gr
+                                            f.cantGrNue = $(this).text();
+                                            break;
+                                        case 3: //Cantidad Porcentaje
+                                            f.cantPtjNue = $(this).text();
+                                            break;
+                                    }
+                                });
+                                oArr.preparacionCollectionNue.push(f);
+                            }
+                        });*/
+                    }
+                    
+                } else if (t.frm === 'curva') {
+                    
                 }
                 return oArr;
             },

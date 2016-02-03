@@ -14,11 +14,9 @@
                     vacios = campos.length;
 
                     if (estado === '1') {
-
                         for (var i = 0; i < campos.length; i++) {
                             campos[i].closest('.form-group').removeClass('has-success').addClass('has-error');
                         }
-
                     } 
                     
                     if (estado === '2') {

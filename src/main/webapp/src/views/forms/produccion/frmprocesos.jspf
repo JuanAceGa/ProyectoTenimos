@@ -13,8 +13,13 @@
                     <div class="row">
                         <div class="form-group col-md-12">
                             <label class="col-md-2 control-label"> Nombre Proceso <span class="asterisk">*</span></label>
-                            <div class="col-md-9">
+                            <div class="col-md-5">
                                 <input type="text" name="nomProceso" id="nomProceso" class="form-control" placeholder="Nombre del proceso" required />
+                            </div>
+                            
+                            <label class="col-md-2 control-label"> Tiempo (Minutos)</label>
+                            <div class="col-md-2">
+                                <input type="text" name="tiempoProceso" id="tiempoProceso" class="form-control" placeholder="Tiempo" disabled="true"/>
                             </div>
                         </div>
                     </div>
@@ -22,11 +27,14 @@
                     <div class="row">
                         <div class="col-md-10 col-md-offset-1">
                             <div class="table-responsive">
-                                <table class="table mb30" id="dataTableNewCurva">
+                                <table class="table mb40" id="dataTableNewCurva">
                                     <thead>
                                         <tr>
-                                            <th class="col-md-1">Código Curva <span class="asterisk">*</span></th>
+                                            <th class="col-md-2">Código Curva <span class="asterisk">*</span></th>
                                             <th class="col-md-5" style="text-align: center">Nombre de la Curva <span class="asterisk">*</span></th>
+                                            <th class="col-md-1" style="text-align: center">Tiempo (min)</th>
+                                            <th class="col-md-1" style="text-align: center">Llenado(s)</th>
+                                            <th class="col-md-1" style="text-align: center">Rinse(s) x 5'</th>
                                             <th class="col-md-1"></th>
                                         </tr>
                                     </thead>
@@ -48,6 +56,9 @@
                                                     </div>
                                                 </div>
                                             </td>
+                                            <td style="text-align: center"></td>
+                                            <td style="text-align: center"></td>
+                                            <td style="text-align: center"></td>
                                             <td class="table-action">
                                                 <div class="form-group col-md-12">
                                                     <button id="btnAddLineaCurva" title="Agregar Curva" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button"><i class="fa fa-plus-square"></i></button>
@@ -64,8 +75,8 @@
                 <div class="panel-footer">
                     <div class="row">
                         <div class="col-sm-9 col-sm-offset-5">
-                            <button class="btn btn-success" type="button" id="btnSaveCurva">Guardar</button>
-                            <button type="reset" class="btn btn-default" id="btnCleanCurva">Limpiar</button>
+                            <button class="btn btn-success" type="button" id="btnSaveProceso">Guardar</button>
+                            <button type="reset" class="btn btn-default" id="btnCleanProceso">Limpiar</button>
                         </div>
                     </div>
                 </div>
@@ -79,7 +90,7 @@
                 <div class="panel-btns" id="tblMaestroProceso">
                     <a href="#" class="minimize">&minus;</a>
                 </div>
-                <h4 class="panel-title">Listado de Maestros de Prcesos</h4>
+                <h4 class="panel-title">Listado de Maestros de Procesos</h4>
                 <p>Si desea consultar o editar un maestro específico, despliegue este panel.</p>
             </div>
             <div class="panel-body">
@@ -89,8 +100,8 @@
                             <tr>
                                 <th class="col-md-1" style="text-align: center">Id. Proc.</th>
                                 <th class="col-md-4" style="text-align: center">Nombre del Proceso</th>
-                                <th class="col-md-2" style="text-align: center">Curvas</th>
-                                <th class="col-md-2" style="text-align: center">Tiempo Estimado</th>
+                                <th class="col-md-2" style="text-align: center">Curva(s)</th>
+                                <th class="col-md-2" style="text-align: center">Tiempo Estimado (Min)</th>
                                 <th class="col-md-1" style="text-align: center">Ver</th>
                             </tr>
                         </thead>

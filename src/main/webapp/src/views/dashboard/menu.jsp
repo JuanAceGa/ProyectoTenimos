@@ -215,6 +215,7 @@
                     <jsp:include page="../forms/laboratorio/frmprocesospost.jspf"></jsp:include>
                     <jsp:include page="../forms/laboratorio/frmfibras.jspf"></jsp:include>
                     <jsp:include page="../forms/produccion/frmprocesos.jspf"></jsp:include>
+                    <jsp:include page="../forms/produccion/frmcurvas.jspf"></jsp:include>
                 </div><!-- contentpanel -->
             </div><!-- mainpanel -->
         </section>
@@ -249,6 +250,8 @@
         <script src="../../js/frmAuxiliares.js"></script>
         <script src="../../js/frmProcesosPost.js"></script>
         <script src="../../js/frmFibras.js"></script>
+        <script src="../../js/frmProcesos.js"></script>
+        <script src="../../js/frmCurvas.js"></script>
         <script src="../../js/consultas.js"></script>
         <script src="../../js/dashboard.js"></script>
     </body>

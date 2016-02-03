@@ -82,12 +82,12 @@
                     self.oQuimicos = data;
                     elementos.push(self.$dlCodQuimAux);
                     elementos.push(self.$dlNomQuimAux);
-                    um.cargarDataList(elementos, self.oQuimicos);
+                    um.cargarDataList(elementos, self.oQuimicos, 'q');
                     
                     elementos = [];
                     elementos.push(self.$eDlCodQuimAux);
                     elementos.push(self.$eDlNomQuimAux);
-                    um.cargarDataList(elementos, self.oQuimicos);
+                    um.cargarDataList(elementos, self.oQuimicos, 'q');
                 }
 
                 if (opc === 'au') {
@@ -565,7 +565,7 @@
                         }
                     }
                     
-                    um.guardarRegistro({form: 'aux', tabla: self.$dataTableNewQAuxiliar, nombre: nombre, idFib: idFib}, 'ServletAuxiliares');
+                    um.guardarRegistro({form: '', tabla: self.$dataTableNewQAuxiliar, nombre: nombre, idFib: idFib}, 'ServletAuxiliares');
                     
                 }
             },

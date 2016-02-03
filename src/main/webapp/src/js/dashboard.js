@@ -19,6 +19,12 @@
             rowFibra: $("#rowFibra"),
             frmMaestroFibra: $("#frmMaestroFibra"),
             tblMaestroFibra: $("#tblMaestroFibra"),
+            rowProceso: $("#rowProceso"),
+            frmMaestroProceso: $("#frmMaestroProceso"),
+            tblMaestroProceso: $("#tblMaestroProceso"),
+            rowCurva: $("#rowCurva"),
+            frmMaestroCurva: $("#frmMaestroCurva"),
+            tblMaestroCurva: $("#tblMaestroCurva"),
             $contenido: $("#contenido"),
             
             init: function() {
@@ -42,6 +48,8 @@
                 self.rowAuxiliares.hide();
                 self.rowProcPos.hide();
                 self.rowFibra.hide();
+                self.rowProceso.hide();
+                self.rowCurva.hide();
             },
             
             cargarSesion: function(){
@@ -76,33 +84,29 @@
                         case "Dashboard":
                             this.children[0].className = "active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-home'></i>Dashboard";
-                            //self.ocultarMenu();
                             self.ocultarFormularios();
-                            //self.menuPrincipal();
                             
                             this.children[1].className = "";
                             this.children[2].className = "nav-parent";
+                            this.children[3].className = "nav-parent";
                             
                             break;
                             
                         case "Email":
                             this.children[1].className = "active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-envelope-o'></i>Email";
-                            //self.ocultarMenu();
                             self.ocultarFormularios();
-                            //self.menuPrincipal();
                             
                             this.children[0].className = "";
                             this.children[2].className = "nav-parent";
+                            this.children[3].className = "nav-parent";
                             
                             break;
                             
                         case "Maestro Preparación":
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Preparación";
-                            //self.ocultarMenu();
                             self.ocultarFormularios();
-                            //self.menuPrincipal();
                             
                             self.rowPreparacion.show();
                             self.frmMaestroPrep.children(".minimize").click();
@@ -110,14 +114,14 @@
                             
                             this.children[0].className = "";
                             this.children[1].className = "";
+                            this.children[3].className = "nav-parent";
+                            
                             break;
                         
                         case "Maestro Auxiliares":
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Auxiliares";
-                            //self.ocultarMenu();
                             self.ocultarFormularios();
-                            //self.menuPrincipal();
                             
                             self.rowAuxiliares.show();
                             self.frmMaestroAux.children(".minimize").click();
@@ -125,14 +129,14 @@
                             
                             this.children[0].className = "";
                             this.children[1].className = "";
+                            this.children[3].className = "nav-parent";
+                            
                             break;
                             
                         case "Maestro Procesos Posteriores":
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Procesos Posteriores";
-                            //self.ocultarMenu();
                             self.ocultarFormularios();
-                            //self.menuPrincipal();
                             
                             self.rowProcPos.show();
                             self.frmMaestroProcPos.children(".minimize").click();
@@ -140,14 +144,14 @@
                             
                             this.children[0].className = "";
                             this.children[1].className = "";
+                            this.children[3].className = "nav-parent";
+                            
                             break;
                             
                         case "Maestro Fibras":
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Fibras";
-                            //self.ocultarMenu();
                             self.ocultarFormularios();
-                            //self.menuPrincipal();
                             
                             self.rowFibra.show();
                             self.frmMaestroFibra.children(".minimize").click();
@@ -155,6 +159,38 @@
                             
                             this.children[0].className = "";
                             this.children[1].className = "";
+                            this.children[3].className = "nav-parent";
+                            
+                            break;
+                        
+                        case "Maestro Procesos":
+                            this.children[3].className = "nav-parent active";
+                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Producción / Maestro Procesos";
+                            self.ocultarFormularios();
+                            
+                            self.rowProceso.show();
+                            self.frmMaestroProceso.children(".minimize").click();
+                            self.tblMaestroProceso.children(".minimize").click();
+                            
+                            this.children[0].className = "";
+                            this.children[1].className = "";
+                            this.children[2].className = "nav-parent";
+                            
+                            break;
+                        
+                        case "Maestro Curvas":
+                            this.children[3].className = "nav-parent active";
+                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Producción / Maestro Curvas";
+                            self.ocultarFormularios();
+                            
+                            self.rowCurva.show();
+                            self.frmMaestroCurva.children(".minimize").click();
+                            self.tblMaestroCurva.children(".minimize").click();
+                            
+                            this.children[0].className = "";
+                            this.children[1].className = "";
+                            this.children[2].className = "nav-parent";
+                            
                             break;
                     }
                 });
