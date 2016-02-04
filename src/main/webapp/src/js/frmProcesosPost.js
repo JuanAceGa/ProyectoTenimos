@@ -37,7 +37,7 @@
             $eBtnAddLineaProcPos: $('#eBtnAddLineaProcPos'),
             $eBtnModificar: $('#eBtnEditProcPos'),
             $eBtnRestProcPos: $('#eBtnRestProcPos'),
-            $eBtnCerrar: $('#eBtnCerrar'),
+            $eBtnCerrar: $('#eBtnCerrarModalEditProcPost'),
             $eBtnCerrar2: $('#modalEditProcPos').find('.modal-header .close'),
             quimicosPorProcPos: [],
             idProcPos: 0,
@@ -692,7 +692,7 @@
                         }
                     }
                     
-                    um.SolicitarModificarRegistro({tabla: self.$tableEditProcPos, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idProcPos, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$modalEditProcPos.find('#eBtnCerrar'), 'ServletProcesosPost');
+                    um.SolicitarModificarRegistro({tabla: self.$tableEditProcPos, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idProcPos, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar, 'ServletProcesosPost');
                 }
             },
             

@@ -5,7 +5,7 @@
             init: function() {
                 this.consultarFibras();
                 this.consultarQuimicosPrepAux();
-                this.consultarMaestros();
+                this.consultarMaestros('');
             },
             
             consultarFibras: function() {
@@ -37,28 +37,32 @@
                 });
             },
             
-            consultarMaestros: function() {
+            consultarMaestros: function(m) {
                 
-                $.get('../../../ServletPreparaciones', {accion: 'buscar'}, function(response) {
-                    frmPreparacion.cargarDatos(response, 'pr');
-                });
+                if (m === '') {
+                    $.get('../../../ServletPreparaciones', {accion: 'buscar'}, function(response) {
+                        frmPreparacion.cargarDatos(response, 'pr');
+                    });
+
+                    $.get('../../../ServletAuxiliares', {accion: 'buscar'}, function(response) {
+                        frmAuxiliar.cargarDatos(response, 'au');
+                    });
+
+                    $.get('../../../ServletProcesosPost', {accion: 'buscar'}, function(response) {
+                        frmProcPos.cargarDatos(response, 'pp');
+                    });
+
+                    $.get('../../../ServletProcesos', {accion: 'buscar'}, function(response) {
+                        frmProceso.cargarDatos(response, 'pr');
+                    });
+                }
                 
-                $.get('../../../ServletAuxiliares', {accion: 'buscar'}, function(response) {
-                    frmAuxiliar.cargarDatos(response, 'au');
-                });
-                
-                $.get('../../../ServletProcesosPost', {accion: 'buscar'}, function(response) {
-                    frmProcPos.cargarDatos(response, 'pp');
-                });
-                
-                $.get('../../../ServletCurvas', {accion: 'buscar'}, function(response) {
-                    frmProceso.cargarDatos(response, 'c');
-                    frmCurva.cargarDatos(response, 'c');
-                });
-                
-                $.get('../../../ServletProcesos', {accion: 'buscar'}, function(response) {
-                    frmProceso.cargarDatos(response, 'pr');
-                });
+                if (m === '' || m === 'c') {
+                    $.get('../../../ServletCurvas', {accion: 'buscar'}, function(response) {
+                        frmProceso.cargarDatos(response, 'c');
+                        frmCurva.cargarDatos(response, 'c');
+                    });
+                }
             },
             
             consultarNombreMaestros: function(nombre, tipo, idMaestro, servlet) {
@@ -118,6 +122,11 @@
                             if (servlet === 'ServletFibras') {
                                 frmFibra.solicitarModificarFibra(response);
                             }
+                            
+                            if (servlet === 'ServletCurvas') {
+                                frmCurva.solicitarModificarCurva(response);
+                            }
+                            
                         }
                     },
                     error: function(response, status, er) {
@@ -242,6 +251,7 @@
             },
             
             solicitarModificarMaestro: function(datos, btnCerrar, servlet) {
+                var self = this;
                 
                 $.ajax({
                     url: '../../../' + servlet,
@@ -255,26 +265,41 @@
                     mimeType: 'application/json',
                     
                     success: function(response) {
+                        var text = '';
+                        var class_name = '';
                         
                         if (response === 'true') {
-                            $.gritter.add({
-                                title: "Modificar Registro",
-                                text: "¡Solicitud enviada con éxito.!",
-                                class_name: "growl-info",
-                                sticky: false,
-                                time: ""
-                            });
+                            if (servlet !== 'ServletCurvas') {
+                                text = '¡Solicitud enviada con éxito.!';
+                                class_name = 'growl-info';
+                                
+                            } else if (servlet === 'ServletCurvas') {
+                                text = '¡Registro modificado exitosamente.!';
+                                class_name = 'growl-info';
+                                self.consultarMaestros('c');
+                            }
+                            
                             $(btnCerrar).click();
                             
                         } else {
-                            $.gritter.add({
-                                title: "Modificar Registro",
-                                text: "¡ No se entregó la solicitud de modificación.!",
-                                class_name: "growl-danger",
-                                sticky: false,
-                                time: ""
-                            });
+                            
+                            if (servlet !== 'ServletCurvas') {
+                                text = '¡No se entregó la solicitud de modificación.!';
+                                class_name = 'growl-danger';
+                                
+                            } else if (servlet === 'ServletCurvas') {
+                                text = '¡Registro no modificado. Intente nuevamente.!';
+                                class_name = 'growl-danger';
+                            }
                         }
+                        
+                        $.gritter.add({
+                            title: 'Modificar Registro',
+                            text: text,
+                            class_name: class_name,
+                            sticky: false,
+                            time: ""
+                        });
                         
                     },
                     error: function(response, status, er) {

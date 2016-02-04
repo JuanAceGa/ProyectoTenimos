@@ -66,6 +66,7 @@
                 var elementos = [];
                 
                 if (opc === 'c') {
+                    self.oCurvas = '';
                     self.oCurvas = data;
                     elementos.push(self.$dlCodCurva);
                     elementos.push(self.$dlNomCurva);

@@ -38,6 +38,8 @@
                         oElement[1].append(option2);
                     });
                 } else if (tipo === 'c') {
+                    oElement[0].empty();
+                    oElement[1].empty();
                     oDatos.forEach(function(curva) {
                         option1 = document.createElement('option');
                         option2 = document.createElement('option');
@@ -754,38 +756,62 @@
             SolicitarModificarRegistro: function(oBas, oQmod, oQnue, btnCerrar, servlet) {
                 var usuario = JSON.parse(sessionStorage.user);
                 var datos = new Object();
-                datos.idReg = oBas.idMaestro;
-                datos.nombreReg = oBas.nombre;
-                datos.nombreRegNue = oBas.nombreNue;
-                datos.idFibra = oBas.idFib;
-                datos.idFibraNue = oBas.idFibNue;
-                datos.idSolicitante = usuario.idUsuario.idPersonal;
-                datos.comentario = oBas.coment;
-                datos.quimicoMod = new Array();
-                datos.quimicoNue = new Array();
                 
-                for (var i = 0; i < oQmod.length; i++) {
-                    if (oQmod[i].tipo !== '') {
-                        datos.quimicoMod.push(oQmod[i]);
+                if (servlet !== 'ServletCurvas') {
+                    datos.idReg = oBas.idMaestro;
+                    datos.nombreReg = oBas.nombre;
+                    datos.nombreRegNue = oBas.nombreNue;
+                    datos.idFibra = oBas.idFib;
+                    datos.idFibraNue = oBas.idFibNue;
+                    datos.idSolicitante = usuario.idUsuario.idPersonal;
+                    datos.comentario = oBas.coment;
+                    datos.quimicoMod = new Array();
+                    datos.quimicoNue = new Array();
+
+                    for (var i = 0; i < oQmod.length; i++) {
+                        if (oQmod[i].tipo !== '') {
+                            datos.quimicoMod.push(oQmod[i]);
+                        }
                     }
-                }
-                
-                for (var i = 0; i < oQnue.length; i++) {
-                    datos.quimicoNue.push(oQnue[i]);
-                }
-                
-                if (datos.nombreRegNue !== '' || datos.idFibraNue !== '' || datos.quimicoMod.length > 0 || datos.quimicoNue.length > 0) {
+
+                    for (var i = 0; i < oQnue.length; i++) {
+                        datos.quimicoNue.push(oQnue[i]);
+                    }
+
+                    if (datos.nombreRegNue !== '' || datos.idFibraNue !== '' || datos.quimicoMod.length > 0 || datos.quimicoNue.length > 0) {
+
+                        consultas.solicitarModificarMaestro(datos, btnCerrar, servlet);
+
+                    } else {
+                        $.gritter.add({
+                            title: "Modificar Registro",
+                            text: "¡No hay datos a modificar.!",
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+                    }
+                } else if (servlet === 'ServletCurvas'){
+                    datos.nombre = oBas.nombre;
+                    datos.tiempo = oBas.tiempo;
+                    datos.llenado = oBas.llenado;
+                    datos.rinse = oBas.rinse;
+                    datos.idMaestro = oBas.idMaestro;
+                    datos.coment = oBas.coment;
                     
-                    consultas.solicitarModificarMaestro(datos, btnCerrar, servlet);
-                    
-                } else {
-                    $.gritter.add({
-                        title: "Modificar Registro",
-                        text: "¡No hay datos a modificar.!",
-                        class_name: "growl-warning",
-                        sticky: false,
-                        time: ""
-                    });
+                    if (datos.nombre !== oBas.org.nomCurva || datos.tiempo !== oBas.org.tiempoCurva || datos.llenado !== oBas.org.llenadoCurva || datos.rinse !== oBas.org.rinseCurva) {
+
+                        consultas.solicitarModificarMaestro(datos, btnCerrar, servlet);
+
+                    } else {
+                        $.gritter.add({
+                            title: "Modificar Registro",
+                            text: "¡No hay datos a modificar.!",
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+                    }
                 }
             },
             

@@ -17,7 +17,7 @@
             $eTextArea: $('#modalEditFibra').find('textarea'),
             $eBtnModificar: $('#eBtnEditFibra'),
             $eBtnRestFibra: $('#eBtnRestFibra'),
-            $eBtnCerrar: $('#eBtnCerrar'),
+            $eBtnCerrar: $('#eBtnCerrarModalEditFib'),
             $eBtnCerrar2: $('#modalEditFibra').find('.modal-header .close'),
             idFibra: 0,
             banderaModal: 0,
@@ -261,7 +261,7 @@
                         }
                     }
                     
-                    um.SolicitarModificarRegistro({tabla: '', nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idFibra, coment: coment}, [], [], self.$modalEditFibra.find('#eBtnCerrar'), 'ServletFibras');
+                    um.SolicitarModificarRegistro({tabla: '', nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idFibra, coment: coment}, [], [], self.$eBtnCerrar, 'ServletFibras');
                 }
             },
             

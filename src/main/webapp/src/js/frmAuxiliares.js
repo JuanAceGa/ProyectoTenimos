@@ -37,7 +37,7 @@
             $eBtnAddLineaAux: $('#eBtnAddLineaAux'),
             $eBtnModificar: $('#eBtnEditAux'),
             $eBtnRestAux: $('#eBtnRestAux'),
-            $eBtnCerrar: $('#eBtnCerrar'),
+            $eBtnCerrar: $('#eBtnCerrarModalEditAux'),
             $eBtnCerrar2: $('#modalEditAuxiliar').find('.modal-header .close'),
             quimicosPorAux: [],
             idAuxiliar: 0,
@@ -692,7 +692,7 @@
                         }
                     }
                     
-                    um.SolicitarModificarRegistro({tabla: self.$tableEditAux, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idAuxiliar, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$modalEditAux.find('#eBtnCerrar'), 'ServletAuxiliares');
+                    um.SolicitarModificarRegistro({tabla: self.$tableEditAux, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idAuxiliar, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar, 'ServletAuxiliares');
                 }
             },
             

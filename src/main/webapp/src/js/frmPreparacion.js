@@ -38,7 +38,7 @@
             $eBtnAddLineaPrep: $('#eBtnAddLineaPrep'),
             $eBtnModificar: $('#eBtnEditPrep'),
             $eBtnRestPrep: $('#eBtnRestPrep'),
-            $eBtnCerrar: $('#eBtnCerrar'),
+            $eBtnCerrar: $('#eBtnCerrarModalEditPrep'),
             $eBtnCerrar2: $('#modalEditPreparacion').find('.modal-header .close'),
             quimicosPorPrep: [],
             idPreparacion: 0,
@@ -696,7 +696,7 @@
                         }
                     }
                     
-                    um.SolicitarModificarRegistro({tabla: self.$tableEditPrep, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idPreparacion, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$modalEditPrep.find('#eBtnCerrar'), 'ServletPreparaciones');
+                    um.SolicitarModificarRegistro({tabla: self.$tableEditPrep, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idPreparacion, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar, 'ServletPreparaciones');
                 }
             },
             
