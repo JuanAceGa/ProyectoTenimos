@@ -519,7 +519,7 @@
                         
                 } else if (t.frm === 'proceso') {
                     
-                    if (t.tipo === 'nuevo' && tabla !== '') {
+                    if ((t.tipo === 'nuevo' || t.tipo === 'editar') && tabla !== '') {
                         $(tabla).find('tbody tr').each(function(index) {
                             if (index > 0) {
                                 $(this).children('td').each(function(index2) {
@@ -535,29 +535,6 @@
                                 });
                             }
                         });
-                        
-                    } else if (t.tipo === 'editar' && tabla !== '') {
-                        /*$(tabla).find('tbody tr').each(function(index) {
-                            if (index > 0) {
-                                var f = {codQuimicoNue: '', cantGrNue: '', cantPtjNue: ''};
-                                $(this).children('td').each(function(index2) {
-                                    switch (index2) {
-                                        case 0: //Código Quimico
-                                            f.codQuimicoNue = $(this).text();
-                                            break;
-                                        case 1: //Nombre Quimico                                            
-                                            break;
-                                        case 2: //Cantidad Gr
-                                            f.cantGrNue = $(this).text();
-                                            break;
-                                        case 3: //Cantidad Porcentaje
-                                            f.cantPtjNue = $(this).text();
-                                            break;
-                                    }
-                                });
-                                oArr.preparacionCollectionNue.push(f);
-                            }
-                        });*/
                     }
                     
                 } else if (t.frm === 'curva') {
@@ -754,10 +731,68 @@
             },
             
             SolicitarModificarRegistro: function(oBas, oQmod, oQnue, btnCerrar, servlet) {
+                var self = this;
                 var usuario = JSON.parse(sessionStorage.user);
                 var datos = new Object();
                 
-                if (servlet !== 'ServletCurvas') {
+                if (servlet === 'ServletCurvas'){
+                    datos.nombre = oBas.nombre;
+                    datos.tiempo = oBas.tiempo;
+                    datos.llenado = oBas.llenado;
+                    datos.rinse = oBas.rinse;
+                    datos.idMaestro = oBas.idMaestro;
+                    datos.coment = oBas.coment;
+                    
+                    if (datos.nombre !== oBas.org.nomCurva || datos.tiempo !== oBas.org.tiempoCurva || datos.llenado !== oBas.org.llenadoCurva || datos.rinse !== oBas.org.rinseCurva) {
+
+                        consultas.solicitarModificarMaestro(datos, btnCerrar, servlet);
+
+                    } else {
+                        $.gritter.add({
+                            title: "Modificar Registro",
+                            text: "¡No hay datos a modificar.!",
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+                    }
+                } else if (servlet === 'ServletProcesos') {
+                    datos.idProceso = oBas.idMaestro;
+                    datos.nombre = oBas.nombre;
+                    datos.idCurvas = null;
+                    
+                    datos = self.obtenerDatosTabla(oBas.tabla, datos, {frm: 'proceso', tipo: 'editar'});
+                    
+                    var curvas = oBas.org.idCurvas.length;
+                    var curvasNue = datos.idCurvas.length;
+                    var c = 0;
+                    
+                    if (curvas > curvasNue) {
+                        c = 1;
+                    } if (curvas < curvasNue) {
+                        c = 1;
+                    } else if (curvas === curvasNue) {
+                        if (oBas.org.idCurvas === datos.idCurvas) {
+                            c = 0;
+                        } else {
+                            c = 1;
+                        }
+                    }
+                    
+                    if (datos.nombre !== oBas.org.nomProceso || c > 0) {
+
+                        consultas.solicitarModificarMaestro(datos, btnCerrar, servlet);
+
+                    } else {
+                        $.gritter.add({
+                            title: "Modificar Registro",
+                            text: "¡No hay datos a modificar.!",
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+                    }
+                } else if (servlet !== 'ServletCurvas') {
                     datos.idReg = oBas.idMaestro;
                     datos.nombreReg = oBas.nombre;
                     datos.nombreRegNue = oBas.nombreNue;
@@ -779,27 +814,6 @@
                     }
 
                     if (datos.nombreRegNue !== '' || datos.idFibraNue !== '' || datos.quimicoMod.length > 0 || datos.quimicoNue.length > 0) {
-
-                        consultas.solicitarModificarMaestro(datos, btnCerrar, servlet);
-
-                    } else {
-                        $.gritter.add({
-                            title: "Modificar Registro",
-                            text: "¡No hay datos a modificar.!",
-                            class_name: "growl-warning",
-                            sticky: false,
-                            time: ""
-                        });
-                    }
-                } else if (servlet === 'ServletCurvas'){
-                    datos.nombre = oBas.nombre;
-                    datos.tiempo = oBas.tiempo;
-                    datos.llenado = oBas.llenado;
-                    datos.rinse = oBas.rinse;
-                    datos.idMaestro = oBas.idMaestro;
-                    datos.coment = oBas.coment;
-                    
-                    if (datos.nombre !== oBas.org.nomCurva || datos.tiempo !== oBas.org.tiempoCurva || datos.llenado !== oBas.org.llenadoCurva || datos.rinse !== oBas.org.rinseCurva) {
 
                         consultas.solicitarModificarMaestro(datos, btnCerrar, servlet);
 

@@ -52,6 +52,10 @@
                         frmProcPos.cargarDatos(response, 'pp');
                     });
 
+                    
+                }
+                
+                if (m === '' || m === 'p') {
                     $.get('../../../ServletProcesos', {accion: 'buscar'}, function(response) {
                         frmProceso.cargarDatos(response, 'pr');
                     });
@@ -125,6 +129,10 @@
                             
                             if (servlet === 'ServletCurvas') {
                                 frmCurva.solicitarModificarCurva(response);
+                            }
+                            
+                            if (servlet === 'ServletProcesos') {
+                                frmProceso.solicitarModificarProceso(response);
                             }
                             
                         }
@@ -269,27 +277,37 @@
                         var class_name = '';
                         
                         if (response === 'true') {
-                            if (servlet !== 'ServletCurvas') {
-                                text = '¡Solicitud enviada con éxito.!';
-                                class_name = 'growl-info';
-                                
-                            } else if (servlet === 'ServletCurvas') {
+                            if (servlet === 'ServletCurvas') {
                                 text = '¡Registro modificado exitosamente.!';
                                 class_name = 'growl-info';
                                 self.consultarMaestros('c');
-                            }
+                            
+                            } else if (servlet === 'ServletProcesos') {
+                                text = '¡Registro modificado exitosamente.!';
+                                class_name = 'growl-info';
+                                self.consultarMaestros('p');
+                            
+                            } else if (servlet !== 'ServletCurvas') {
+                                text = '¡Solicitud enviada con éxito.!';
+                                class_name = 'growl-info';                                
+                            } 
                             
                             $(btnCerrar).click();
                             
                         } else {
                             
-                            if (servlet !== 'ServletCurvas') {
+                            if (servlet === 'ServletCurvas') {
+                                text = '¡Registro no modificado. Intente nuevamente.!';
+                                class_name = 'growl-danger';
+                            
+                            } else if (servlet === 'ServletProcesos') {
+                                text = '¡Registro no modificado. Intente nuevamente.!';
+                                class_name = 'growl-danger';
+                            
+                            } else if (servlet !== 'ServletCurvas') {
                                 text = '¡No se entregó la solicitud de modificación.!';
                                 class_name = 'growl-danger';
                                 
-                            } else if (servlet === 'ServletCurvas') {
-                                text = '¡Registro no modificado. Intente nuevamente.!';
-                                class_name = 'growl-danger';
                             }
                         }
                         

@@ -16,7 +16,7 @@
                             <div class="col-md-5">
                                 <input type="text" name="nomProceso" id="nomProceso" class="form-control" placeholder="Nombre del proceso" required />
                             </div>
-                            
+
                             <label class="col-md-2 control-label"> Tiempo (Minutos)</label>
                             <div class="col-md-2">
                                 <input type="text" name="tiempoProceso" id="tiempoProceso" class="form-control" placeholder="Tiempo" disabled="true"/>
@@ -113,88 +113,73 @@
 </div><!--row -->
 
 <!-- Modal -->
-<!--<div class="modal" id="modalEditPreparacion" tabindex="-1" role="dia" aria-hidden="true">
+<div class="modal" id="modalEditProceso" tabindex="-1" role="dia" aria-hidden="true">
     <div class="modal-lg col-lg-offset-3">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Modificación de Preparaciones</h4>
+                <h4 class="modal-title">Modificación de Procesos</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="form-group col-md-6">
-                        <label class="col-sm-4 control-label"> Nombre Preparación <span class="asterisk">*</span></label>
-                        <div class="col-sm-8">
-                            <input type="text" name="eNomPrep" id="eNomPrep" class="form-control" placeholder="Nombre de la preparación" required />
+                    <div class="form-group col-md-12">
+                        <label class="col-md-2 control-label"> Nombre Proceso <span class="asterisk">*</span></label>
+                        <div class="col-md-5">
+                            <input type="text" name="eNomProceso" id="eNomProceso" class="form-control" placeholder="Nombre del proceso" required />
+                        </div>
+
+                        <label class="col-md-2 control-label"> Tiempo (Minutos)</label>
+                        <div class="col-md-2">
+                            <input type="text" name="eTiempoProceso" id="eTiempoProceso" class="form-control" placeholder="Tiempo" disabled="true"/>
                         </div>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label class="col-sm-4 control-label">Fibra <span class="asterisk">*</span></label>
-                        <div class="col-sm-8">
-                            <select id="eCbxfibraPrep" class="form-control" required>
-                                <option>Seleccione una...</option>
-                                <option>Fibra</option>
-                            </select>
-                            <label class="error" for="fibra"></label>
-                        </div>
-                    </div><!-- form-group ->
                 </div>
+                <br/>
                 <div class="row">
-                    <div class="col-lg-12 col-lg-offset-0">
+                    <div class="col-md-10 col-md-offset-1">
                         <div class="table-responsive">
-                            <table class="table mb30" id="tableEditPrep">
+                            <table class="table mb40" id="eTableEditCurva">
                                 <thead>
                                     <tr>
-                                        <th class="col-md-3">Código del Químico <span class="asterisk">*</span></th>
-                                        <th class="col-md-5">Nombre del Químico <span class="asterisk">*</span></th>
-                                        <th class="col-md-2">Cant. Gr/Lt <span class="asterisk">*</span></th>
-                                        <th class="col-md-2">Cant. %/Kl <span class="asterisk">*</span></th>
-                                        <th class="col-md-1"></th>
+                                        <th class="col-md-2">Código Curva <span class="asterisk">*</span></th>
+                                        <th class="col-md-5" style="text-align: center">Nombre de la Curva <span class="asterisk">*</span></th>
+                                        <th class="col-md-1" style="text-align: center">Tiempo (min)</th>
+                                        <th class="col-md-1" style="text-align: center">Llenado(s)</th>
+                                        <th class="col-md-1" style="text-align: center">Rinse(s) x 5'</th>
                                         <th class="col-md-1"></th>
                                     </tr>
                                 </thead>
-                                <tbody id="tBodyEditPrep">
+                                <tbody>
                                     <tr>
                                         <td>
                                             <div class="form-group col-md-12">
                                                 <div class="col-sm-12">
-                                                    <input type="text" name="eCodQuimPrep" id="eCodQuimPrep" class="form-control" placeholder="Código" maxlength="4" list="eDlCodQuimPrep" required />
-                                                    <datalist id="eDlCodQuimPrep"></datalist>
+                                                    <input type="text" name="eCodCurva" id="eCodCurva" class="form-control" placeholder="Código" maxlength="4" list="eDlCodCurva" required />
+                                                    <datalist id="eDlCodCurva"></datalist>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="form-group col-md-12">
                                                 <div class="col-sm-12">
-                                                    <input type="text" name="eNomQuimPrep" id="eNomQuimPrep" class="form-control" placeholder="Nombre del químico" list="eDlNomQuimPrep" required />
-                                                    <datalist id="eDlNomQuimPrep"></datalist>
+                                                    <input type="text" name="eNomCurva" id="eNomCurva" class="form-control" placeholder="Nombre de la curva" list="eDlNomCurva" required />
+                                                    <datalist id="eDlNomCurva"></datalist>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>
-                                            <div class="form-group col-md-12">
-                                                <div class="col-sm-12">
-                                                    <input type="text" name="eCantGrLtPrep" id="eCantGrLtPrep" class="form-control" maxlength="16" placeholder="Gr/Lt" required />
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group col-md-12">
-                                                <div class="col-sm-12">
-                                                    <input type="text" name="eCantPctjPrep" id="eCantPctjPrep" class="form-control" maxlength="9" placeholder="%/Kl" required />
-                                                </div>
-                                            </div>
-                                        </td>
+                                        <td style="text-align: center"></td>
+                                        <td style="text-align: center"></td>
+                                        <td style="text-align: center"></td>
                                         <td class="table-action">
                                             <div class="form-group col-md-12">
-                                                <button id="eBtnAddLineaPrep" title="Agregar Químico" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button"><i class="fa fa-plus-square"></i></button>
+                                                <button id="eBtnAddLineaCurva" title="Agregar Curva" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button"><i class="fa fa-plus-square"></i></button>
                                             </div>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-                        </div><!-- table-responsive ->
-                    </div><!-- col-md-6 ->
+                        </div><!-- table-responsive -->
+                    </div><!-- col-md-6 -->
                 </div>
                 <div class="row">
                     <div class="form-group col-lg-12 col-lg-offset-0">
@@ -205,14 +190,14 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-lg-1 col-lg-offset-0">
-                        <button class="btn btn-success" type="button" id="eBtnEditPrep">Modificar</button>
+                        <button class="btn btn-success" type="button" id="eBtnEditCurva">Modificar</button>
                     </div>
                     <div class="col-lg-11 col-lg-offset-0">
-                        <button class="btn btn-white" type="button" id="eBtnRestPrep">Restaurar</button>
-                        <button type="reset" class="btn btn-default" data-dismiss="modal" id="eBtnCerrar">Cerrar</button>
+                        <button class="btn btn-white" type="button" id="eBtnRestCurva">Restaurar</button>
+                        <button type="reset" class="btn btn-default" data-dismiss="modal" id="eBtnCerrarModalEditCur">Cerrar</button>
                     </div>
                 </div>
             </div>
-        </div><!-- modal-content ->
-    </div><!-- modal-dialog ->
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
 </div><!-- modal -->
