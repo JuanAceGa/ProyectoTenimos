@@ -114,6 +114,7 @@
 
 <!-- Modal -->
 <div class="modal" id="modalEditProceso" tabindex="-1" role="dia" aria-hidden="true">
+    <div class="mb10"></div>
     <div class="modal-lg col-lg-offset-3">
         <div class="modal-content">
             <div class="modal-header">
@@ -136,7 +137,7 @@
                 </div>
                 <br/>
                 <div class="row">
-                    <div class="col-md-10 col-md-offset-1">
+                    <div class="col-md-12">
                         <div class="table-responsive">
                             <table class="table mb40" id="eTableEditCurva">
                                 <thead>

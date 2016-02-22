@@ -53,9 +53,14 @@
                 }
             },
             
-            destruirDataTable: function(tabla, t) {
-                tabla.fnDestroy();
+            destruirDataTable: function(tabla, tt) {
                 
+                var t = tabla.dataTable();
+                t.fnDestroy();
+                
+                $(tabla).find('tr:gt(0)').remove();
+                
+                /*
                 if (t === '1') {
                     $('#dataTablePreparacion tr:gt(0)').remove();
                 } 
@@ -79,6 +84,11 @@
                 if (t === '6') {
                     $('#dataTableCurva tr:gt(0)').remove();
                 }
+                
+                if (t === '7') {
+                    $('#dataTableLista ')
+                }
+                */
             },
             
             renderDataTables: function(tabla, oDatos, tipo) {
@@ -180,6 +190,20 @@
                             {data: 'tiempoCurva', className: 'center'},
                             {data: 'llenadoCurva', className: 'center'},
                             {data: 'rinseCurva', className: 'center'},
+                            {data: 'btnView', className: 'center'}
+                        ],
+                        sPaginationType: 'full_numbers',
+                        dAutoWidth: false
+                    });
+                }
+                
+                if (tipo === 'lc') {
+                    $(tabla).dataTable({
+                        data: oDatos,
+                        columns: [
+                            {data: 'idLabel', className: 'center'},
+                            {data: 'nombreLabel', className: 'left'},
+                            {data: 'curvAsoc', className: 'center'},
                             {data: 'btnView', className: 'center'}
                         ],
                         sPaginationType: 'full_numbers',
@@ -452,6 +476,9 @@
                     datos.tiempo = d.tiempo;
                     datos.llenado = d.llenado;
                     datos.rinse = d.rinse;
+                    
+                } else if (d.form === 'listaCheck') {
+                    datos.nombre = d.nombre;
                 }
 
                 consultas.guardarNuevoMaestro(datos, servlet);
@@ -756,6 +783,7 @@
                             time: ""
                         });
                     }
+                    
                 } else if (servlet === 'ServletProcesos') {
                     datos.idProceso = oBas.idMaestro;
                     datos.nombre = oBas.nombre;
@@ -792,6 +820,26 @@
                             time: ""
                         });
                     }
+                    
+                } else if (servlet === 'ServletListaCheck'){
+                    datos.nombre = oBas.nombre;
+                    datos.idMaestro = oBas.idMaestro;
+                    datos.coment = oBas.coment;
+                    
+                    if (datos.nombre !== oBas.org.nombreLabel) {
+
+                        consultas.solicitarModificarMaestro(datos, btnCerrar, servlet);
+
+                    } else {
+                        $.gritter.add({
+                            title: "Modificar Registro",
+                            text: "¡No hay datos a modificar.!",
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+                    }
+                    
                 } else if (servlet !== 'ServletCurvas') {
                     datos.idReg = oBas.idMaestro;
                     datos.nombreReg = oBas.nombre;

@@ -1,7 +1,7 @@
 (function(document, window, $, undefined) {
     (function() {
         return frmCurva = {
-            oCurvas: {},
+            oCurvas: '',
             $dataTableCurva: $('#dataTableCurva'),
             $nomCurva: $('#nombCurva'),
             $tiempoCurva: $('#tiempCurva'),
@@ -39,7 +39,7 @@
                 var data = JSON.parse(dato);
                 
                 if (opc === 'c') {
-                    self.oCurvas = "";
+                    self.oCurvas = '';
                     self.oCurvas = data;
                     um.destruirDataTable(self.$dataTableCurva.dataTable(), '6');
                     um.renderDataTables(self.$dataTableCurva, self.oCurvas, 'c');
@@ -277,7 +277,7 @@
                         }
                     }
                     
-                    um.SolicitarModificarRegistro({tabla: '', nombre: nombre, tiempo: tiempo, llenado: llenado, rinse: rinse, idMaestro: self.idCurva, coment: coment, org: self.oCurvas[i]}, [], [], self.$eBtnCerrar, 'ServletCurvas');
+                    um.SolicitarModificarRegistro({tabla: '', nombre: nombre, tiempo: tiempo, llenado: llenado, rinse: rinse, idMaestro: self.idCurva, coment: coment, org: self.oCurvas[j]}, [], [], self.$eBtnCerrar, 'ServletCurvas');
                 }
             },
             

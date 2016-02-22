@@ -1,5 +1,5 @@
 <div class="row" id="rowCurva">
-    <div class=" col-md-offset-1 col-md-10">
+    <div class="col-md-offset-1 col-md-10">
         <form id="frmCurva" class="form-horizontal">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -54,7 +54,7 @@
         </form>
     </div><!-- col-md-6 -->
 
-    <div class=" col-md-offset-1 col-md-10">
+    <div class="col-md-offset-1 col-md-10">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="panel-btns" id="tblMaestroCurva">
@@ -70,9 +70,9 @@
                             <tr>
                                 <th class="col-md-1" style="text-align: center">Id. Curva</th>
                                 <th class="col-md-4" style="text-align: center">Nombre de la Curva</th>
-                                <th class="col-md-2" style="text-align: center">Tiempo (Min)</th>
-                                <th class="col-md-2" style="text-align: center">Llenado(s)</th>
-                                <th class="col-md-2" style="text-align: center">Rinse(s) x 5'</th>
+                                <th class="col-md-1" style="text-align: center">Tiempo (Min)</th>
+                                <th class="col-md-1" style="text-align: center">Llenado(s)</th>
+                                <th class="col-md-1" style="text-align: center">Rinse(s) x 5'</th>
                                 <th class="col-md-1" style="text-align: center">Ver</th>
                             </tr>
                         </thead>
@@ -85,6 +85,7 @@
 
 <!-- Modal -->
 <div class="modal" id="modalEditCurva" tabindex="-1" role="dia" aria-hidden="true">
+    <div class="mb10"></div>
     <div class="modal-lg col-lg-offset-3">
         <div class="modal-content">
             <div class="modal-header">

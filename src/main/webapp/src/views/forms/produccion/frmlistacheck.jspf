@@ -1,0 +1,184 @@
+<div class="row" id="rowList">
+    <div class="col-md-6">
+        <form id="frmLista" class="form-horizontal">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-btns" id="frmMaestroLista">
+                        <a href="#" class="minimize">&minus;</a>
+                    </div>
+                    <h4 class="panel-title">Etiquetas para Lista de Chequeo</h4>
+                    <p>Por favor ingrese todos los campos obligatorios ( <span class="asterisk">*</span> ).</p>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="col-md-3 control-label"> Nombre Item <span class="asterisk">*</span></label>
+                            <div class="col-md-9">
+                                <input type="text" id="nomItem" class="form-control" placeholder="Nombre del item" required />
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- panel-body -->
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-9 col-sm-offset-5">
+                            <button class="btn btn-success" type="button" id="btnSaveItem">Guardar</button>
+                            <button type="reset" class="btn btn-default" id="btnCleanItem">Limpiar</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- panel -->
+        </form>
+    </div><!-- col-md-6 -->
+    
+    <div class="col-md-6">
+        <form id="frmSeccion" class="form-horizontal">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-btns" id="frmMaestroSeccion">
+                        <a href="#" class="minimize">&minus;</a>
+                    </div>
+                    <h4 class="panel-title">Creación de Lista de Chequeo</h4>
+                    <p>Por favor ingrese todos los campos obligatorios ( <span class="asterisk">*</span> ).</p>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="col-md-3 control-label"> Nombre Lista de Chequeo <span class="asterisk">*</span></label>
+                            <div class="col-md-9">
+                                <input type="text" name="nomListCheck" id="nomListCheck" class="form-control" placeholder="Nombre Lista de Chequeo" required />
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-10 col-md-offset-1">
+                            <div class="table-responsive">
+                                <table class="table mb40" id="dataTableNewLabel">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="form-group col-md-12">
+                                                    <div class="col-sm-12">
+                                                        <input type="text" name="nomLabel" id="nomLabel" class="form-control" placeholder="Nombre de la etiqueta (*)" list="dlNomEtiqueta" required />
+                                                        <datalist id="dlNomEtiqueta"></datalist>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="table-action">
+                                                <div class="form-group col-md-12">
+                                                    <button id="btnAddLineaLabel" title="Agregar Etiqueta" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button"><i class="fa fa-plus-square"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div><!-- table-responsive -->
+                        </div><!-- col-md-6 -->
+                    </div>
+
+                </div><!-- panel-body -->
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-sm-9 col-sm-offset-5">
+                            <button class="btn btn-success" type="button" id="btnSaveSeccion">Guardar</button>
+                            <button type="reset" class="btn btn-default" id="btnCleanSeccion">Limpiar</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- panel -->
+        </form>
+    </div><!-- col-md-6 -->
+</div><!--row -->
+
+<div class="row" id="rowList">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-btns" id="tblMaestroLista">
+                    <a href="#" class="minimize">&minus;</a>
+                </div>
+                <h4 class="panel-title">Listado de Etiquetas para Lista de Chequeo</h4>
+                <p>Si desea consultar o editar un maestro específico, despliegue este panel.</p>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table" id="dataTableLista">
+                        <thead>
+                            <tr>
+                                <th class="col-md-1" style="text-align: center">Id. Item</th>
+                                <th class="col-md-3" style="text-align: center">Nombre del Item</th>
+                                <th class="col-md-2" style="text-align: center">Curva(s) Asociada</th>
+                                <th class="col-md-1" style="text-align: center">Ver</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div><!-- table-responsive -->
+            </div><!-- panel-body -->
+        </div><!-- panel -->
+    </div><!-- col-md-6 -->
+    
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-btns" id="tblMaestroSeccion">
+                    <a href="#" class="minimize">&minus;</a>
+                </div>
+                <h4 class="panel-title">Listado de Secciones para Lista de Chequeo</h4>
+                <p>Si desea consultar o editar un maestro específico, despliegue este panel.</p>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table" id="dataTableSeccion">
+                        <thead>
+                            <tr>
+                                <th class="col-md-1" style="text-align: center">Id. Secc.</th>
+                                <th class="col-md-4" style="text-align: center">Nombre Sección</th>
+                                <th class="col-md-1" style="text-align: center">Ver</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div><!-- table-responsive -->
+            </div><!-- panel-body -->
+        </div><!-- panel -->
+    </div><!-- col-md-6 -->
+</div><!--row -->
+
+<!-- Modal -->
+<div class="modal" id="modalEditLabel" tabindex="-1" role="dia" aria-hidden="true">
+    <div class="mb10"></div>
+    <div class="modal-lg col-lg-offset-3">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Modificación de Item</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label class="col-md-2 control-label"> Nombre Etiqueta <span class="asterisk">*</span></label>
+                        <div class="col-md-10">
+                            <input type="text" id="eNomLabel" class="form-control" placeholder="Nombre de la etiqueta" required />
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="form-group col-lg-12 col-lg-offset-0">
+                        <textarea placeholder="Motivo de modificación" class="form-control" rows="5" style="margin-top: 0px; margin-bottom: 0px; height: 112px;" required></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-lg-1 col-lg-offset-0">
+                        <button class="btn btn-success" type="button" id="eBtnModificarLabel">Modificar</button>
+                    </div>
+                    <div class="col-lg-11 col-lg-offset-0">
+                        <button type="reset" class="btn btn-default" data-dismiss="modal" id="eBtnCerrarModalElista">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div><!-- modal -->

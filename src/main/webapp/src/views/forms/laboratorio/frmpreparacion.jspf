@@ -134,6 +134,7 @@
 
 <!-- Modal -->
 <div class="modal" id="modalEditPreparacion" tabindex="-1" role="dia" aria-hidden="true">
+    <div class="mb10"></div>
     <div class="modal-lg col-lg-offset-3">
         <div class="modal-content">
             <div class="modal-header">

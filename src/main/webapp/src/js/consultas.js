@@ -51,8 +51,6 @@
                     $.get('../../../ServletProcesosPost', {accion: 'buscar'}, function(response) {
                         frmProcPos.cargarDatos(response, 'pp');
                     });
-
-                    
                 }
                 
                 if (m === '' || m === 'p') {
@@ -65,6 +63,13 @@
                     $.get('../../../ServletCurvas', {accion: 'buscar'}, function(response) {
                         frmProceso.cargarDatos(response, 'c');
                         frmCurva.cargarDatos(response, 'c');
+                    });
+                }
+                
+                if (m === '' || m === 'lc') {
+                    $.get('../../../ServletListaCheck', {accion: 'buscar'}, function(response) {
+                        frmListaC.cargarDatos(response, 'lc');
+                        frmCurva.cargarDatos(response, 'lc');
                     });
                 }
             },
@@ -109,6 +114,10 @@
                                 frmCurva.agregarCurva(response);
                             }
                             
+                            if (servlet === 'ServletListaCheck') {
+                                frmListaC.agregarRegistro(response);
+                            }
+                            
                         } else if (tipo === 'editar') {
                             
                             if (servlet === 'ServletPreparaciones') {
@@ -135,6 +144,9 @@
                                 frmProceso.solicitarModificarProceso(response);
                             }
                             
+                            if (servlet === 'ServletListaCheck') {
+                                frmListaC.solicitarModificarRegistro(response);
+                            }
                         }
                     },
                     error: function(response, status, er) {
@@ -189,6 +201,10 @@
                             
                             if (servlet === 'ServletCurvas') {
                                 frmCurva.cargarDatos(response, 'nc');
+                            }
+                            
+                            if (servlet === 'ServletListaCheck') {
+                                frmListaC.cargarDatos(response, 'nlc');
                             }
                             
                         } else {
@@ -277,6 +293,7 @@
                         var class_name = '';
                         
                         if (response === 'true') {
+                            
                             if (servlet === 'ServletCurvas') {
                                 text = '¡Registro modificado exitosamente.!';
                                 class_name = 'growl-info';
@@ -286,6 +303,11 @@
                                 text = '¡Registro modificado exitosamente.!';
                                 class_name = 'growl-info';
                                 self.consultarMaestros('p');
+                            
+                            } else if (servlet === 'ServletListaCheck') {
+                                text = '¡Registro modificado exitosamente.!';
+                                class_name = 'growl-info';
+                                self.consultarMaestros('lc');
                             
                             } else if (servlet !== 'ServletCurvas') {
                                 text = '¡Solicitud enviada con éxito.!';
@@ -301,6 +323,10 @@
                                 class_name = 'growl-danger';
                             
                             } else if (servlet === 'ServletProcesos') {
+                                text = '¡Registro no modificado. Intente nuevamente.!';
+                                class_name = 'growl-danger';
+                            
+                            } else if (servlet === 'ServletListaCheck') {
                                 text = '¡Registro no modificado. Intente nuevamente.!';
                                 class_name = 'growl-danger';
                             
