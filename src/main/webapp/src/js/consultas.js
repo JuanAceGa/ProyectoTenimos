@@ -51,6 +51,10 @@
                     $.get('../../../ServletProcesosPost', {accion: 'buscar'}, function(response) {
                         frmProcPos.cargarDatos(response, 'pp');
                     });
+                    
+                    $.get('../../../ServletListaCheck', {accion: 'buscar'}, function(response) {
+                        frmListaC.cargarDatos(response, 'lc');
+                    });
                 }
                 
                 if (m === '' || m === 'p') {
@@ -66,10 +70,9 @@
                     });
                 }
                 
-                if (m === '' || m === 'lc') {
-                    $.get('../../../ServletListaCheck', {accion: 'buscar'}, function(response) {
-                        frmListaC.cargarDatos(response, 'lc');
-                        frmCurva.cargarDatos(response, 'lc');
+                if (m === '' || m === 'll') {
+                    $.get('../../../ServletLabelList', {accion: 'buscar'}, function(response) {
+                        frmListaC.cargarDatos(response, 'll');
                     });
                 }
             },
@@ -114,8 +117,12 @@
                                 frmCurva.agregarCurva(response);
                             }
                             
+                            if (servlet === 'ServletLabelList') {
+                                frmListaC.agregarRegistro(response, 'll');
+                            }
+                            
                             if (servlet === 'ServletListaCheck') {
-                                frmListaC.agregarRegistro(response);
+                                frmListaC.agregarRegistro(response, 'lc');
                             }
                             
                         } else if (tipo === 'editar') {
@@ -144,7 +151,7 @@
                                 frmProceso.solicitarModificarProceso(response);
                             }
                             
-                            if (servlet === 'ServletListaCheck') {
+                            if (servlet === 'ServletLabelList') {
                                 frmListaC.solicitarModificarRegistro(response);
                             }
                         }
@@ -202,6 +209,11 @@
                             if (servlet === 'ServletCurvas') {
                                 frmCurva.cargarDatos(response, 'nc');
                             }
+                            
+                            if (servlet === 'ServletLabelList') {
+                                frmListaC.cargarDatos(response, 'nll');
+                            }
+                            
                             
                             if (servlet === 'ServletListaCheck') {
                                 frmListaC.cargarDatos(response, 'nlc');
@@ -304,10 +316,10 @@
                                 class_name = 'growl-info';
                                 self.consultarMaestros('p');
                             
-                            } else if (servlet === 'ServletListaCheck') {
+                            } else if (servlet === 'ServletLabelList') {
                                 text = '¡Registro modificado exitosamente.!';
                                 class_name = 'growl-info';
-                                self.consultarMaestros('lc');
+                                self.consultarMaestros('ll');
                             
                             } else if (servlet !== 'ServletCurvas') {
                                 text = '¡Solicitud enviada con éxito.!';
@@ -326,14 +338,13 @@
                                 text = '¡Registro no modificado. Intente nuevamente.!';
                                 class_name = 'growl-danger';
                             
-                            } else if (servlet === 'ServletListaCheck') {
+                            } else if (servlet === 'ServletLabelList') {
                                 text = '¡Registro no modificado. Intente nuevamente.!';
                                 class_name = 'growl-danger';
                             
                             } else if (servlet !== 'ServletCurvas') {
                                 text = '¡No se entregó la solicitud de modificación.!';
                                 class_name = 'growl-danger';
-                                
                             }
                         }
                         

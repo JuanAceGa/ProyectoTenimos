@@ -26,7 +26,7 @@
                 var option1;
                 var option2;
 
-                if (tipo === 'q') {
+                if (tipo === 'q') {//Carga de los quimicos.
                     oDatos.forEach(function(quimico) {
                         option1 = document.createElement('option');
                         option2 = document.createElement('option');
@@ -37,7 +37,7 @@
                         oElement[0].append(option1);
                         oElement[1].append(option2);
                     });
-                } else if (tipo === 'c') {
+                } else if (tipo === 'c') {//Carga de las curvas.
                     oElement[0].empty();
                     oElement[1].empty();
                     oDatos.forEach(function(curva) {
@@ -49,6 +49,17 @@
 
                         oElement[0].append(option1);
                         oElement[1].append(option2);
+                    });
+                } else if (tipo === 'll') {//Carga Label para lista de chequeo.
+                    if (oElement[0].options.length > 0) {
+                        oElement[0].empty();
+                    }
+                    oDatos.forEach(function(label) {
+                        option1 = document.createElement('option');
+                        
+                        option1.value = label.nombreLabel;
+                        
+                        $(oElement[0]).append(option1);
                     });
                 }
             },
@@ -95,11 +106,9 @@
                 var i;
 
                 for (i = 0; i < oDatos.length; i++) {
-                    oDatos[i].btnView = '<div class="form-group col-md-5">' +
-                                            '<button id="btnView" title="Ver/Editar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
-                                                '<i class="glyphicon glyphicon-eye-open"></i>' +
-                                            '</button>' +
-                                       '</div>';
+                    oDatos[i].btnView = '<button id="btnView" title="Ver/Editar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
+                                            '<i class="glyphicon glyphicon-eye-open"></i>' +
+                                        '</button>';
                 }
                 
                 if (tipo === 'prep') {
@@ -112,7 +121,7 @@
                             {data: 'idFibra.codFibra', className: 'center'},
                             {data: 'costoPreparacion', className: 'right'},
                             {data: 'fechaUso', className: 'center'},
-                            {data: 'btnView'}
+                            {data: 'btnView', className: 'center'}
                         ],
                         sPaginationType: 'full_numbers',
                         bAutoWidth: false
@@ -129,7 +138,7 @@
                             {data: 'idFibra.codFibra', className: 'center'},
                             {data: 'costoAuxiliar', className: 'right'},
                             {data: 'fechaUso', className: 'center'},
-                            {data: 'btnView'}
+                            {data: 'btnView', className: 'center'}
                         ],
                         sPaginationType: 'full_numbers',
                         bAutoWidth: false
@@ -197,14 +206,26 @@
                     });
                 }
                 
-                if (tipo === 'lc') {
+                if (tipo === 'll') {//Label Lista de chequeo.
                     $(tabla).dataTable({
                         data: oDatos,
                         columns: [
                             {data: 'idLabel', className: 'center'},
                             {data: 'nombreLabel', className: 'left'},
-                            {data: 'curvAsoc', className: 'center'},
                             {data: 'btnView', className: 'center'}
+                        ],
+                        sPaginationType: 'full_numbers',
+                        dAutoWidth: false
+                    });
+                }
+                
+                if (tipo === 'lc') {
+                    $(tabla).dataTable({
+                        data: oDatos,
+                        columns: [
+                            {data: 'idNomLista', className: 'center'},
+                            {data: 'nomListaCheck', className: 'left'},
+                            {data: 'idLabel', className: 'center'}
                         ],
                         sPaginationType: 'full_numbers',
                         dAutoWidth: false
@@ -477,8 +498,14 @@
                     datos.llenado = d.llenado;
                     datos.rinse = d.rinse;
                     
-                } else if (d.form === 'listaCheck') {
+                } else if (d.form === 'label') {
                     datos.nombre = d.nombre;
+                    
+                } else if (d.from === 'listaCheck') {
+                    datos.nomLista = d.nombre;
+                    datos.idLabel = null;
+                    
+                    datos = self.obtenerDatosTabla(d.tabla, datos, {frm: d.form, tipo: 'nuevo'});
                 }
 
                 consultas.guardarNuevoMaestro(datos, servlet);
@@ -566,7 +593,26 @@
                     
                 } else if (t.frm === 'curva') {
                     
+                } else if (t.frm === 'listaCheck') {
+                    if ((t.tipo === 'nuevo' || t.tipo === 'editar') && tabla !== '') {
+                        $(tabla).find('tbody tr').each(function(index) {
+                            if (index > 0) {
+                                $(this).children('td').each(function(index2) {
+                                    switch (index2) {
+                                        case 0: //Id Etiquetas
+                                            if (oArr.idLabel === null) {
+                                                oArr.idLabel = $(this).text();
+                                            } else {
+                                                oArr.idLabel += "-" + $(this).text();
+                                            }
+                                            break;
+                                    }
+                                });
+                            }
+                        });
+                    }
                 }
+                
                 return oArr;
             },
             
