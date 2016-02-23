@@ -51,10 +51,6 @@
                     $.get('../../../ServletProcesosPost', {accion: 'buscar'}, function(response) {
                         frmProcPos.cargarDatos(response, 'pp');
                     });
-                    
-                    $.get('../../../ServletListaCheck', {accion: 'buscar'}, function(response) {
-                        frmListaC.cargarDatos(response, 'lc');
-                    });
                 }
                 
                 if (m === '' || m === 'p') {
@@ -73,6 +69,12 @@
                 if (m === '' || m === 'll') {
                     $.get('../../../ServletLabelList', {accion: 'buscar'}, function(response) {
                         frmListaC.cargarDatos(response, 'll');
+                    });
+                }
+                
+                if (m === '' || m === 'lc') {
+                    $.get('../../../ServletListaCheck', {accion: 'buscar'}, function(response) {
+                            frmListaC.cargarDatos(response, 'lc');
                     });
                 }
             },
@@ -152,7 +154,11 @@
                             }
                             
                             if (servlet === 'ServletLabelList') {
-                                frmListaC.solicitarModificarRegistro(response);
+                                frmListaC.solicitarModificarRegistro(response, 'll');
+                            }
+                            
+                            if (servlet === 'ServletListaCheck') {
+                                frmListaC.solicitarModificarRegistro(response, 'lc');
                             }
                         }
                     },
@@ -321,9 +327,15 @@
                                 class_name = 'growl-info';
                                 self.consultarMaestros('ll');
                             
+                            } else if (servlet === 'ServletListaCheck') {
+                                text = '¡Registro modificado exitosamente.!';
+                                class_name = 'growl-info';
+                                self.consultarMaestros('lc');                   
+                            
                             } else if (servlet !== 'ServletCurvas') {
                                 text = '¡Solicitud enviada con éxito.!';
                                 class_name = 'growl-info';                                
+                            
                             } 
                             
                             $(btnCerrar).click();
@@ -345,6 +357,11 @@
                             } else if (servlet !== 'ServletCurvas') {
                                 text = '¡No se entregó la solicitud de modificación.!';
                                 class_name = 'growl-danger';
+                                
+                            } else if (servlet === 'ServletListaCheck') {
+                                text = '¡Registro no modificado. Intente nuevamente.!';
+                                class_name = 'growl-danger';
+                            
                             }
                         }
                         

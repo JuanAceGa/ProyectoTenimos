@@ -51,15 +51,19 @@
                         oElement[1].append(option2);
                     });
                 } else if (tipo === 'll') {//Carga Label para lista de chequeo.
-                    if (oElement[0].options.length > 0) {
-                        oElement[0].empty();
-                    }
+                    
+                    oElement[0].empty();
+                    oElement[1].empty();
+                    
                     oDatos.forEach(function(label) {
                         option1 = document.createElement('option');
+                        option2 = document.createElement('option');
                         
                         option1.value = label.nombreLabel;
+                        option2.value = label.nombreLabel;
                         
                         $(oElement[0]).append(option1);
+                        $(oElement[1]).append(option2);
                     });
                 }
             },
@@ -225,7 +229,7 @@
                         columns: [
                             {data: 'idNomLista', className: 'center'},
                             {data: 'nomListaCheck', className: 'left'},
-                            {data: 'idLabel', className: 'center'}
+                            {data: 'btnView', className: 'center'}
                         ],
                         sPaginationType: 'full_numbers',
                         dAutoWidth: false
@@ -501,7 +505,7 @@
                 } else if (d.form === 'label') {
                     datos.nombre = d.nombre;
                     
-                } else if (d.from === 'listaCheck') {
+                } else if (d.form === 'listaCheck') {
                     datos.nomLista = d.nombre;
                     datos.idLabel = null;
                     
@@ -592,6 +596,7 @@
                     }
                     
                 } else if (t.frm === 'curva') {
+                    
                     
                 } else if (t.frm === 'listaCheck') {
                     if ((t.tipo === 'nuevo' || t.tipo === 'editar') && tabla !== '') {
@@ -867,7 +872,7 @@
                         });
                     }
                     
-                } else if (servlet === 'ServletListaCheck'){
+                } else if (servlet === 'ServletLabelList'){
                     datos.nombre = oBas.nombre;
                     datos.idMaestro = oBas.idMaestro;
                     datos.coment = oBas.coment;
@@ -886,6 +891,43 @@
                         });
                     }
                     
+                } else if (servlet === 'ServletListaCheck') {
+                    
+                    datos.idLista = oBas.idMaestro;
+                    datos.nomLista = oBas.nombre;
+                    datos.idLabel = null;
+                    
+                    datos = self.obtenerDatosTabla(oBas.tabla, datos, {frm: 'listaCheck', tipo: 'editar'});
+                    
+                    var label = oBas.org.idLabel.length;
+                    var labelNue = datos.idLabel.length;
+                    var c = 0;
+                    
+                    if (label > labelNue) {
+                        c = 1;
+                    } if (label < labelNue) {
+                        c = 1;
+                    } else if (label === labelNue) {
+                        if (oBas.org.idLabel === datos.idLabel) {
+                            c = 0;
+                        } else {
+                            c = 1;
+                        }
+                    }
+                    
+                    if (datos.nomLista !== oBas.org.nomListaCheck || c > 0) {
+
+                        consultas.solicitarModificarMaestro(datos, btnCerrar, servlet);
+
+                    } else {
+                        $.gritter.add({
+                            title: "Modificar Registro",
+                            text: "¡No hay datos a modificar.!",
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+                    }
                 } else if (servlet !== 'ServletCurvas') {
                     datos.idReg = oBas.idMaestro;
                     datos.nombreReg = oBas.nombre;

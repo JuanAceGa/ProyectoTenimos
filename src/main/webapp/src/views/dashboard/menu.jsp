@@ -83,6 +83,7 @@
                             <ul class="children" >
                                 <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Procesos</a></li>
                                 <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Curvas</a></li>
+                                <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Lista de Chequeo</a></li>
                             </ul>
                         </li>
                     </ul>

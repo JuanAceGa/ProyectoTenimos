@@ -25,6 +25,12 @@
             rowCurva: $("#rowCurva"),
             frmMaestroCurva: $("#frmMaestroCurva"),
             tblMaestroCurva: $("#tblMaestroCurva"),
+            rowFormsLL: $('#rowFormsLL'),
+            rowTablesLL: $('#rowTablesLL'),
+            frmMaestroLabel: $('#frmMaestroLabel'),
+            frmMaestroLista: $('#frmMaestroLista'),
+            tblMaestroLabel: $('#tblMaestroLabel'),
+            tblMaestroLista: $('#tblMaestroLista'),
             $contenido: $("#contenido"),
             
             init: function() {
@@ -50,6 +56,8 @@
                 self.rowFibra.hide();
                 self.rowProceso.hide();
                 self.rowCurva.hide();
+                self.rowFormsLL.hide();
+                self.rowTablesLL.hide();
             },
             
             cargarSesion: function(){
@@ -186,6 +194,24 @@
                             self.rowCurva.show();
                             self.frmMaestroCurva.children(".minimize").click();
                             self.tblMaestroCurva.children(".minimize").click();
+                            
+                            this.children[0].className = "";
+                            this.children[1].className = "";
+                            this.children[2].className = "nav-parent";
+                            
+                            break;
+                        
+                        case "Maestro Lista de Chequeo":
+                            this.children[3].className = "nav-parent active";
+                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Producción / Maestro Lista de Chequeo";
+                            self.ocultarFormularios();
+                            
+                            self.rowFormsLL.show();
+                            self.rowTablesLL.show();
+                            self.frmMaestroLabel.children(".minimize").click();
+                            self.frmMaestroLista.children(".minimize").click();
+                            self.tblMaestroLabel.children(".minimize").click();
+                            self.tblMaestroLista.children(".minimize").click();
                             
                             this.children[0].className = "";
                             this.children[1].className = "";

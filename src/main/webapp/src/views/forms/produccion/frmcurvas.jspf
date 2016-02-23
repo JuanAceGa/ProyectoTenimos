@@ -28,18 +28,30 @@
                         </div>
 
                         <div class="form-group col-md-4">
-                            <label class="col-sm-4 control-label col-md-offset-2"> Llenado(s) <span class="asterisk">*</span></label>
+                            <label class="col-md-4 control-label col-md-offset-2"> Llenado(s) <span class="asterisk">*</span></label>
                             <div class="col-md-6">
                                 <input type="text" name="llenadCurva" id="llenadCurva" class="form-control" placeholder="Llenado(s) de la curva" style="text-align: center" required />
                             </div>
                         </div>
 
                         <div class="form-group col-md-4">
-                            <label class="col-sm-4 control-label col-md-offset-2"> Rinse(s) x 5' <span class="asterisk">*</span></label>
+                            <label class="col-md-4 control-label col-md-offset-2"> Rinse(s) x 5' <span class="asterisk">*</span></label>
                             <div class="col-md-6">
                                 <input type="text" name="rinsCurva" id="rinsCurva" class="form-control" placeholder="Rinse(s) de la curva" style="text-align: center" required />
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="col-md-2 control-label">Lista de Chequeo <span class="asterisk">*</span></label>
+                            <div class="col-md-10">
+                                <select id="cbxListaCheck" class="form-control" required>
+                                    <option>Seleccione una...</option>
+                                    <option>Lista Chequeo</option>
+                                </select>
+                                <label class="error" for="lista"></label>
+                            </div>
+                        </div><!-- form-group -->
                     </div>
                 </div><!-- panel-body -->
                 <div class="panel-footer">

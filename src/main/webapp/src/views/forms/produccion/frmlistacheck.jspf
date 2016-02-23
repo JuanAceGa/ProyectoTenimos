@@ -1,9 +1,9 @@
-<div class="row" id="rowList">
+<div class="row" id="rowFormsLL">
     <div class="col-md-6">
         <form id="frmLista" class="form-horizontal">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <div class="panel-btns" id="frmMaestroLista">
+                    <div class="panel-btns" id="frmMaestroLabel">
                         <a href="#" class="minimize">&minus;</a>
                     </div>
                     <h4 class="panel-title">Etiquetas para Lista de Chequeo</h4>
@@ -35,7 +35,7 @@
         <form id="frmSeccion" class="form-horizontal">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <div class="panel-btns" id="frmMaestroSeccion">
+                    <div class="panel-btns" id="frmMaestroLista">
                         <a href="#" class="minimize">&minus;</a>
                     </div>
                     <h4 class="panel-title">Creación de Lista de Chequeo</h4>
@@ -94,7 +94,7 @@
     </div><!-- col-md-6 -->
 </div><!--row -->
 
-<div class="row" id="rowList">
+<div class="row" id="rowTablesLL">
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -109,8 +109,8 @@
                     <table class="table" id="dataTableLabel">
                         <thead>
                             <tr>
-                                <th class="col-md-1" style="text-align: center">Id. Item</th>
-                                <th class="col-md-3" style="text-align: center">Nombre del Item</th>
+                                <th class="col-md-2" style="text-align: center">Id. Item</th>
+                                <th class="col-md-4" style="text-align: center">Nombre del Item</th>
                                 <th class="col-md-1" style="text-align: center">Ver</th>
                             </tr>
                         </thead>
@@ -134,7 +134,7 @@
                     <table class="table" id="dataTableLista">
                         <thead>
                             <tr>
-                                <th class="col-md-1" style="text-align: center">Id. Lista</th>
+                                <th class="col-md-2" style="text-align: center">Id. Lista</th>
                                 <th class="col-md-4" style="text-align: center">Nombre Lista de Chequeo</th>
                                 <th class="col-md-1" style="text-align: center">Ver</th>
                             </tr>
@@ -160,7 +160,7 @@
                     <div class="form-group col-md-12">
                         <label class="col-md-2 control-label"> Nombre Etiqueta <span class="asterisk">*</span></label>
                         <div class="col-md-10">
-                            <input type="text" id="eNomLabel" class="form-control" placeholder="Nombre de la etiqueta" required />
+                            <input type="text" id="eNomItem" class="form-control" placeholder="Nombre de la etiqueta" required />
                         </div>
                     </div>
                 </div>
@@ -201,6 +201,35 @@
                             <input type="text" id="eNomLista" class="form-control" placeholder="Nombre de lista de chequeo" required />
                         </div>
                     </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-md-10 col-md-offset-1">
+                        <div class="table-responsive">
+                            <table class="table mb40" id="eTableNewLabel">
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <div class="form-group col-md-12">
+                                                <div class="col-sm-12">
+                                                    <input type="text" name="eNomLabel" id="eNomLabel" class="form-control" placeholder="Nombre de la etiqueta (*)" list="eDlNomEtiqueta" required />
+                                                    <datalist id="eDlNomEtiqueta"></datalist>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="table-action">
+                                            <div class="form-group col-md-12">
+                                                <button id="eBtnAddLineaLabel" title="Agregar Etiqueta" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">
+                                                    <i class="fa fa-plus-square"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div><!-- table-responsive -->
+                    </div><!-- col-md-6 -->
                 </div>
                 <br/>
                 <div class="row">
