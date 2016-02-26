@@ -1,7 +1,7 @@
 (function(document, window, $, undefined) {
     (function() {
         return um = {
-            cargarComboBox: function(oCbx, oDatos) {
+            cargarComboBox: function(oCbx, oDatos, frm) {
                 
                 for (var i = 0; i < oCbx.length; i++) {
                     var option = document.createElement('option');
@@ -11,14 +11,25 @@
                     
                     oCbx[i].append(option);
                     
-                    oDatos.forEach(function(fibra){
-                        if (fibra.nomFibra !== "") {
-                            option = document.createElement('option');
-                            $(option).text(fibra.nomFibra);
-                            oCbx[i].append(option);
-                        }
-                    });
+                    if (frm === 'preparacion' || frm === 'auxiliares' || frm === 'proPost') {
+                        oDatos.forEach(function(fibra){
+                            if (fibra.nomFibra !== "") {
+                                option = document.createElement('option');
+                                $(option).text(fibra.nomFibra);
+                                oCbx[i].append(option);
+                            }
+                        });
+                    }
                     
+                    if (frm === 'curvas') {
+                        oDatos.forEach(function(l){
+                            if (l.nomListaCheck !== "") {
+                                option = document.createElement('option');
+                                $(option).text(l.nomListaCheck);
+                                oCbx[i].append(option);
+                            }
+                        });
+                    }
                 }
             },
             
@@ -194,7 +205,7 @@
                     });
                 }
                 
-                if (tipo === 'c') {
+                if (tipo === 'c') { //Curva
                     $(tabla).dataTable({
                         data: oDatos,
                         columns: [
@@ -203,6 +214,7 @@
                             {data: 'tiempoCurva', className: 'center'},
                             {data: 'llenadoCurva', className: 'center'},
                             {data: 'rinseCurva', className: 'center'},
+                            {data: 'checkList', className: 'center'},
                             {data: 'btnView', className: 'center'}
                         ],
                         sPaginationType: 'full_numbers',
@@ -501,6 +513,9 @@
                     datos.tiempo = d.tiempo;
                     datos.llenado = d.llenado;
                     datos.rinse = d.rinse;
+                    datos.idListaCheck = null;
+                    
+                    datos = self.obtenerDatosTabla(d.tabla, datos, {frm: d.form, tipo: 'nuevo'});
                     
                 } else if (d.form === 'label') {
                     datos.nombre = d.nombre;
@@ -596,7 +611,23 @@
                     }
                     
                 } else if (t.frm === 'curva') {
-                    
+                    if ((t.tipo === 'nuevo' || t.tipo === 'editar') && tabla !== '') {
+                        $(tabla).find('tbody tr').each(function(index) {
+                            if (index > 0) {
+                                $(this).children('td').each(function(index2) {
+                                    switch (index2) {
+                                        case 0: //Id Lista Chequeo
+                                            if (oArr.idListaCheck === null) {
+                                                oArr.idListaCheck = $(this).text();
+                                            } else {
+                                                oArr.idListaCheck += "-" + $(this).text();
+                                            }
+                                            break;
+                                    }
+                                });
+                            }
+                        });
+                    }
                     
                 } else if (t.frm === 'listaCheck') {
                     if ((t.tipo === 'nuevo' || t.tipo === 'editar') && tabla !== '') {
@@ -814,14 +845,42 @@
                 var datos = new Object();
                 
                 if (servlet === 'ServletCurvas'){
+                    var lista = 0;
+                    var listaNue = 0;
+                    
                     datos.nombre = oBas.nombre;
                     datos.tiempo = oBas.tiempo;
                     datos.llenado = oBas.llenado;
                     datos.rinse = oBas.rinse;
                     datos.idMaestro = oBas.idMaestro;
                     datos.coment = oBas.coment;
+                    datos.idListaCheck = null;
                     
-                    if (datos.nombre !== oBas.org.nomCurva || datos.tiempo !== oBas.org.tiempoCurva || datos.llenado !== oBas.org.llenadoCurva || datos.rinse !== oBas.org.rinseCurva) {
+                    datos = self.obtenerDatosTabla(oBas.tabla, datos, {frm: 'curva', tipo: 'editar'});
+                    
+                    if (oBas.org.checkList !== null) {
+                        var lista = oBas.org.checkList.length;
+                    }
+                    
+                    if (datos.idListaCheck !== null) {
+                        var listaNue = datos.idListaCheck.length;
+                    }
+                    
+                    var c = 0;
+                    
+                    if (lista > listaNue) {
+                        c = 1;
+                    } if (lista < listaNue) {
+                        c = 1;
+                    } else if (lista === listaNue) {
+                        if (oBas.org.checkList === datos.idListaCheck) {
+                            c = 0;
+                        } else {
+                            c = 1;
+                        }
+                    }
+                    
+                    if (datos.nombre !== oBas.org.nomCurva || datos.tiempo !== oBas.org.tiempoCurva || datos.llenado !== oBas.org.llenadoCurva || datos.rinse !== oBas.org.rinseCurva || c > 0) {
 
                         consultas.solicitarModificarMaestro(datos, btnCerrar, servlet);
 

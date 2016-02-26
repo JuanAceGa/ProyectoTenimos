@@ -42,16 +42,40 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="form-group col-md-12">
-                            <label class="col-md-2 control-label">Lista de Chequeo <span class="asterisk">*</span></label>
-                            <div class="col-md-10">
-                                <select id="cbxListaCheck" class="form-control" required>
-                                    <option>Seleccione una...</option>
-                                    <option>Lista Chequeo</option>
-                                </select>
-                                <label class="error" for="lista"></label>
-                            </div>
-                        </div><!-- form-group -->
+                        <div class="col-md-10 col-md-offset-1">
+                            <div class="table-responsive">
+                                <table class="table display" id="tableNewListCheck">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-1 center">Id. Lista</th>
+                                            <th class="col-md-8 left">Nombre Lista de Chequeo <span class="asterisk">*</span></th>
+                                            <th class="col-md-1 center">Agregar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td></td>
+                                            <td class="left">
+                                                <div class="form-group col-md-12">
+                                                    <!--<div class="col-md-10">-->
+                                                        <select id="cbxListaCheck" class="form-control" required>
+                                                            <option>Seleccione una...</option>
+                                                            <option>Lista Chequeo</option>
+                                                        </select>
+                                                        <!--<label class="error" for="lista"></label>-->
+                                                    <!--</div>-->
+                                                </div><!-- form-group -->
+                                            </td>
+                                            <td class="table-action center">
+                                                <!--<div class="form-group col-md-12">-->
+                                                    <button id="btnAddLista" title="Agregar Lista" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button"><i class="fa fa-plus-square"></i></button>
+                                                <!--</div>-->
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div><!-- table-responsive -->
+                        </div><!-- col-md-6 -->
                     </div>
                 </div><!-- panel-body -->
                 <div class="panel-footer">
@@ -80,12 +104,13 @@
                     <table class="table" id="dataTableCurva">
                         <thead>
                             <tr>
-                                <th class="col-md-1" style="text-align: center">Id. Curva</th>
-                                <th class="col-md-4" style="text-align: center">Nombre de la Curva</th>
-                                <th class="col-md-1" style="text-align: center">Tiempo (Min)</th>
-                                <th class="col-md-1" style="text-align: center">Llenado(s)</th>
-                                <th class="col-md-1" style="text-align: center">Rinse(s) x 5'</th>
-                                <th class="col-md-1" style="text-align: center">Ver</th>
+                                <th class="col-md-1 center">Id. Curva</th>
+                                <th class="col-md-4 center">Nombre de la Curva</th>
+                                <th class="col-md-1 center">Tiempo (Min)</th>
+                                <th class="col-md-1 center">Llenado(s)</th>
+                                <th class="col-md-1 center">Rinse(s) x 5'</th>
+                                <th class="col-md-2 center">Id. Lista Chequeo</th>
+                                <th class="col-md-1 center">Ver</th>
                             </tr>
                         </thead>
                     </table>
@@ -135,6 +160,42 @@
                             <input type="text" name="eRinsCurva" id="eRinsCurva" class="form-control" placeholder="Rinse(s) de la curva" style="text-align: center" required />
                         </div>
                     </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10 col-md-offset-1">
+                        <div class="table-responsive">
+                            <table class="table display" id="eTableNewListCheck">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-1 center">Id. Lista</th>
+                                        <th class="col-md-8 left">Nombre Lista de Chequeo <span class="asterisk">*</span></th>
+                                        <th class="col-md-1 center">Agregar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td class="left">
+                                            <div class="form-group col-md-12">
+                                                <!--<div class="col-md-10">-->
+                                                <select id="eCbxListaCheck" class="form-control" required>
+                                                    <option>Seleccione una...</option>
+                                                    <option>Lista Chequeo</option>
+                                                </select>
+                                                <!--<label class="error" for="lista"></label>-->
+                                                <!--</div>-->
+                                            </div><!-- form-group -->
+                                        </td>
+                                        <td class="table-action center">
+                                            <!--<div class="form-group col-md-12">-->
+                                            <button id="eBtnAddLista" title="Agregar Lista" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button"><i class="fa fa-plus-square"></i></button>
+                                            <!--</div>-->
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div><!-- table-responsive -->
+                    </div><!-- col-md-6 -->
                 </div>
                 <div class="row">
                     <div class="form-group col-lg-12 col-lg-offset-0">

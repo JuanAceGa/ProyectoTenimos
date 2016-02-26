@@ -19,6 +19,7 @@
         <link href="../../css/style.default.css" rel="stylesheet">
         <link href="../../css/jquery.gritter.css" rel="stylesheet">
         <link href="../../css/jquery.datatables.css" rel="stylesheet">
+        <!--<link href="../../css/jquery.dataTables.min.css" rel="stylesheet">-->
         <link href="../../css/display.css" rel="stylesheet">
         <link href="../../css/datatable-align-text.css" rel="stylesheet">
     </head>
@@ -68,15 +69,15 @@
 
                     <h5 class="sidebartitle">Navegación</h5>
                     <ul class="nav nav-pills nav-stacked nav-bracket" id="nav">
-                        <li class="active">
-                            <a href="#"><i class="fa fa-home"></i><span>Dashboard</span></a></li>
+                        <li class="active"><a href="#"><i class="fa fa-home"></i><span>Dashboard</span></a></li>
                         <li><a href="#"><i class="fa fa-envelope-o"></i><span>Email</span></a></li>
                         <li class="nav-parent" id="navLab"><a href="#"><i class="fa fa-edit"></i><span>Laboratorio</span></a>
-                            <ul class="children" >
+                            <ul class="children">
                                 <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Preparación</a></li>
                                 <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Auxiliares</a></li>
                                 <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Procesos Posteriores</a></li>
                                 <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Fibras</a></li>
+                                <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Formulación</a></li>
                             </ul>
                         </li>
                         <li class="nav-parent" id="navProd"><a href="#"><i class="fa fa-gears"></i><span>Producción</span></a>
@@ -227,6 +228,8 @@
         <script src="../../js/lib/jquery-1.10.2.min.js"></script>
         <script src="../../js/lib/code.jquery.com-jquery-1.11.3.min.js"></script>
         <script src="../../js/lib/jquery-migrate-1.2.1.min.js"></script>
+        <!--<script src="../../js/lib/jquery-1.12.0.min.js"></script>-->
+        <!--<script src="../../js/lib/jquery-dataTables-1.10.11.min.js"></script>-->
         <script src="../../js/lib/bootstrap.min.js"></script>
         <script src="../../js/lib/modernizr.min.js"></script>
         <script src="../../js/lib/jquery.sparkline.min.js"></script>

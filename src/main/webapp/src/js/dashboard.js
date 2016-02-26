@@ -170,6 +170,21 @@
                             this.children[3].className = "nav-parent";
                             
                             break;
+                            
+                        case "Maestro Formulación":
+                            this.children[2].className = "nav-parent active";
+                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Formulación";
+                            self.ocultarFormularios();
+                            
+                            //self.rowFibra.show();
+                            //self.frmMaestroFibra.children(".minimize").click();
+                            //self.tblMaestroFibra.children(".minimize").click();
+                            
+                            this.children[0].className = "";
+                            this.children[1].className = "";
+                            this.children[3].className = "nav-parent";
+                            
+                            break;
                         
                         case "Maestro Procesos":
                             this.children[3].className = "nav-parent active";

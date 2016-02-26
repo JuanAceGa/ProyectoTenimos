@@ -75,7 +75,7 @@
                     }
                     elementos.push(self.$cbxfibraAux);
                     elementos.push(self.$eCbxfibraAux);
-                    um.cargarComboBox(elementos, self.oFibras);
+                    um.cargarComboBox(elementos, self.oFibras, 'auxiliares');
                 }
 
                 if (opc === 'q') {

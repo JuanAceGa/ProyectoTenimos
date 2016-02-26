@@ -1,12 +1,17 @@
 (function(document, window, $, undefined) {
     (function() {
         return frmCurva = {
-            oCurvas: '',
+            oCurvas: [],
+            oListaCheck: [],
+            oLabel: [],
             $dataTableCurva: $('#dataTableCurva'),
             $nomCurva: $('#nombCurva'),
             $tiempoCurva: $('#tiempCurva'),
             $llenadoCurva: $('#llenadCurva'),
             $rinseCurva: $('#rinsCurva'),
+            $tBodyNewListCheck: $('#tableNewListCheck').find('tbody'),
+            $cbxListaCheck: $('#cbxListaCheck'),
+            $btnAddLista: $('#btnAddLista'),
             $btnSaveCurva: $('#btnSaveCurva'),
             $btnCleanCurva: $('#btnCleanCurva'),
             $modalMensaje: $('#myModal'),
@@ -17,6 +22,9 @@
             $eTiempCurva: $('#eTiempCurva'),
             $eLlenadCurva: $('#eLlenadCurva'),
             $eRinseCurva: $('#eRinsCurva'),
+            $eTBodyNewListCheck: $('#eTableNewListCheck').find('tbody'),
+            $eCbxListaCheck: $('#eCbxListaCheck'),
+            $eBtnAddLista: $('#eBtnAddLista'),
             $eTextArea: $('#modalEditCurva').find('textarea'),
             $eBtnModificar: $('#eBtnModificarCurva'),
             $eBtnCerrar: $('#eBtnCerrarModalEdit'),
@@ -30,6 +38,9 @@
                 this.metodosUtiles();
                 this.limpiarFormulario();
                 this.pintarCamposObligatorios();
+                this.agregarListaChequeo();
+                this.desplegarLista();
+                this.borrarListaCheck()
                 this.consultaNombreCurva();
                 this.verCurva();
                 this.cerrarModalEdicion();
@@ -44,7 +55,18 @@
                     um.destruirDataTable(self.$dataTableCurva.dataTable(), '6');
                     um.renderDataTables(self.$dataTableCurva, self.oCurvas, 'c');
                 }
-
+                
+                if (opc === 'lc') {
+                    self.oListaCheck = [];
+                    self.oListaCheck = data;
+                    um.cargarComboBox([self.$cbxListaCheck, self.$eCbxListaCheck], self.oListaCheck, 'curvas');
+                }
+                
+                if (opc === 'll') {
+                    self.oLabel = [];
+                    self.oLabel = data;
+                }
+                
                 if (opc === 'nc') {
                     if (data !== null) {
                         self.oCurvas = "";
@@ -106,8 +128,13 @@
                 
                 self.$btnCleanCurva.on('click', function(e) {
                     e.preventDefault();
-
-                    self.limpiarFormulario();
+                    
+                    //self.limpiarFormulario();
+                    self.$cbxListaCheck.val('Seleccione una...');
+                    self.$tBodyNewListCheck.find('tr:gt(0)').remove();
+                    var elementos = [self.$nomCurva, self.$tiempoCurva, self.$llenadoCurva, self.$rinseCurva];
+                    u.limpiarCampos(elementos);
+                    u.camposObligatorios(elementos, '1');
                 });
             },
             
@@ -116,13 +143,13 @@
                 
                 var elementos = [self.$nomCurva, self.$tiempoCurva, self.$llenadoCurva, self.$rinseCurva];
                 u.limpiarCampos(elementos);
-
+                
                 self.pintarCamposObligatorios();
             },
             
             pintarCamposObligatorios: function() {
               var self = this;
-              var campos = [self.$nomCurva, self.$tiempoCurva, self.$llenadoCurva, self.$rinseCurva];
+              var campos = [self.$nomCurva, self.$tiempoCurva, self.$llenadoCurva, self.$rinseCurva, self.$cbxListaCheck];
               
               u.camposObligatorios(campos, '1');
             },
@@ -137,6 +164,182 @@
                 } catch (e) {
                     alert(mensaje.cuerpoMensaje);
                 }
+            },
+            
+            agregarListaChequeo: function() {
+                var self = this;
+                
+                self.$btnAddLista.on('click', function(e) {
+                    e.preventDefault();
+                    var newDd = '';
+                    var ddTemp = '<dd>Etiqueta: :nombreLabel:</dd>';                     
+                    var trTemp = '<tr>' +
+                                    '<td class="center">:idNomLista:</td>' +
+                                    '<td class="left">' +
+                                        '<dl style="margin-bottom: 0;">' +
+                                            '<dt>' +
+                                                '<button type="button" class="btn" id="btnPlus" style="background: transparent">' +
+                                                    '<i class="fa fa-plus-square"></i>' +
+                                                '</button>' +
+                                                ':nomLista:</dt> :dd:' +
+                                        '</dl>' +
+                                    '</td>' +
+                                    '<td class="center">' +
+                                        '<button type="button" class="btn" id="btnDelLinea">' +
+                                            '<i class="fa fa-trash-o"></i>' +
+                                        '</button>' +
+                                    '</td>' +
+                                 '</tr>';
+                    
+                    var campObligQuim = u.camposObligatorios([self.$cbxListaCheck], '2');
+                    
+                    if (campObligQuim) {
+                        var lista = self.$cbxListaCheck.val();
+                        var label;
+                        var aLabel;
+                        
+                        for (var i = 0; i < self.oListaCheck.length; i++) {
+                            if (lista === self.oListaCheck[i].nomListaCheck) {
+                                label = self.oListaCheck[i].idLabel.split('-');
+                                aLabel = new Array(label.length);
+                                
+                                for (var j = 0; j < label.length; j++) {
+                                    for (var k = 0; k < self.oLabel.length; k++) {
+                                        if (parseInt(label[j]) === self.oLabel[k].idLabel) {
+                                            aLabel[j] = ddTemp.replace(':nombreLabel:', self.oLabel[k].nombreLabel);
+                                            newDd = newDd + aLabel[j];
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                var newTr = trTemp
+                                        .replace(':idNomLista:', self.oListaCheck[i].idNomLista)
+                                        .replace(':nomLista:', self.oListaCheck[i].nomListaCheck)
+                                        .replace(':dd:', newDd);
+                                break;
+                            }
+                        }
+                        
+                        self.$tBodyNewListCheck.append(newTr);
+                        $('dd').hide();
+                        
+                        self.$cbxListaCheck.val("Seleccione una...");
+                        u.camposObligatorios([self.$cbxListaCheck], '1');
+                    }
+                });
+                
+                self.$eBtnAddLista.on('click', function(e) {
+                    e.preventDefault();
+                    var newDd = '';
+                    var ddTemp = '<dd>Etiqueta: :nombreLabel:</dd>';                     
+                    var trTemp = '<tr>' +
+                                    '<td class="center">:idNomLista:</td>' +
+                                    '<td class="left">' +
+                                        '<dl style="margin-bottom: 0;">' +
+                                            '<dt>' +
+                                                '<button type="button" class="btn" id="btnPlus" style="background: transparent">' +
+                                                    '<i class="fa fa-plus-square"></i>' +
+                                                '</button>' +
+                                                ':nomLista:</dt> :dd:' +
+                                        '</dl>' +
+                                    '</td>' +
+                                    '<td class="center">' +
+                                        '<button type="button" class="btn" id="btnDelLinea">' +
+                                            '<i class="fa fa-trash-o"></i>' +
+                                        '</button>' +
+                                    '</td>' +
+                                 '</tr>';
+                    
+                    var campObligQuim = u.camposObligatorios([self.$eCbxListaCheck], '2');
+                    
+                    if (campObligQuim) {
+                        var lista = self.$eCbxListaCheck.val();
+                        var label;
+                        var aLabel;
+                        
+                        for (var i = 0; i < self.oListaCheck.length; i++) {
+                            if (lista === self.oListaCheck[i].nomListaCheck) {
+                                label = self.oListaCheck[i].idLabel.split('-');
+                                aLabel = new Array(label.length);
+                                
+                                for (var j = 0; j < label.length; j++) {
+                                    for (var k = 0; k < self.oLabel.length; k++) {
+                                        if (parseInt(label[j]) === self.oLabel[k].idLabel) {
+                                            aLabel[j] = ddTemp.replace(':nombreLabel:', self.oLabel[k].nombreLabel);
+                                            newDd = newDd + aLabel[j];
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                var newTr = trTemp
+                                        .replace(':idNomLista:', self.oListaCheck[i].idNomLista)
+                                        .replace(':nomLista:', self.oListaCheck[i].nomListaCheck)
+                                        .replace(':dd:', newDd);
+                                break;
+                            }
+                        }
+                        
+                        self.$eTBodyNewListCheck.append(newTr);
+                        $('dd').hide();
+                        
+                        self.$eCbxListaCheck.val("Seleccione una...");
+                        u.camposObligatorios([self.$eCbxListaCheck], '1');
+                    }
+                });
+            },
+            
+            desplegarLista: function() {
+                var self = this;
+                
+                self.$tBodyNewListCheck.on('click', '#btnPlus', function(e) {
+                    e.preventDefault();
+                    
+                    var lista = $(this).closest('dl').find('dd');
+                    
+                    $('dd').not(lista).slideUp('fast');
+                    $('dd').not(lista)
+                            .closest('dl').find('i').removeClass('fa-minus-square');
+
+                    $(this).find('i').toggleClass('fa-minus-square');
+                    
+                    lista.slideToggle('fast');
+                });
+                
+                self.$eTBodyNewListCheck.on('click', '#btnPlus', function(e) {
+                    e.preventDefault();
+                    
+                    var lista = $(this).closest('dl').find('dd');
+                    
+                    $('dd').not(lista).slideUp('fast');
+                    $('dd').not(lista)
+                            .closest('dl').find('i').removeClass('fa-minus-square');
+
+                    $(this).find('i').toggleClass('fa-minus-square');
+                    
+                    lista.slideToggle('fast');
+                });
+            },
+            
+            borrarListaCheck: function() {
+                var self = this;
+                
+                self.$tBodyNewListCheck.on('click', '#btnDelLinea', function(e) {
+                    var fila = $(this).closest('tr');
+                    
+                    fila.remove();
+                   
+                    e.stopPropagation();
+                });
+                
+                self.$eTBodyNewListCheck.on('click', '#btnDelLinea', function(e) {
+                    var fila = $(this).closest('tr');
+                    
+                    fila.remove();
+                   
+                    e.stopPropagation();
+                });
             },
             
             consultaNombreCurva: function(){
@@ -174,7 +377,7 @@
                             }
                         }
                         
-                        consultas.consultarNombreMaestros(nombre, 'editar', self.idCurva, 'ServletCurvas');                        
+                        consultas.consultarNombreMaestros(nombre, 'editar', self.idCurva, 'ServletCurvas');
                     }
                 });
             },
@@ -194,7 +397,7 @@
                     var llenado = self.$llenadoCurva.val();
                     var rinse = self.$rinseCurva.val();
                     
-                    um.guardarRegistro({form: 'curva', nombre: nombre, tiempo: tiempo, llenado: llenado, rinse: rinse}, 'ServletCurvas');
+                    um.guardarRegistro({form: 'curva', nombre: nombre, tiempo: tiempo, llenado: llenado, rinse: rinse, tabla: $('#tableNewListCheck')}, 'ServletCurvas');
                 }
             },
             
@@ -203,12 +406,16 @@
 
                 self.$dataTableCurva.on('click', '#btnView', function (e) {
                     var fila = $(this).closest('tr');
+                    self.$eCbxListaCheck.val('Seleccione una...');
                     var elementos = [self.$eNombCurva, self.$eTiempCurva, self.$eLlenadCurva, self.$eRinseCurva, self.$eTextArea];
                     
                     self.banderaModal = 1;
                     self.idCurva = parseInt(fila[0].cells[0].textContent);
                     
-                    u.limpiarCampos(elementos);
+                    u.limpiarCampos(elementos);                    
+                    self.$eTBodyNewListCheck.find('tr:gt(0)').remove();
+                    elementos.push(self.$eCbxListaCheck);
+                    u.camposObligatorios(elementos, '1');
                     
                     for (var i = 0; i < self.oCurvas.length; i++) {
                         if (self.oCurvas[i].idCurva === self.idCurva) {
@@ -216,6 +423,62 @@
                             self.$eTiempCurva.val(self.oCurvas[i].tiempoCurva);
                             self.$eLlenadCurva.val(self.oCurvas[i].llenadoCurva);
                             self.$eRinseCurva.val(self.oCurvas[i].rinseCurva);
+                            
+                            if (self.oCurvas[i].checkList !== null) {
+                                var idLista = self.oCurvas[i].checkList.split('-');
+                                
+                                for (var h = 0; h < idLista.length; h++) {
+                                    for (var i = 0; i < self.oListaCheck.length; i++) {
+                                        if (parseInt(idLista[h]) === self.oListaCheck[i].idNomLista) {
+                                            var newDd = '';
+                                            var ddTemp = '<dd>Etiqueta: :nombreLabel:</dd>';                     
+                                            var trTemp = '<tr>' +
+                                                            '<td class="center">:idNomLista:</td>' +
+                                                            '<td class="left">' +
+                                                                '<dl style="margin-bottom: 0;">' +
+                                                                    '<dt>' +
+                                                                        '<button type="button" class="btn" id="btnPlus" style="background: transparent">' +
+                                                                            '<i class="fa fa-plus-square"></i>' +
+                                                                        '</button>' +
+                                                                        ':nomLista:</dt> :dd:' +
+                                                                '</dl>' +
+                                                            '</td>' +
+                                                            '<td class="center">' +
+                                                                '<button type="button" class="btn" id="btnDelLinea">' +
+                                                                    '<i class="fa fa-trash-o"></i>' +
+                                                                '</button>' +
+                                                            '</td>' +
+                                                         '</tr>';
+                                            
+                                            var label = self.oListaCheck[i].idLabel.split('-');
+                                            var aLabel = new Array(label.length);
+
+                                            for (var j = 0; j < label.length; j++) {
+                                                for (var k = 0; k < self.oLabel.length; k++) {
+                                                    if (parseInt(label[j]) === self.oLabel[k].idLabel) {
+                                                        aLabel[j] = ddTemp.replace(':nombreLabel:', self.oLabel[k].nombreLabel);
+                                                        newDd = newDd + aLabel[j];
+                                                        break;
+                                                    }
+                                                }
+                                            }
+
+                                            var newTr = trTemp
+                                                    .replace(':idNomLista:', self.oListaCheck[i].idNomLista)
+                                                    .replace(':nomLista:', self.oListaCheck[i].nomListaCheck)
+                                                    .replace(':dd:', newDd);
+                                            break;
+                                        }
+                                    }
+                                    self.$eTBodyNewListCheck.append(newTr);
+                                }
+                                
+                                $('dd').hide();
+
+                                self.$eCbxListaCheck.val("Seleccione una...");
+                                u.camposObligatorios([self.$eCbxListaCheck], '1');
+                            }
+                            
                             break;
                         }
                     }
@@ -277,7 +540,7 @@
                         }
                     }
                     
-                    um.SolicitarModificarRegistro({tabla: '', nombre: nombre, tiempo: tiempo, llenado: llenado, rinse: rinse, idMaestro: self.idCurva, coment: coment, org: self.oCurvas[j]}, [], [], self.$eBtnCerrar, 'ServletCurvas');
+                    um.SolicitarModificarRegistro({tabla: $('#eTableNewListCheck'), nombre: nombre, tiempo: tiempo, llenado: llenado, rinse: rinse, idMaestro: self.idCurva, coment: coment, org: self.oCurvas[j]}, [], [], self.$eBtnCerrar, 'ServletCurvas');
                 }
             },
             

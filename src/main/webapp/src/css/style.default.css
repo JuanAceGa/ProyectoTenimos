@@ -3412,6 +3412,13 @@ div.error label.error:before {
 	width: 30px;
 }
 
+td.details-control {
+    background: url(../images/plus-icon.png) no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url(../images/minus-icon.png) no-repeat center center;
+}
 
 /***** MEDIA QUERIES *****/
 /*************************/

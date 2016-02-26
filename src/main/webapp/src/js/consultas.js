@@ -69,12 +69,14 @@
                 if (m === '' || m === 'll') {
                     $.get('../../../ServletLabelList', {accion: 'buscar'}, function(response) {
                         frmListaC.cargarDatos(response, 'll');
+                        frmCurva.cargarDatos(response, 'll');
                     });
                 }
                 
                 if (m === '' || m === 'lc') {
                     $.get('../../../ServletListaCheck', {accion: 'buscar'}, function(response) {
                             frmListaC.cargarDatos(response, 'lc');
+                            frmCurva.cargarDatos(response, 'lc');
                     });
                 }
             },
@@ -218,11 +220,13 @@
                             
                             if (servlet === 'ServletLabelList') {
                                 frmListaC.cargarDatos(response, 'nll');
+                                frmListaC.cargarDatos(response, 'll');
                             }
                             
                             
                             if (servlet === 'ServletListaCheck') {
                                 frmListaC.cargarDatos(response, 'nlc');
+                                frmCurva.cargarDatos(response, 'lc');
                             }
                             
                         } else {

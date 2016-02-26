@@ -76,7 +76,7 @@
                     
                     elementos.push(self.$cbxfibraProcPos);
                     elementos.push(self.$eCbxfibraProcPos);
-                    um.cargarComboBox(elementos, self.oFibras);
+                    um.cargarComboBox(elementos, self.oFibras, 'proPost');
                 }
 
                 if (opc === 'q') {
