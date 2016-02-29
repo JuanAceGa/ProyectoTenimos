@@ -79,6 +79,9 @@
                     
                     self.nomUser.text(this.nombre(self.user.idUsuario.priNombre, self.user.idUsuario.segNombre));
                     self.nomUser2.text(self.nomUser);
+                    
+                } else {
+                    window.location = '../../../index.jsp';
                 }
             },
             

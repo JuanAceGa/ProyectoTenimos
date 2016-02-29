@@ -19,9 +19,9 @@
         <link href="../../css/style.default.css" rel="stylesheet">
         <link href="../../css/jquery.gritter.css" rel="stylesheet">
         <link href="../../css/jquery.datatables.css" rel="stylesheet">
-        <!--<link href="../../css/jquery.dataTables.min.css" rel="stylesheet">-->
         <link href="../../css/display.css" rel="stylesheet">
         <link href="../../css/datatable-align-text.css" rel="stylesheet">
+        <link href="../../css/colorpicker.css" rel="stylesheet">        
     </head>
 
     <body>
@@ -219,6 +219,7 @@
                     <jsp:include page="../forms/produccion/frmprocesos.jspf"></jsp:include>
                     <jsp:include page="../forms/produccion/frmcurvas.jspf"></jsp:include>
                     <jsp:include page="../forms/produccion/frmlistacheck.jspf"></jsp:include>
+                    <jsp:include page="../forms/laboratorio/frmformular.jspf"></jsp:include>
                 </div><!-- contentpanel -->
             </div><!-- mainpanel -->
         </section>
@@ -228,8 +229,6 @@
         <script src="../../js/lib/jquery-1.10.2.min.js"></script>
         <script src="../../js/lib/code.jquery.com-jquery-1.11.3.min.js"></script>
         <script src="../../js/lib/jquery-migrate-1.2.1.min.js"></script>
-        <!--<script src="../../js/lib/jquery-1.12.0.min.js"></script>-->
-        <!--<script src="../../js/lib/jquery-dataTables-1.10.11.min.js"></script>-->
         <script src="../../js/lib/bootstrap.min.js"></script>
         <script src="../../js/lib/modernizr.min.js"></script>
         <script src="../../js/lib/jquery.sparkline.min.js"></script>
@@ -244,6 +243,8 @@
         <script src="../../js/lib/chosen.jquery.min.js"></script>
 
         <script src="../../js/lib/jquery.validate.min.js"></script>
+        
+        <script src="../../js/lib/colorpicker.js"></script>
         
         <script src="../../js/lib/custom.js"></script>
         <script src="../../js/lib/datatables.min.js"></script>

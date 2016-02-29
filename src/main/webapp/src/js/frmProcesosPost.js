@@ -566,7 +566,7 @@
                         }
                     }
                     
-                    um.guardarRegistro({form: '', tabla: self.$dataTableNewQProcPos, nombre: nombre, idFib: idFib}, 'ServletProcesosPost');
+                    um.guardarRegistro({form: '', tabla: self.$dataTableNewQProcPos, nombre: nombre, idFib: idFib, compos: ''}, 'ServletProcesosPost');
                 }
             },
             verProcPos: function() {

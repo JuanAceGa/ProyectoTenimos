@@ -176,13 +176,14 @@
                     });
                 }
                 
-                if (tipo === 'f') {
+                if (tipo === 'f') { //Maestro Fibras
                     $(tabla).dataTable({
                         data: oDatos,
                         columns: [
                             {data: 'idFibra', className: 'center'},
-                            {data: 'nomFibra', className: 'center'},
+                            {data: 'nomFibra', className: 'left'},
                             {data: 'codFibra', className: 'center'},
+                            {data: 'composicion', className: 'center'},
                             {data: 'btnView', className: 'center'}
                         ],
                         sPaginationType: 'full_numbers',
@@ -499,6 +500,7 @@
                     datos.codQuimico = null;
                     datos.cantGr = null;
                     datos.cantPtj = null;
+                    datos.compos = d.compos;
 
                     datos = self.obtenerDatosTabla(d.tabla, datos, {frm: d.form, tipo: 'nuevo'});
                     
@@ -788,13 +790,14 @@
                     oDatos.eModal.modal('show', 'slow');
                 }
                 
-                if (oDatos.frm === 'f'){
+                if (oDatos.frm === 'f'){//Maestro Fibras
                     
                     for (var i = 0; i < oDatos.registros.length; i++) {
                         if (oDatos.registros[i].idFibra === oDatos.idReg) {
                             
                             oDatos.eNombre.val(oDatos.registros[i].codFibra);
                             oDatos.eNombreFib.val(oDatos.registros[i].nomFibra);
+                            oDatos.eCompos.val(oDatos.registros[i].composicion);
                             break;
                         }
                     }
@@ -997,6 +1000,8 @@
                     datos.comentario = oBas.coment;
                     datos.quimicoMod = new Array();
                     datos.quimicoNue = new Array();
+                    datos.compos = oBas.compos;
+                    datos.composNue = oBas.composNue;
 
                     for (var i = 0; i < oQmod.length; i++) {
                         if (oQmod[i].tipo !== '') {
@@ -1028,6 +1033,7 @@
                 var estado = false;
                 var solcNombre = false;
                 var solcFibra = false;
+                var solcCompos = false;
                 
                 for (var i = 0; i < arrSolicitudes.length; i++) {
                     if (arrSolicitudes[i].nombreNue !== null && arrB.solcNombre === false) {
@@ -1099,10 +1105,23 @@
                         });
 
                         break;
-                    }                    
+                    }
+                    
+                    if (arrSolicitudes[i].composicion !== null && arrB.solcCompos === false) {
+                        u.habilitarDeshabilitarCampos(oElement[2], 'des');
+                        solcCompos = true;
+                        
+                        $.gritter.add({
+                            title: 'Fibra del Maestro',
+                            text: 'Ya solicitaron cambiar la composición de este maestro, está pendiente por aprobación.',
+                            class_name: 'growl-warning',
+                            sticky: false,
+                            time: '60000'
+                        });
+                    }
                 }
                 
-                return {estado: estado, solcNombre: solcNombre, solcFibra: solcFibra};
+                return {estado: estado, solcNombre: solcNombre, solcFibra: solcFibra, solcCompos: solcCompos};
             }
         }
     })();

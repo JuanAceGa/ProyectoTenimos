@@ -6,6 +6,7 @@
             $dataTableFibra: $('#dataTableFibra'),
             $nomFibra: $('#nomFibra'),
             $codFibra: $('#codFibra'),
+            $cbxComposicion: $('#cbxComposicion'),
             $btnSaveFibra: $('#btnSaveFibra'),
             $btnCleanFibra: $('#btnCleanFibra'),
             $modalMensaje: $('#myModal'),
@@ -14,6 +15,7 @@
             $modalEditFibra: $('#modalEditFibra'),
             $eNomFibra: $('#eNomFibra'),
             $eCodFibra: $('#eCodFibra'),
+            $eCbxComposicion: $('#eCbxComposicion'),
             $eTextArea: $('#modalEditFibra').find('textarea'),
             $eBtnModificar: $('#eBtnEditFibra'),
             $eBtnRestFibra: $('#eBtnRestFibra'),
@@ -26,6 +28,7 @@
             solicitudesEnviadas: [],
             solcNombre: false,
             solcFibra: false,
+            solcCompos: false,
             
             init: function() {
                 this.metodosUtiles();
@@ -69,6 +72,7 @@
                         self.solicitudesEnviadas = data;
                         self.solcNombre = false;
                         self.solcFibra = false;
+                        self.solcCompos = false;
                         self.verificarSolicitudes();
                     }
                 }
@@ -119,13 +123,14 @@
                 
                 var elementos = [self.$codFibra, self.$nomFibra];
                 u.limpiarCampos(elementos);
-
+                self.$cbxComposicion.val('Seleccione una...');
+                
                 self.pintarCamposObligatorios();
             },
             
             pintarCamposObligatorios: function() {
               var self = this;
-              var elementos = [self.$nomFibra , self.$codFibra];
+              var elementos = [self.$nomFibra , self.$codFibra, self.$cbxComposicion];
               
               u.camposObligatorios(elementos, '1');
             },
@@ -147,10 +152,7 @@
 
                 self.$btnSaveFibra.on("click", function(e) {
                     e.preventDefault();
-                    var campOblig = false;
-                    var elementos = [self.$codFibra, self.$nomFibra];
-
-                    campOblig = u.camposObligatorios(elementos, '2');
+                    var campOblig = u.camposObligatorios([self.$codFibra, self.$nomFibra, self.$cbxComposicion], '2');
 
                     if (campOblig) {
                         consultas.consultarNombreMaestros(self.$nomFibra.val(), 'nuevo', self.$codFibra.val(), 'ServletFibras');
@@ -161,10 +163,7 @@
                     e.preventDefault();
                     
                     if (!self.$eCodFibra.attr('disabled') || !self.$eNomFibra.attr('disabled')) {
-                        var campOblig = false;
-                        var campos = [self.$eCodFibra, self.$eNomFibra, self.$eTextArea];
-
-                        campOblig = u.camposObligatorios(campos, '2');
+                        var campOblig = u.camposObligatorios([self.$eCodFibra, self.$eNomFibra, self.$eCbxComposicion, self.$eTextArea], '2');
 
                         if (campOblig) {
                             consultas.consultarNombreMaestros(self.$eCodFibra.val() + ";" + self.$eNomFibra.val(), 'editar', self.idFibra, 'ServletFibras');
@@ -186,7 +185,7 @@
                 
                 } else if (response === 'false') {
 
-                    um.guardarRegistro({form: '', tabla: '', nombre: self.$nomFibra.val(), idFib: self.$codFibra.val()}, 'ServletFibras');
+                    um.guardarRegistro({form: '', tabla: '', nombre: self.$nomFibra.val(), idFib: self.$codFibra.val(), compos: self.$cbxComposicion.val()}, 'ServletFibras');
                 }
             },
             verFibra: function() {
@@ -196,7 +195,7 @@
                     self.banderaModal = 1;
                     var fila = $(this).closest('tr');
                     self.idFibra = parseInt(fila[0].cells[0].textContent);
-                    var elementos = [self.$eCodFibra, self.$eNomFibra];
+                    var elementos = [self.$eCodFibra, self.$eNomFibra, self.$eCbxComposicion];
                     consultas.verificarEstadoModificacion(fila[0].cells[0].textContent, 'ServletFibras');
                     var datos = {
                         frm: 'f',
@@ -205,6 +204,7 @@
                         quimicos: '',
                         eNombre: self.$eCodFibra,
                         eNombreFib: self.$eNomFibra,
+                        eCompos: self.$eCbxComposicion,
                         eTabla: '',
                         eModal: self.$modalEditFibra
                     }
@@ -221,8 +221,8 @@
             
             verificarSolicitudes: function() {
                 var self = this;
-                var elementos = [self.$eNomFibra, self.$eCodFibra];
-                var estado = um.verificarSolicitudes('', elementos, self.solicitudesEnviadas, {solcNombre: self.solcNombre, solcFibra: self.solcFibra});
+                var elementos = [self.$eNomFibra, self.$eCodFibra, self.$eCbxComposicion];
+                var estado = um.verificarSolicitudes('', elementos, self.solicitudesEnviadas, {solcNombre: self.solcNombre, solcFibra: self.solcFibra, solcCompos: self.solcCompos});
                 
                 self.solcNombre = estado.solcNombre;
                 self.solcFibra = estado.solcFibra;
@@ -242,6 +242,8 @@
                     var nombreNue = '';
                     var idFib = '';
                     var idFibNue = '';
+                    var compos = '';
+                    var composNue = '';
                     
                     var coment = self.$eTextArea.val();
                     
@@ -257,11 +259,16 @@
                                 idFib = self.oFibras[i].codFibra;
                                 idFibNue = self.$eCodFibra.val()
                             }
+                            
+                            if (self.oFibras[i].composicion !== self.$eCbxComposicion.val()) {
+                                compos = self.oFibras[i].composicion;
+                                composNue = self.$eCbxComposicion.val();
+                            }
                             break;
                         }
                     }
                     
-                    um.SolicitarModificarRegistro({tabla: '', nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idFibra, coment: coment}, [], [], self.$eBtnCerrar, 'ServletFibras');
+                    um.SolicitarModificarRegistro({tabla: '', nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, compos: compos, composNue: composNue, idMaestro: self.idFibra, coment: coment}, [], [], self.$eBtnCerrar, 'ServletFibras');
                 }
             },
             

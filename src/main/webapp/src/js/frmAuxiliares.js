@@ -565,7 +565,7 @@
                         }
                     }
                     
-                    um.guardarRegistro({form: '', tabla: self.$dataTableNewQAuxiliar, nombre: nombre, idFib: idFib}, 'ServletAuxiliares');
+                    um.guardarRegistro({form: '', tabla: self.$dataTableNewQAuxiliar, nombre: nombre, idFib: idFib, compos: ''}, 'ServletAuxiliares');
                     
                 }
             },
