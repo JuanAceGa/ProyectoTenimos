@@ -43,14 +43,17 @@
                 if (m === '') {
                     $.get('../../../ServletPreparaciones', {accion: 'buscar'}, function(response) {
                         frmPreparacion.cargarDatos(response, 'pr');
+                        frmFormula.cargarDatos(response, 'pre');
                     });
 
                     $.get('../../../ServletAuxiliares', {accion: 'buscar'}, function(response) {
                         frmAuxiliar.cargarDatos(response, 'au');
+                        frmFormula.cargarDatos(response, 'aux');
                     });
 
                     $.get('../../../ServletProcesosPost', {accion: 'buscar'}, function(response) {
                         frmProcPos.cargarDatos(response, 'pp');
+                        frmFormula.cargarDatos(response, 'pp');
                     });
                     
                     $.get('../../../ServletFormulas', {accion: 'buscar', tipo:'formula'}, function(response) {

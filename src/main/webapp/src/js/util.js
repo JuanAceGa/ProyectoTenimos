@@ -49,6 +49,19 @@
                         }
                     }
                     
+                    if (estado === '4') {
+
+                        for (var i = 0; i < campos.length; i++) {
+                            if ($(campos[i][0]).attr('disabled')) {
+                                campos[i].closest('.form-group').removeClass('has-error has-success');
+                            } else if ($(campos[i][0]).val() !== "" && $(campos[i][0]).val() !== "Seleccione una...") {
+                                campos[i].closest('.form-group').removeClass('has-error');
+                            } else {
+                                campos[i].closest('.form-group').addClass('has-error');
+                            }
+                        }
+                    }
+                    
                     return resp;
                 }
             },

@@ -6,6 +6,10 @@
             oComposicion: [],
             oColores: [],
             oTonos: [],
+            oPreparaciones: [],
+            oAuxiliares: [],
+            oColorantes: [],
+            oProPosterior: [],
             $barraProgreso: $('#barraProgreso'),
             $nomFormula: $('#nomFormula'),
             $codFormula: $('#codFormula'),
@@ -43,9 +47,9 @@
             
             init: function() {
                 this.iniciarComplementos();
-//                this.metodosUtiles();
+                this.metodosUtiles();
 //                this.limpiarFormulario();
-//                this.pintarCamposObligatorios();
+                this.pintarCamposObligatorios();
 //                this.agregarListaChequeo();
 //                this.desplegarLista();
 //                this.borrarListaCheck()
@@ -57,9 +61,11 @@
             iniciarComplementos: function() {
                 var self = this;
                 
+                self.$cbxCompos.attr('disabled', true);
+                
                 self.$barraProgreso.bootstrapWizard({
-                    'nextSelector': '.next',
-                    'previousSelector': '.previous',
+                    'nextSelector': '#siguiente',
+                    'previousSelector': '#anterior',
                     onNext: function(tab, navigation, index) {
                       var $total = navigation.find('li').length;
                       var $current = index+1;
@@ -94,6 +100,7 @@
                             jQuery('#colorSelector span').css('backgroundColor', '#' + hex);
                             self.$colorpicker.val('#' + hex);
                             self.$colorpicker.css({color: '#' + hex, backgroundColor: '#' + hex});
+                            u.camposObligatorios([self.$colorpicker], '4');
                         }
                     });
                 }
@@ -114,7 +121,7 @@
                 if (opc === 'pr') { //Procesos
                     self.oProcesos = data;
                     um.destruirDataTable(self.$daTableProcesos, '');
-                    um.renderDataTables(self.$daTableProcesos, self.oProcesos, 'formula');
+                    um.renderDataTables(self.$daTableProcesos, self.oProcesos, {frm: 'formula', tbl:'procesos'});
                 }
                 
                 if (opc === 'fla') {
@@ -135,12 +142,134 @@
                     self.oTonos = data;
                     um.cargarComboBox([self.$cbxTono], self.oTonos, 'tono');
                 }
+                
+                if (opc === 'pre') { //Preparacion
+                    self.oPreparaciones = data;
+                }
+                
+                if (opc === 'aux') { //Auxiliares
+                    self.oAuxiliares = data;
+                }
+                
+                if (opc === '') { //Colorantes
+                    
+                }
+                
+                if (opc === 'pp') { //Procesos Posteriores
+                    self.oProPosterior = data;
+                }
             },
             
             metodosUtiles: function() {
                 var self = this;
-
-                self.$nomCurva.on('keyup keypress', function() {
+                
+                //focusin
+                //focusout
+                self.$cbxFibra.focusout(function(e) {
+                    var fibra = self.$cbxFibra.val();
+                    var arrTemp = [];
+                    
+                    if (fibra !== 'Seleccione una...') {
+                        for (var i = 0; i < self.oFibras.length; i++) {
+                            if (self.oFibras[i].nomFibra === fibra) {
+                                var idFibra = self.oFibras[i].idFibra;
+                                
+                                if (self.oFibras[i].composicion === 'SI') {
+                                    self.$cbxCompos.attr('disabled', false);
+                                    u.camposObligatorios([self.$cbxCompos], '4');
+                                } else {
+                                    self.$cbxCompos.attr('disabled', true);
+                                    u.camposObligatorios([self.$cbxCompos], '4');
+                                }
+                                
+                                break;
+                            }
+                        }
+                        
+                        for (var j = 0; j < self.oPreparaciones.length; j++) {
+                            if (self.oPreparaciones[j].idFibra.idFibra === idFibra) {
+                                arrTemp.push(self.oPreparaciones[j]);
+                            }
+                        }
+                        um.destruirDataTable(self.$daTablePreparaciones, '');
+                        um.renderDataTables(self.$daTablePreparaciones, arrTemp, {frm: 'formula', tbl:'preparacion'});
+                        
+                        arrTemp = [];                        
+                        for (var j = 0; j < self.oAuxiliares.length; j++) {
+                            if (self.oAuxiliares[j].idFibra.idFibra === idFibra) {
+                                arrTemp.push(self.oAuxiliares[j]);
+                            }
+                        }
+                        um.destruirDataTable(self.$daTableAuxiliares, '');
+                        um.renderDataTables(self.$daTableAuxiliares, arrTemp, {frm:'formula', tbl:'auxiliar'});
+                        
+                        arrTemp = [];
+                        for (var j = 0; j < self.oProPosterior.length; j++) {
+                            if (self.oProPosterior[j].idFibra.idFibra === idFibra) {
+                                arrTemp.push(self.oProPosterior[j]);
+                            }
+                        }
+                        um.destruirDataTable(self.$daTableProPosteriores, '');
+                        um.renderDataTables(self.$daTableProPosteriores, arrTemp, {frm: 'formula', tbl: 'proPost'});
+                        
+                        self.nombreFormula();
+                        self.codigoFormula();
+                    } else {
+                        self.$cbxCompos.attr('disabled', true);
+                        u.camposObligatorios([self.$cbxCompos], '4');
+                        self.nombreFormula();
+                        self.codigoFormula();
+                    }
+                    u.camposObligatorios([self.$cbxFibra], '4');
+                    
+                });
+                
+                self.$cbxCompos.focusout(function(e) {
+                    u.camposObligatorios([self.$cbxCompos], '4');
+                });
+                
+                self.$cbxColor.focusout(function(e) {
+                    u.camposObligatorios([self.$cbxColor], '4');
+                    self.nombreFormula();
+                    self.codigoFormula();
+                });
+                
+                self.$desColor.focusin(function(e) {
+                    self.$desColor.css('text-transform', 'uppercase');
+                });
+                
+                self.$desColor.focusout(function(e) {
+                    u.camposObligatorios([self.$desColor], '4');
+                    self.nombreFormula();
+                    
+                    if (self.$desColor.val() === '') {
+                        self.$desColor.css('text-transform', '');
+                    }
+                });
+                
+                self.$cbxTono.focusout(function(e) {
+                    u.camposObligatorios([self.$cbxTono], '4');
+                    self.nombreFormula();
+                    self.codigoFormula();
+                });
+                
+                self.$codPantone.focusin(function(e) {
+                    self.$codPantone.css('text-transform', 'uppercase');
+                });
+                
+                self.$codPantone.focusout(function(e) {
+                    u.camposObligatorios([self.$codPantone], '4');
+                    
+                    if (self.$codPantone.val() === '') {
+                        self.$codPantone.css('text-transform', '');
+                    }
+                });
+                
+                self.$phFormula.focusout(function(e) {
+                    u.camposObligatorios([self.$phFormula], '4');
+                });
+                
+                /*self.$nomCurva.on('keyup keypress', function() {
                     self.$nomCurva.val(self.$nomCurva.val().toUpperCase());
                 });
 
@@ -193,7 +322,7 @@
                     var elementos = [self.$nomCurva, self.$tiempoCurva, self.$llenadoCurva, self.$rinseCurva];
                     u.limpiarCampos(elementos);
                     u.camposObligatorios(elementos, '1');
-                });
+                });*/
             },
             
             limpiarFormulario: function() {
@@ -207,7 +336,18 @@
             
             pintarCamposObligatorios: function() {
               var self = this;
-              var campos = [self.$nomCurva, self.$tiempoCurva, self.$llenadoCurva, self.$rinseCurva, self.$cbxListaCheck];
+              var campos = [
+                  self.$cbxFibra,
+                  self.$cbxColor,
+                  self.$desColor,
+                  self.$cbxTono,
+                  self.$codPantone,
+                  self.$phFormula,
+                  self.$colorpicker,
+                  self.$codColor,
+                  self.$nomColor,
+                  self.$cantColor
+              ];
               
               u.camposObligatorios(campos, '1');
             },
@@ -636,6 +776,68 @@
                     self.tipoEdicion = 'nuevo';
                     self.$eTextArea.val('');
                 });
+            },
+            
+            nombreFormula: function() {
+                var self = this;
+                var fibra = self.$cbxFibra.val();
+                var color = self.$cbxColor.val();
+                var desColor = self.$desColor.val().toUpperCase();
+                var tono = self.$cbxTono.val();
+                
+                if (fibra === 'Seleccione una...') {
+                    fibra = '';
+                }
+                
+                if (color === 'Seleccione una...') {
+                    color = '';
+                }
+                
+                if (tono === 'Seleccione una...') {
+                    tono = '';
+                }
+                
+                var nombre = fibra + ' ' + color + ' ' + desColor + ' ' + tono;
+                
+                self.$nomFormula.val(nombre.trim());
+            },
+            
+            codigoFormula: function() {
+                var self = this;                
+                var fibra = self.$cbxFibra.val();
+                var color = self.$cbxColor.val();
+                var tono = self.$cbxTono.val();
+                var codFibra = '';
+                var codColor = '';
+                var codTono = '';
+                
+                if (fibra !== 'Seleccione una...') {
+                    for (var i = 0; i < self.oFibras.length; i++) {
+                        if (fibra === self.oFibras[i].nomFibra) {
+                            codFibra = self.oFibras[i].codFibra;
+                        }
+                    }
+                }
+                
+                if (color !== 'Seleccione una...') {
+                    for (var i = 0; i < self.oColores.length; i++) {
+                        if (color === self.oColores[i].nomColor) {
+                            codColor = self.oColores[i].codColor;
+                        }
+                    }
+                }
+                
+                if (tono !== 'Seleccione una...') {
+                    for (var i = 0; i < self.oTonos.length; i++) {
+                        if (tono === self.oTonos[i].nomTono) {
+                            codTono= self.oTonos[i].codTono;
+                        }
+                    }
+                }
+                
+                var codigo = codFibra + codColor + codTono;
+                
+                self.$codFormula.val(codigo.trim());
             }
         };
     })();

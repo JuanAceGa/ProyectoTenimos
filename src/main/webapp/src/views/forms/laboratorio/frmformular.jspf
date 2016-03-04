@@ -608,8 +608,8 @@
                     </div><!-- tab-content -->
 
                     <ul class="pager wizard">
-                        <li class="previous"><a href="javascript:void(0)">Anterior</a></li>
-                        <li class="next"><a href="javascript:void(0)">Siguiente</a></li>
+                        <li class="previous" id="anterior"><a href="javascript:void(0)">Anterior</a></li>
+                        <li class="next" id="siguiente"><a href="javascript:void(0)">Siguiente</a></li>
                     </ul>
 
                 </div><!-- #basicWizard -->

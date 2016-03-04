@@ -281,24 +281,71 @@
                     });
                 }
                 
-                if (tipo === 'formula') {
+                if (tipo.frm === 'formula') {
                     for (i = 0; i < oDatos.length; i++) {
                         oDatos[i].btnAdd = '<button id="btnAdd" title="Agregar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
                                                 '<i class="fa fa-plus-square"></i>' +
                                             '</button>';
                     }
                     
-                    $(tabla).dataTable({
-                        data: oDatos,
-                        columns: [
-                            {data: 'nomProceso', className: 'left'},
-                            {data: 'idCurvas', className: 'center'},
-                            {data: 'tiempoEst', className: 'center'},
-                            {data: 'btnAdd', className: 'center'}
-                        ],
-                        sPaginationType: 'full_numbers',
-                        dAutoWidth: false
-                    });
+                    if (tipo.tbl === 'procesos') {
+                        $(tabla).dataTable({
+                            data: oDatos,
+                            columns: [
+                                {data: 'nomProceso', className: 'left'},
+                                {data: 'idCurvas', className: 'center'},
+                                {data: 'tiempoEst', className: 'center'},
+                                {data: 'btnAdd', className: 'center'}
+                            ],
+                            sPaginationType: 'full_numbers',
+                            dAutoWidth: false
+                        });
+                    }
+                    
+                    if (tipo.tbl === 'preparacion') {
+                        $(tabla).dataTable({
+                            data: oDatos,
+                            columns: [
+                                {data: 'nomPreparacion', className: 'left'},
+                                {data: 'idFibra.codFibra', className: 'center'},
+                                {data: 'costoPreparacion', className: 'right'},
+                                {data: 'fechaUso', className: 'center'},
+                                {data: 'btnAdd', className: 'center'}
+                            ],
+                            sPaginationType: 'full_numbers',
+                            bAutoWidth: false
+                        });
+                    }
+                    
+                    if (tipo.tbl === 'auxiliar') {
+                        $(tabla).dataTable({
+                            data: oDatos,
+                            columns: [
+                                {data: 'nomAuxiliar', className: 'left'},
+                                {data: 'idFibra.codFibra', className: 'center'},
+                                {data: 'costoAuxiliar', className: 'right'},
+                                {data: 'fechaUso', className: 'center'},
+                                {data: 'btnAdd', className: 'center'}
+                            ],
+                            sPaginationType: 'full_numbers',
+                            bAutoWidth: false
+                        });
+                    }
+
+                    if (tipo.tbl === 'proPost') {
+                        $(tabla).dataTable({
+                            data: oDatos,
+                            columns: [
+                                {data: 'nomProcPost', className: 'left'},
+                                {data: 'idFibra.codFibra', className: 'center'},
+                                {data: 'costoProcPost', className: 'right'},
+                                {data: 'fechaUso', className: 'center'},
+                                {data: 'btnAdd', className: 'center'}
+                            ],
+                            sPaginationType: 'full_numbers',
+                            dAutoWidth: false
+                        });
+                    }
                 }
             },
             
