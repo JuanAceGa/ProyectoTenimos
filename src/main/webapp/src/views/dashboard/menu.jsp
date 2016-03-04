@@ -227,8 +227,9 @@
         <jsp:include page="../modal.alert/modalMensajeAlert.jspf"></jsp:include>
         
         <script src="../../js/lib/jquery-1.10.2.min.js"></script>
-        <script src="../../js/lib/code.jquery.com-jquery-1.11.3.min.js"></script>
+        <script src="../../js/lib/code.jquery.com-jquery-1.11.3.min.js"></script>-->
         <script src="../../js/lib/jquery-migrate-1.2.1.min.js"></script>
+        <script src="../../js/lib/jquery-ui-1.10.3.min.js"></script>
         <script src="../../js/lib/bootstrap.min.js"></script>
         <script src="../../js/lib/modernizr.min.js"></script>
         <script src="../../js/lib/jquery.sparkline.min.js"></script>
@@ -244,6 +245,7 @@
 
         <script src="../../js/lib/jquery.validate.min.js"></script>
         
+        <script src="../../js//lib/bootstrap-wizard.min.js"></script>
         <script src="../../js/lib/colorpicker.js"></script>
         
         <script src="../../js/lib/custom.js"></script>
@@ -259,6 +261,7 @@
         <script src="../../js/frmProcesos.js"></script>
         <script src="../../js/frmCurvas.js"></script>
         <script src="../../js/frmListaCheck.js"></script>
+        <script src="../../js/frmFormulas.js"></script>
         <script src="../../js/consultas.js"></script>
         <script src="../../js/dashboard.js"></script>
     </body>

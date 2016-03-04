@@ -6,154 +6,610 @@
                     <a href="#" class="minimize">&minus;</a>
                 </div>
                 <h4 class="panel-title">Maestro para Formulación</h4>
-                <p>Por favor ingrese todos los campos obligatorios ( <span class="asterisk">*</span> ).</p>
+                <p>Por favor ingrese todos los campos obligatorios ( <span class="asterisk">*</span> ) en cada una de las secciones.</p>
             </div>
             <div class="panel-body panel-body-nopadding">
                 <!-- BASIC WIZARD -->
-                <div id="progressWizard" class="basic-wizard">
+                <div id="barraProgreso" class="basic-wizard">
                     <ul class="nav nav-pills nav-justified">
-                        <li><a href="#ptab1" data-toggle="tab"><span>Encabezado</span></a></li>
-                        <li><a href="#ptab2" data-toggle="tab"><span>Sección 1:</span> Preparación</a></li>
-                        <li><a href="#ptab3" data-toggle="tab"><span>Sección 2:</span> Auxiliares</a></li>
-                        <li><a href="#ptab4" data-toggle="tab"><span>Sección 3:</span> Colorantes</a></li>
-                        <li><a href="#ptab5" data-toggle="tab"><span>Sección 4:</span> Procesos Posteriores</a></li>
-                        <li><a href="#ptab6" data-toggle="tab"><span>Observaciones</span></a></li>
+                        <li><a href="#tabEncabezado" data-toggle="tab"><span>Encabezado</span></a></li>
+                        <li><a href="#tabPreparacion" data-toggle="tab"><span>Preparación</span></a></li>
+                        <li><a href="#tabAuxiliar" data-toggle="tab"><span>Auxiliares</span></a></li>
+                        <li><a href="#tabColorante" data-toggle="tab"><span>Colorantes</span></a></li>
+                        <li><a href="#tabProPosterior" data-toggle="tab"><span>Proc. Posterior</span></a></li>
+                        <li><a href="#tabObservacion" data-toggle="tab"><span>Observaciones</span></a></li>
+                        <li><a href="#tabFormula" data-toggle="tab"><span>Formula</span></a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="progress progress-striped active">
                             <div class="progress-bar" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
 
-                        <div class="tab-pane" id="ptab1">
+                        <div class="tab-pane" id="tabEncabezado">
                             <form class="form">
-                                <div class="form-group">
-                                    <label class="col-sm-2">Firstname</label>
+                                <div class="row">
+                                    <div class="form-group col-sm-5 col-sm-offset-1">
+                                        <label class="col-sm-2">Nombre Formula:</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" id="nomFormula" class="form-control" disabled="true" style="font-size: 0.84em;" placeholder="Nombre de la formula"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group col-sm-5">
+                                        <label class="col-sm-3">Código Formula:</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="codFormula" class="form-control" disabled="true" placeholder="Código de la formula"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-sm-5 col-sm-offset-1">
+                                        <label class="col-sm-2">Fibra:</label>
+                                        <div class="col-sm-10">
+                                            <select id="cbxFibra" class="form-control" required>
+                                                <option>Seleccione una...</option>
+                                                <option>FIBRA</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-5">
+                                        <label class="col-sm-3">Composición:</label>
+                                        <div class="col-sm-9">
+                                            <select id="cbxCompos" class="form-control" required>
+                                                <option>Seleccione una...</option>
+                                                <option>100/00</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-sm-5 col-sm-offset-1">
+                                        <label class="col-sm-2">Color:</label>
+                                        <div class="col-sm-10">
+                                            <select id="cbxColor" class="form-control" required>
+                                                <option>Seleccione una...</option>
+                                                <option>COLOR</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group col-sm-5">
+                                        <label class="col-sm-3">Descripción Color:</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="desColor" class="form-control" placeholder="Descripción del color" required/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="form-group col-sm-5 col-sm-offset-1">
+                                        <label class="col-sm-2">Tono:</label>
+                                        <div class="col-sm-10">
+                                            <select id="cbxTono" class="form-control" required>
+                                                <option>Seleccione una...</option>
+                                                <option>TONO</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group col-sm-5">
+                                        <label class="col-sm-3">Código Pantone:</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="codPantone" class="form-control" placeholder="Código pantone"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="form-group col-sm-5 col-sm-offset-1">
+                                        <label class="col-sm-2">PH:</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" id="phFormula" class="form-control" placeholder="Ph de la formula"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group col-sm-5">
+                                        <label class="col-sm-3">Color:</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" name="colorpicker" class="form-control colorpicker-input" id="colorpicker" />
+                                            <span id="colorSelector" class="colorselector">
+                                                <span></span>
+                                            </span>
+                                       </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-sm-5 col-sm-offset-1">
+                                        <div class="table-responsive">
+                                            <table class="table" id="tProcesos">
+                                                <tbody>
+                                                    <div class="loader" style=""></div>
+                                                    <tr>
+                                                        <td class="col-sm-1">Proceso:</td>
+                                                        <td class="left">:NombreProceso:</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Curva:</td>
+                                                        <td>
+                                                            :NombreCurva: <br>
+                                                            Tiempo: :TiempoCurva: <br>
+                                                            Llenado: :LlenadoCurva: <br>
+                                                            Rinse: :RinseCurva:
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div><!-- table-responsive -->
+                                    </div><!-- col-md-6 -->
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-sm-10 col-md-offset-1">
+                                        <div class="table-responsive">
+                                            <table class="table" id="daTableProcesos">
+                                                <caption><h3>PROCESOS</h3></caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-md-4 center">Nombre del Proceso</th>
+                                                        <th class="col-md-2 center">Curva(s)</th>
+                                                        <th class="col-md-2 center">Tiempo Estimado (Min)</th>
+                                                        <th class="col-md-1 center">Agregar</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div><!-- table-responsive -->
+                                    </div><!-- col-md-6 -->
+                                </div>
+                            </form>
+                        </div> <!-- tabEncabezado -->
+                        
+                        <div class="tab-pane" id="tabPreparacion">
+                            <form class="form">
+                                <div class="row">
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <div class="table-responsive">
+                                            <table class="table" id="tPreparaciones">
+                                                <tbody>
+                                                    <div class="loader" style=""></div>
+                                                    <tr>
+                                                        <td class="center col-sm-2"><strong>Nombre Preparación:</strong></td>
+                                                        <td class="left col-sm-4">REACTIVOS PREB. EN MQ. Y JAB. EN LAVADORA</td>
+                                                        <td class=" center col-sm-1"><strong>Fibra:</strong></td>
+                                                        <td class="left col-sm-1">POL/ALG(VIS/LYCR)</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="center"><strong>Código Químico</strong></td>
+                                                        <td class="center"><strong>Nombre Químico</strong></td>
+                                                        <td class="center"><strong>Gr/Lt</strong></td>
+                                                        <td class="center"><strong>%/Kl</strong></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="center">1460</td>
+                                                        <td class="center">ACIDO ACETICO</td>
+                                                        <td class="center">0.4</td>
+                                                        <td class="center">0</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div><!-- table-responsive -->
+                                    </div><!-- col-md-6 -->
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-sm-10 col-md-offset-1">
+                                        <div class="table-responsive">
+                                            <table class="table" id="daTablePreparaciones">
+                                                <caption><h3>PREPARACIONES</h3></caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-md-4 center">Nombre de la Preparación</th>
+                                                        <th class="col-md-1 center">Fibra</th>
+                                                        <th class="col-md-1 center">$ Costo</th>
+                                                        <th class="col-md-2 center">Ult. Fecha de Uso</th>
+                                                        <th class="col-md-1 center">Agregar</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div><!-- table-responsive -->
+                                    </div><!-- col-md-6 -->
+                                </div>
+                            </form>
+                        </div> <!-- tabPreparacion -->
+                        <div class="tab-pane" id="tabAuxiliar">
+                            <form class="form">
+                                <div class="row">
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <div class="table-responsive">
+                                            <table class="table" id="tAuxiliares">
+                                                <tbody>
+                                                    <div class="loader" style=""></div>
+                                                    <tr>
+                                                        <td class="center col-sm-2"><strong>Nombre Auxiliar:</strong></td>
+                                                        <td class="left col-sm-4">REACTIVOS PREB. EN MQ. Y JAB. EN LAVADORA</td>
+                                                        <td class=" center col-sm-1"><strong>Fibra:</strong></td>
+                                                        <td class="left col-sm-1">POL/ALG(VIS/LYCR)</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="center"><strong>Código Químico</strong></td>
+                                                        <td class="center"><strong>Nombre Químico</strong></td>
+                                                        <td class="center"><strong>Gr/Lt</strong></td>
+                                                        <td class="center"><strong>%/Kl</strong></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="center">1460</td>
+                                                        <td class="center">ACIDO ACETICO</td>
+                                                        <td class="center">0.4</td>
+                                                        <td class="center">0</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div><!-- table-responsive -->
+                                    </div><!-- col-md-6 -->
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-sm-10 col-md-offset-1">
+                                        <div class="table-responsive">
+                                            <table class="table" id="daTableAuxiliares">
+                                                <caption><h3>AUXILIARES</h3></caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-md-4 center">Nombre del Auxiliar</th>
+                                                        <th class="col-md-1 center">Fibra</th>
+                                                        <th class="col-md-1 center">$ Costo</th>
+                                                        <th class="col-md-2 center">Ult. Fecha de Uso</th>
+                                                        <th class="col-md-1 center">Agregar</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div><!-- table-responsive -->
+                                    </div><!-- col-md-6 -->
+                                </div>
+                            </form>
+                        </div> <!-- tabAuxiliar -->
+
+                        <div class="tab-pane" id="tabColorante">
+                            <form class="form">
+                                <div class="row">
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <div class="table-responsive">
+                                            <table class="table" id="tColorantes">
+                                                <caption><h3>COLORANTES</h3></caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-sm-1 center">Código Color</th>
+                                                        <th class="col-sm-5 center">Nombre del Color</th>
+                                                        <th class="col-sm-1 center">Cant. %/Kl</th>
+                                                        <th class="col-sm-1 center"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <!--<div class="col-sm-12">-->
+                                                                    <input type="text" id="codColor" class="form-control center" placeholder="Código" maxlength="4" list="dlCodColor" required />
+                                                                    <datalist id="dlCodColor"></datalist>
+                                                                <!--</div>-->
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <!--<div class="col-sm-12">-->
+                                                                    <input type="text" id="nomColor" class="form-control" placeholder="Nombre del color" list="dlNomColor" required />
+                                                                    <datalist id="dlNomColor"></datalist>
+                                                                <!--</div>-->
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <!--<div class="col-sm-12">-->
+                                                                    <input type="text" id="cantColor" class="form-control center" maxlength="8" placeholder="%/Kl" required />
+                                                                <!--</div>-->
+                                                            </div>
+                                                        </td>
+                                                        <td class="table-action">
+                                                            <!--<div class="form-group col-md-12">-->
+                                                                <button id="btnAddColor" title="Agregar Color" data-placement="right" data-toggle="tooltip" class="btn tooltips"><i class="fa fa-plus-square"></i></button>
+                                                            <!--</div>-->
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div><!-- table-responsive -->
+                                    </div><!-- col-md-6 -->
+                                </div>
+                            </form>
+                        </div> <!-- tabColorante -->
+
+                        <div class="tab-pane" id="tabProPosterior">
+                            <form class="form">
+                                <div class="row">
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <div class="table-responsive">
+                                            <table class="table" id="tProPosteriores">
+                                                <tbody>
+                                                    <div class="loader" style=""></div>
+                                                    <tr>
+                                                        <td class="center col-sm-2"><strong>Nombre Proceso Posterior:</strong></td>
+                                                        <td class="left col-sm-4">REACTIVOS PREB. EN MQ. Y JAB. EN LAVADORA</td>
+                                                        <td class=" center col-sm-1"><strong>Fibra:</strong></td>
+                                                        <td class="left col-sm-1">POL/ALG(VIS/LYCR)</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="center"><strong>Código Químico</strong></td>
+                                                        <td class="center"><strong>Nombre Químico</strong></td>
+                                                        <td class="center"><strong>Gr/Lt</strong></td>
+                                                        <td class="center"><strong>%/Kl</strong></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="center">1460</td>
+                                                        <td class="center">ACIDO ACETICO</td>
+                                                        <td class="center">0.4</td>
+                                                        <td class="center">0</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div><!-- table-responsive -->
+                                    </div><!-- col-md-6 -->
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <div class="table-responsive">
+                                            <table class="table" id="daTableProPosteriores">
+                                                <caption><h3>PROCESOS POSTERIORES</h3></caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-md-4 center">Nombre del Proceso Posterior</th>
+                                                        <th class="col-md-1 center">Fibra</th>
+                                                        <th class="col-md-1 center">$ Costo</th>
+                                                        <th class="col-md-2 center">Ult. Fecha de Uso</th>
+                                                        <th class="col-md-1 center">Agregar</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div><!-- table-responsive -->
+                                    </div><!-- col-md-6 -->
+                                </div>
+                            </form>
+                        </div> <!-- tabProPosterior -->
+
+                        <div class="tab-pane" id="tabObservacion">
+                            <form class="form">                                
+                                <div class="form-group col-sm-10 col-sm-offset-1">
+                                    <label class="col-sm-2">Observaciones:</label>
                                     <div class="col-sm-10">
-                                        <input type="text" name="firstname" class="form-control" />
+                                        <textarea id="observ" placeholder="Campo para observaciones en la formula" class="form-control" rows="8" style="margin-top: 0px; margin-bottom: 0px; height: 112px;" required></textarea>
                                     </div>
                                 </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-2">Lastname</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" name="lastname" class="form-control" />
-                                    </div>
-                                </div>
-
                             </form>
-                        </div>
-                        <div class="tab-pane" id="ptab2">
-                            <form class="form">
-                                <div class="form-group">
-                                    <label class="col-sm-4">Product ID</label>
-                                    <div class="col-sm-5">
-                                        <input type="text" name="product_id" class="form-control" />
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-4">Product Name</label>
-                                    <div class="col-sm-8">
-                                        <input type="text" name="product_name" class="form-control" />
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-4">Category</label>
-                                    <div class="col-sm-4">
-                                        <select class="form-control">
-                                            <option value="">Choose One</option>
-                                            <option value="">3D Animation</option>
-                                            <option value="">Web Design</option>
-                                            <option value="">Software Engineering</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                            </form>
-                        </div>
-                        <div class="tab-pane" id="ptab3">
-                            <form class="form">
-                                <div class="form-group">
-                                    <label class="col-sm-4">Card No</label>
-                                    <div class="col-sm-8">
-                                        <input type="text" name="cardno" class="form-control" />
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-4">Expiration</label>
-                                    <div class="col-sm-4">
-                                        <select class="form-control">
-                                            <option value="">Month</option>
-                                            <option value="">January</option>
-                                            <option value="">February</option>
-                                            <option value="">March</option>
-                                            <option value="">...</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-sm-4">
-                                        <select class="form-control">
-                                            <option value="">Year</option>
-                                            <option value="">2013</option>
-                                            <option value="">2014</option>
-                                            <option value="">2015</option>
-                                            <option value="">...</option>
-                                        </select>
-                                    </div>
-
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-4">CSV</label>
-                                    <div class="col-sm-4">
-                                        <input type="text" name="csv" class="form-control" />
-                                    </div>
-                                </div>
-
-                            </form>
-                        </div>
+                        </div> <!-- tabObservacion -->
                         
-                        <div class="tab-pane" id="ptab4">
-                            <form class="form">
-                                <div class="form-group">
-                                    <label class="col-sm-4">Card No</label>
-                                    <div class="col-sm-8">
-                                        <input type="text" name="cardno" class="form-control" />
-                                    </div>
+                        <div class="tab-pane" id="tabFormula">
+                            <div class="col-sm-10 col-sm-offset-1">
+                                <div class="table-responsive">
+                                    <table class="table-bordered col-sm-12" id="tFormula">
+                                        <caption><h3>VISTA PRELIMINAR DE LA FORMULA</h3></caption>
+                                        <div class="loader" style=""></div>
+                                        <tbody>
+                                            <tr>
+                                                <td class="col-sm-1"><strong>Código:</strong></td>
+                                                <td class="col-sm-1 center">31362834</td>
+                                                <td class="col-sm-1"><strong>Fibra:</strong></td>
+                                                <td class="col-sm-1 center">POL/ALG(VIS/LYCR)</td>
+                                                <td class="col-sm-1"><strong>Composición:</strong></td>
+                                                <td class="col-sm-1 center">65/35</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-1"><strong>Color:</strong></td>
+                                                <td class="col-sm-1" colspan="3">VERDE LIMON</td>
+                                                <td class="col-sm-1"><strong>Tono:</strong></td>
+                                                <td class="col-sm-1 center">OSCURO</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-1"><strong>Proceso:</strong></td>
+                                                <td class="col-sm-1 center">54</td>
+                                                <td class="col-sm-1"><strong>Tiempo:</strong></td>
+                                                <td class="col-sm-1 center">8:47 Hora(s)</td>
+                                                <td class="col-sm-1"><strong>Curvas:</strong></td>
+                                                <td class="col-sm-1 center">12-03-16</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-1"><strong>PH:</strong></td>
+                                                <td class="col-sm-1 center">4.30</td>
+                                                <td class="col-sm-1"><strong>Pantone:</strong></td>
+                                                <td class="col-sm-1 center">5654879</td>
+                                                <td class="col-sm-1"></td>
+                                                <td class="col-sm-1"></td>
+                                            </tr>
+                                            <tr style="background: #E0E3E5;">
+                                                <td class="col-sm-1 center"><strong>Sección</strong></td>
+                                                <td class="col-sm-1 center"><strong>Cód. Producto</strong></td>
+                                                <td class="col-sm-1 center" colspan="3"><strong>Nombre Producto</strong></td>
+                                                <td class="col-sm-1 center"><strong>Cantidad</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-1 center"><strong>PREPARACIÓN</strong></td>
+                                                <td class="col-sm-1 center">
+                                                    1460 <br>
+                                                    1881 <br>
+                                                    1940 <br>
+                                                    2510 <br>
+                                                    3350 <br>
+                                                    8040 <br>
+                                                    9888 <br>
+                                                    1280 <br>
+                                                    1460 <br>
+                                                    1550 <br>
+                                                    1881 <br>
+                                                    1940
+                                                </td>
+                                                <td class="col-sm-1" colspan="3">
+                                                    ACIDO ACETICO <br>
+                                                    PEROXIDO DE HIDROGENO (50%) <br>
+                                                    SODA CAUSTICA 50% (LIQ) <br>
+                                                    FELOSAN FOX <br>
+                                                    TE¥ILUBRI FH <br>
+                                                    CONTAVAN GAL <br>
+                                                    CATALASE T100 <br>
+                                                    NEW-ACID NEU <br>
+                                                    ACIDO ACETICO <br>
+                                                    CARBONATO DE SODIO <br>
+                                                    PEROXIDO DE HIDROGENO (50%) <br>
+                                                    SODA CAUSTICA 50% (LIQ)
+                                                </td>
+                                                <td class="col-sm-1 right">
+                                                    0.4 g<br>
+                                                    1.4 g<br>
+                                                    3 g<br>
+                                                    0.7 g<br>
+                                                    1 g<br>
+                                                    0.3 g<br>
+                                                    0.15 g<br>
+                                                    0.5 g<br>
+                                                    1 g<br>
+                                                    0.3 g<br>
+                                                    2.5 g<br>
+                                                    2 g
+                                                </td>
+                                            </tr>
+                                            <!-- ///////////////////////////////////////////////////////////////////// -->
+                                            <tr>
+                                                <td class="col-sm-1 center"><strong>AUXILIAR</strong></td>
+                                                <td class="col-sm-1 center">
+                                                    1460 <br>
+                                                    1881 <br>
+                                                    1940 <br>
+                                                    2510 <br>
+                                                    3350 <br>
+                                                    8040 <br>
+                                                    9888 <br>
+                                                    1280 <br>
+                                                    1460 <br>
+                                                    1550 <br>
+                                                    1881 <br>
+                                                    1940
+                                                </td>
+                                                <td class="col-sm-1" colspan="3">
+                                                    ACIDO ACETICO <br>
+                                                    PEROXIDO DE HIDROGENO (50%) <br>
+                                                    SODA CAUSTICA 50% (LIQ) <br>
+                                                    FELOSAN FOX <br>
+                                                    TE¥ILUBRI FH <br>
+                                                    CONTAVAN GAL <br>
+                                                    CATALASE T100 <br>
+                                                    NEW-ACID NEU <br>
+                                                    ACIDO ACETICO <br>
+                                                    CARBONATO DE SODIO <br>
+                                                    PEROXIDO DE HIDROGENO (50%) <br>
+                                                    SODA CAUSTICA 50% (LIQ)
+                                                </td>
+                                                <td class="col-sm-1 right">
+                                                    0.4 g<br>
+                                                    1.4 g<br>
+                                                    3 g<br>
+                                                    0.7 g<br>
+                                                    1 g<br>
+                                                    0.3 g<br>
+                                                    0.15 g<br>
+                                                    0.5 g<br>
+                                                    1 g<br>
+                                                    0.3 g<br>
+                                                    2.5 g<br>
+                                                    2 g
+                                                </td>
+                                            </tr>
+                                            <!-- ////////////////////////////////////////////////////////////////////////// -->
+                                            <tr>
+                                                <td class="col-sm-1 center"><strong>COLORANTES</strong></td>
+                                                <td class="col-sm-1 center">
+                                                    1460<br>
+                                                    1881<br>
+                                                    1940<br>
+                                                    2510<br>
+                                                    3350<br>
+                                                    8040
+                                                </td>
+                                                <td class="col-sm-1" colspan="3">
+                                                    ACIDO ACETICO<br>
+                                                    PEROXIDO DE HIDROGENO (50%)<br>
+                                                    SODA CAUSTICA 50% (LIQ)<br>
+                                                    FELOSAN FOX<br>
+                                                    TE¥ILUBRI FH<br>
+                                                    CONTAVAN GAL
+                                                </td>
+                                                <td class="col-sm-1 right">
+                                                    0.4 p<br>
+                                                    1.4 p<br>
+                                                    3 p<br>
+                                                    0.7 p<br>
+                                                    1 p<br>
+                                                    0.3 p
+                                                </td>
+                                            </tr>
+                                            <!-- ////////////////////////////////////////////////////////////////////////////////// -->
+                                            <tr>
+                                                <td class="col-sm-1 center"><strong>PROCESO POSTERIOR</strong></td>
+                                                <td class="col-sm-1 center">
+                                                    1460<br>
+                                                    1881<br>
+                                                    1940<br>
+                                                    2510<br>
+                                                    3350<br>
+                                                    8040<br>
+                                                    9888<br>
+                                                    1280<br>
+                                                    1460<br>
+                                                    1550<br>
+                                                    1881<br>
+                                                    1940
+                                                </td>
+                                                <td class="col-sm-1" colspan="3">
+                                                    ACIDO ACETICO<br>
+                                                    PEROXIDO DE HIDROGENO (50%)<br>
+                                                    SODA CAUSTICA 50% (LIQ)<br>
+                                                    FELOSAN FOX<br>
+                                                    TE¥ILUBRI FH<br>
+                                                    CONTAVAN GAL<br>
+                                                    CATALASE T100<br>
+                                                    NEW-ACID NEU<br>
+                                                    ACIDO ACETICO<br>
+                                                    CARBONATO DE SODIO<br>
+                                                    PEROXIDO DE HIDROGENO (50%)<br>
+                                                    SODA CAUSTICA 50% (LIQ)
+                                                </td>
+                                                <td class="col-sm-1 right">
+                                                    0.4 g<br>
+                                                    1.4 g<br>
+                                                    3 g<br>
+                                                    0.7 g<br>
+                                                    1 g<br>
+                                                    0.3 g<br>
+                                                    0.15 g<br>
+                                                    0.5 g<br>
+                                                    1 g<br>
+                                                    0.3 g<br>
+                                                    2.5 g<br>
+                                                    2 g
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-sm-1" colspan="6" style="text-align: justify;"><strong>OBSERVACIONES: </strong> Al contrario del pensamiento popular, el texto de Lorem Ipsum no es simplemente texto aleatorio. Tiene sus raices en una pieza cl´sica de la literatura del Latin, que data del año 45 antes de Cristo, haciendo que este adquiera mas de 2000 años de antiguedad. Richard McClintock, un profesor de Latin de la Universidad de Hampden-Sydney en Virginia, encontró una de las palabras más oscuras de la lengua del latín, "consecteur", en un pasaje de Lorem Ipsum, y al seguir leyendo distintos textos del latín, descubrió la fuente indudable. Lorem Ipsum viene de las secciones 1.10.32 y 1.10.33 de "de Finnibus Bonorum et Malorum" (Los Extremos del Bien y El Mal) por Cicero, escrito en el año 45 antes de Cristo. Este libro es un tratado de teoría de éticas, muy popular durante el Renacimiento. La primera linea del Lorem Ipsum, "Lorem ipsum dolor sit amet..", viene de una linea en la sección 1.10.32</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </form>
-                        </div>
-                        
-                        <div class="tab-pane" id="ptab5">
-                            <form class="form">
-                                <div class="form-group">
-                                    <label class="col-sm-4">Card</label>
-                                    <div class="col-sm-8">
-                                        <input type="text" name="cardno" class="form-control" />
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                        
-                        <div class="tab-pane" id="ptab6">
-                            <form class="form">
-                                <div class="form-group">
-                                    <label class="col-sm-4">Tarjeta</label>
-                                    <div class="col-sm-8">
-                                        <input type="text" name="cardno" class="form-control" />
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-
+                            </div>
+                        </div> <!-- tabFormula -->
                     </div><!-- tab-content -->
 
                     <ul class="pager wizard">
-                        <li class="previous"><a href="javascript:void(0)">Previous</a></li>
-                        <li class="next"><a href="javascript:void(0)">Next</a></li>
+                        <li class="previous"><a href="javascript:void(0)">Anterior</a></li>
+                        <li class="next"><a href="javascript:void(0)">Siguiente</a></li>
                     </ul>
 
                 </div><!-- #basicWizard -->

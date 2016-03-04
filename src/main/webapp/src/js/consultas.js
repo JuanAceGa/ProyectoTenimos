@@ -20,6 +20,7 @@
                         frmAuxiliar.cargarDatos(response, 'f');
                         frmProcPos.cargarDatos(response, 'f');
                         frmFibra.cargarDatos(response, 'f');
+                        frmFormula.cargarDatos(response, 'f');
                     },
                     error: function(response, status, er) {
                         console.log("error: " + response + " status: " + status + " er:" + er);
@@ -51,11 +52,20 @@
                     $.get('../../../ServletProcesosPost', {accion: 'buscar'}, function(response) {
                         frmProcPos.cargarDatos(response, 'pp');
                     });
+                    
+                    $.get('../../../ServletFormulas', {accion: 'buscar', tipo:'formula'}, function(response) {
+                        frmFormula.cargarDatos(response, 'fla');
+                    });
+                    
+                    $.get('../../../ServletFormulas', {accion: 'buscar', tipo:'compos'}, function(response) {
+                        frmFormula.cargarDatos(response, 'cps');
+                    });
                 }
                 
                 if (m === '' || m === 'p') {
                     $.get('../../../ServletProcesos', {accion: 'buscar'}, function(response) {
                         frmProceso.cargarDatos(response, 'pr');
+                        frmFormula.cargarDatos(response, 'pr');
                     });
                 }
                 
@@ -77,6 +87,18 @@
                     $.get('../../../ServletListaCheck', {accion: 'buscar'}, function(response) {
                             frmListaC.cargarDatos(response, 'lc');
                             frmCurva.cargarDatos(response, 'lc');
+                    });
+                }
+                
+                if (m === '' || m === 'clr') { //Colores
+                    $.get('../../../ServletFormulas', {accion: 'buscar', tipo: 'color'}, function(response) {
+                            frmFormula.cargarDatos(response, 'clr');
+                    });
+                }
+                
+                if (m === '' || m === 'tn') { //Tonos
+                    $.get('../../../ServletFormulas', {accion: 'buscar', tipo: 'tono'}, function(response) {
+                            frmFormula.cargarDatos(response, 'tn');
                     });
                 }
             },

@@ -11,7 +11,7 @@
                     
                     oCbx[i].append(option);
                     
-                    if (frm === 'preparacion' || frm === 'auxiliares' || frm === 'proPost') {
+                    if (frm === 'preparacion' || frm === 'auxiliares' || frm === 'proPost' || frm === 'formula') {
                         oDatos.forEach(function(fibra){
                             if (fibra.nomFibra !== "") {
                                 option = document.createElement('option');
@@ -26,6 +26,36 @@
                             if (l.nomListaCheck !== "") {
                                 option = document.createElement('option');
                                 $(option).text(l.nomListaCheck);
+                                oCbx[i].append(option);
+                            }
+                        });
+                    }
+                    
+                    if (frm === 'compos') {
+                        oDatos.forEach(function(c) {
+                            if (c.tipoCompos !== '') {
+                                option = document.createElement('option');
+                                $(option).text(c.tipoCompos);
+                                oCbx[i].append(option);
+                            }
+                        });
+                    }
+                    
+                    if (frm === 'color') {
+                        oDatos.forEach(function(c) {
+                            if (c.nomColor !== '') {
+                                option = document.createElement('option');
+                                $(option).text(c.nomColor);
+                                oCbx[i].append(option);
+                            }
+                        });
+                    }
+                    
+                    if (frm === 'tono') {
+                        oDatos.forEach(function(c) {
+                            if (c.nomTono !== '') {
+                                option = document.createElement('option');
+                                $(option).text(c.nomTono);
                                 oCbx[i].append(option);
                             }
                         });
@@ -120,12 +150,14 @@
             renderDataTables: function(tabla, oDatos, tipo) {
                 var i;
 
-                for (i = 0; i < oDatos.length; i++) {
-                    oDatos[i].btnView = '<button id="btnView" title="Ver/Editar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
-                                            '<i class="glyphicon glyphicon-eye-open"></i>' +
-                                        '</button>';
+                if (tipo !== 'formula') {
+                    for (i = 0; i < oDatos.length; i++) {
+                        oDatos[i].btnView = '<button id="btnView" title="Ver/Editar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
+                                                '<i class="glyphicon glyphicon-eye-open"></i>' +
+                                            '</button>';
+                    }
                 }
-                
+            
                 if (tipo === 'prep') {
                     
                     $(tabla).dataTable({
@@ -191,7 +223,7 @@
                     });
                 }
                 
-                if (tipo === 'proc') {
+                if (tipo === 'proc') { //Procesos
                     $(tabla).dataTable({
                         data: oDatos,
                         columns: [
@@ -243,6 +275,26 @@
                             {data: 'idNomLista', className: 'center'},
                             {data: 'nomListaCheck', className: 'left'},
                             {data: 'btnView', className: 'center'}
+                        ],
+                        sPaginationType: 'full_numbers',
+                        dAutoWidth: false
+                    });
+                }
+                
+                if (tipo === 'formula') {
+                    for (i = 0; i < oDatos.length; i++) {
+                        oDatos[i].btnAdd = '<button id="btnAdd" title="Agregar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
+                                                '<i class="fa fa-plus-square"></i>' +
+                                            '</button>';
+                    }
+                    
+                    $(tabla).dataTable({
+                        data: oDatos,
+                        columns: [
+                            {data: 'nomProceso', className: 'left'},
+                            {data: 'idCurvas', className: 'center'},
+                            {data: 'tiempoEst', className: 'center'},
+                            {data: 'btnAdd', className: 'center'}
                         ],
                         sPaginationType: 'full_numbers',
                         dAutoWidth: false
