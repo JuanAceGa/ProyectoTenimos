@@ -11,6 +11,7 @@
             oColorantes: [],
             oProPosterior: [],
             oCurvas: [],
+            oQuimicos: [],
             $barraProgreso: $('#barraProgreso'),
             $nomFormula: $('#nomFormula'),
             $codFormula: $('#codFormula'),
@@ -42,6 +43,13 @@
             $observ: $('#observ'),
             $tFormula: $('#tFormula').find('tbody'),
             $loader: '<div class="loader"></div>',
+            $modalMensaje: $('#myModal'),
+            $tituloMensaje: $('#myModalLabel'),
+            $cuerpoMensaje: $('#cuerpoMensaje'),
+            cantQuimicos: 0,
+            cQuimicos: 0,
+            colorPorFormula: [],
+            tipoEdicion: 'nuevoColor',
             
             init: function() {
                 this.iniciarComplementos();
@@ -52,6 +60,8 @@
 //                this.desplegarLista();
 //                this.borrarListaCheck()
 //                this.consultaNombreCurva();
+                this.agregarColorantes();
+                this.borrarColorante();
                 this.agregarMaestros();
 //                this.cerrarModalEdicion();
             },
@@ -59,7 +69,7 @@
             iniciarComplementos: function() {
                 var self = this;
                 
-                self.$cbxCompos.attr('disabled', true);
+                u.habilitarDeshabilitarCampos([self.$cbxCompos, self.$codColor, self.$nomColor, self.$cantColor, self.$btnAddColor], 'des');
                 
                 self.$barraProgreso.bootstrapWizard({
                     'nextSelector': '#siguiente',
@@ -116,6 +126,10 @@
                     um.cargarComboBox([self.$cbxFibra], self.oFibras, 'formula');
                 }
                 
+                if (opc === 'q') {
+                    self.oQuimicos = data;
+                }
+                
                 if (opc === 'pr') { //Procesos
                     self.oProcesos = data;
                     um.destruirDataTable(self.$daTableProcesos, '');
@@ -149,8 +163,9 @@
                     self.oAuxiliares = data;
                 }
                 
-                if (opc === '') { //Colorantes
-                    
+                if (opc === 'clrts') { //Colorantes
+                    self.oColorantes = data;
+                    um.cargarDataList([self.$dlCodColor, self.$dlNomColor], self.oColorantes, 'q');
                 }
                 
                 if (opc === 'pp') { //Procesos Posteriores
@@ -177,12 +192,20 @@
                                 var idFibra = self.oFibras[i].idFibra;
                                 
                                 if (self.oFibras[i].composicion === 'SI') {
+                                    self.cantQuimicos = 6;
+                                    self.cQuimicos = 6;
                                     self.$cbxCompos.attr('disabled', false);
                                     u.camposObligatorios([self.$cbxCompos], '4');
                                 } else {
+                                    self.cantQuimicos = 3;
+                                    self.cQuimicos = 3;
                                     self.$cbxCompos.attr('disabled', true);
                                     u.camposObligatorios([self.$cbxCompos], '4');
                                 }
+                                
+                                self.colorPorFormula = [];
+                                self.$tColorantes.find('tr:gt(1)').remove();
+                                u.habilitarDeshabilitarCampos([self.$codColor, self.$nomColor, self.$cantColor, self.$btnAddColor], 'hab');
                                 
                                 break;
                             }
@@ -217,6 +240,7 @@
                         self.nombreFormula();
                         self.codigoFormula();
                     } else {
+                        self.cantQuimicos = 0;
                         self.$cbxCompos.attr('disabled', true);
                         u.camposObligatorios([self.$cbxCompos], '4');
                         self.nombreFormula();
@@ -279,60 +303,30 @@
                     u.camposObligatorios([self.$phFormula], '4');
                 });
                 
-                /*self.$nomCurva.on('keyup keypress', function() {
-                    self.$nomCurva.val(self.$nomCurva.val().toUpperCase());
-                });
-
-                self.$eNombCurva.on('keyup keypress', function() {
-                    self.$eNombCurva.val(self.$eNombCurva.val().toUpperCase());
-                })
-                
-                self.$tiempoCurva.on('keypress', function(eve) {
-                    if (eve.keyCode < 48 || eve.keyCode > 57) {
-                        eve.preventDefault();
-                    }
+                self.$codColor.on("keyup keypress change", function() {
+                    self.$nomColor.val("");
+                    um.cargarCoincidenciaProductoQuimico('cod', [self.$codColor, self.$nomColor], self.oColorantes);
+                    u.camposObligatorios([self.$codColor, self.$nomColor], '4');
                 });
                 
-                self.$eTiempCurva.on('keypress', function(eve) {
-                    if (eve.keyCode < 48 || eve.keyCode > 57) {
-                        eve.preventDefault();
-                    }
+                self.$nomColor.on('keyup keypress change', function() {
+                    self.$codColor.val("");
+                    um.cargarCoincidenciaProductoQuimico('nom', [self.$nomColor, self.$codColor], self.oColorantes);
+                    u.camposObligatorios([self.$nomColor, self.$codColor], '4');
                 });
                 
-                self.$llenadoCurva.on('keypress', function(eve) {
-                    if (eve.keyCode < 48 || eve.keyCode > 57) {
-                        eve.preventDefault();
-                    }
+                self.$cantColor.inputNumber({
+                    allowDecimals: true,
+                    allowNegative: false,
+                    allowLeadingZero: true,
+                    thousandSep: ',',
+                    decimalSep: '.',
+                    maxDecimalDigits: 3
                 });
                 
-                self.$eLlenadCurva.on('keypress', function(eve) {
-                    if (eve.keyCode < 48 || eve.keyCode > 57) {
-                        eve.preventDefault();
-                    }
+                self.$cantColor.on('keyup keypress change', function() {
+                    u.camposObligatorios([self.$cantColor], '4');
                 });
-                
-                self.$rinseCurva.on('keypress', function(eve) {
-                    if (eve.keyCode < 48 || eve.keyCode > 57) {
-                        eve.preventDefault();
-                    }
-                });
-                
-                self.$eRinseCurva.on('keypress', function(eve) {
-                    if (eve.keyCode < 48 || eve.keyCode > 57) {
-                        eve.preventDefault();
-                    }
-                });
-                
-                self.$btnCleanCurva.on('click', function(e) {
-                    e.preventDefault();
-                    
-                    //self.limpiarFormulario();
-                    self.$cbxListaCheck.val('Seleccione una...');
-                    self.$tBodyNewListCheck.find('tr:gt(0)').remove();
-                    var elementos = [self.$nomCurva, self.$tiempoCurva, self.$llenadoCurva, self.$rinseCurva];
-                    u.limpiarCampos(elementos);
-                    u.camposObligatorios(elementos, '1');
-                });*/
             },
             
             limpiarFormulario: function() {
@@ -405,246 +399,96 @@
                 }
             },
             
-            agregarListaChequeo: function() {
+            consultaNombreFormula: function(){
+                var self = this;
+
+            },
+            
+            agregarColorantes: function() {
                 var self = this;
                 
-                self.$btnAddLista.on('click', function(e) {
+                self.$btnAddColor.on('click', function(e) {
                     e.preventDefault();
-                    var newDd = '';
-                    var ddTemp = '<dd>Etiqueta: :nombreLabel:</dd>';                     
-                    var trTemp = '<tr>' +
-                                    '<td class="center">:idNomLista:</td>' +
-                                    '<td class="left">' +
-                                        '<dl style="margin-bottom: 0;">' +
-                                            '<dt>' +
-                                                '<button type="button" class="btn" id="btnPlus" style="background: transparent">' +
-                                                    '<i class="fa fa-plus-square"></i>' +
-                                                '</button>' +
-                                                ':nomLista:</dt> :dd:' +
-                                        '</dl>' +
-                                    '</td>' +
-                                    '<td class="center">' +
-                                        '<button type="button" class="btn" id="btnDelLinea">' +
-                                            '<i class="fa fa-trash-o"></i>' +
-                                        '</button>' +
-                                    '</td>' +
-                                 '</tr>';
                     
-                    var campObligQuim = u.camposObligatorios([self.$cbxListaCheck], '2');
-                    
-                    if (campObligQuim) {
-                        var lista = self.$cbxListaCheck.val();
-                        var label;
-                        var aLabel;
-                        
-                        for (var i = 0; i < self.oListaCheck.length; i++) {
-                            if (lista === self.oListaCheck[i].nomListaCheck) {
-                                label = self.oListaCheck[i].idLabel.split('-');
-                                aLabel = new Array(label.length);
-                                
-                                for (var j = 0; j < label.length; j++) {
-                                    for (var k = 0; k < self.oLabel.length; k++) {
-                                        if (parseInt(label[j]) === self.oLabel[k].idLabel) {
-                                            aLabel[j] = ddTemp.replace(':nombreLabel:', self.oLabel[k].nombreLabel);
-                                            newDd = newDd + aLabel[j];
-                                            break;
-                                        }
-                                    }
-                                }
-                                
-                                var newTr = trTemp
-                                        .replace(':idNomLista:', self.oListaCheck[i].idNomLista)
-                                        .replace(':nomLista:', self.oListaCheck[i].nomListaCheck)
-                                        .replace(':dd:', newDd);
-                                break;
-                            }
-                        }
-                        
-                        self.$tBodyNewListCheck.append(newTr);
-                        $('dd').hide();
-                        
-                        self.$cbxListaCheck.val("Seleccione una...");
-                        u.camposObligatorios([self.$cbxListaCheck], '1');
+                    var campObligQuim = u.camposObligatorios([self.$codColor, self.$nomColor, self.$cantColor], '2');
+
+                    var b = true;
+
+                    if (um.cantidadDeQuimico({val: self.$cantColor.val(), input: 'pctj'})) {
+                        b = false;
+                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Porcentaje por Kilo',
+                            cuerpoMensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'});
                     }
-                });
-                
-                self.$eBtnAddLista.on('click', function(e) {
-                    e.preventDefault();
-                    var newDd = '';
-                    var ddTemp = '<dd>Etiqueta: :nombreLabel:</dd>';                     
-                    var trTemp = '<tr>' +
-                                    '<td class="center">:idNomLista:</td>' +
-                                    '<td class="left">' +
-                                        '<dl style="margin-bottom: 0;">' +
-                                            '<dt>' +
-                                                '<button type="button" class="btn" id="btnPlus" style="background: transparent">' +
-                                                    '<i class="fa fa-plus-square"></i>' +
-                                                '</button>' +
-                                                ':nomLista:</dt> :dd:' +
-                                        '</dl>' +
-                                    '</td>' +
-                                    '<td class="center">' +
-                                        '<button type="button" class="btn" id="btnDelLinea">' +
-                                            '<i class="fa fa-trash-o"></i>' +
-                                        '</button>' +
-                                    '</td>' +
-                                 '</tr>';
-                    
-                    var campObligQuim = u.camposObligatorios([self.$eCbxListaCheck], '2');
-                    
-                    if (campObligQuim) {
-                        var lista = self.$eCbxListaCheck.val();
-                        var label;
-                        var aLabel;
-                        
-                        for (var i = 0; i < self.oListaCheck.length; i++) {
-                            if (lista === self.oListaCheck[i].nomListaCheck) {
-                                label = self.oListaCheck[i].idLabel.split('-');
-                                aLabel = new Array(label.length);
+
+                    if (b && campObligQuim) {                        
+                        if (self.cantQuimicos > 0) {
+                            var d = um.noRepetirQuimicos({
+                                tipo: '+', 
+                                codQ: self.$codColor.val(),
+                                cant1: 0,
+                                cant2: 0,
+                                maestro: 'formula', 
+                                codQpermitido: ''},
+                                self.colorPorFormula);
+
+                            if (!d.existe) {
+
+                                self.colorPorFormula.push({codQ: self.$codColor.val(), cant1: 0, cant2: parseFloat(self.$cantColor.val())});
                                 
-                                for (var j = 0; j < label.length; j++) {
-                                    for (var k = 0; k < self.oLabel.length; k++) {
-                                        if (parseInt(label[j]) === self.oLabel[k].idLabel) {
-                                            aLabel[j] = ddTemp.replace(':nombreLabel:', self.oLabel[k].nombreLabel);
-                                            newDd = newDd + aLabel[j];
-                                            break;
-                                        }
-                                    }
-                                }
-                                
-                                var newTr = trTemp
-                                        .replace(':idNomLista:', self.oListaCheck[i].idNomLista)
-                                        .replace(':nomLista:', self.oListaCheck[i].nomListaCheck)
-                                        .replace(':dd:', newDd);
-                                break;
+                                um.agregarLinea(
+                                        self.$tColorantes.find('tbody'),
+                                        {tipo: self.tipoEdicion,
+                                        codQuim: self.$codColor.val(),
+                                        nomQuim: self.$nomColor.val(),
+                                        cantPctj: self.$cantColor.val()});
+
+                                u.limpiarCampos([self.$codColor, self.$nomColor, self.$cantColor]);
+                                u.camposObligatorios([self.$codColor, self.$nomColor, self.$cantColor], '4');
+                                self.cantQuimicos--;
+
+                            } else {
+                                self.mensajeObligatoriedad({titulo: 'Registro de Colorantes',
+                                cuerpoMensaje: 'No puede agregar más de una vez un mismo color.'});
                             }
+                        } else {
+                            self.mensajeObligatoriedad({titulo: 'Cantidad Colorantes',
+                            cuerpoMensaje: 'La cantidad permitida para la fibra seleccionada es de ' + self.cQuimicos + ' colorantes.'});
                         }
-                        
-                        self.$eTBodyNewListCheck.append(newTr);
-                        $('dd').hide();
-                        
-                        self.$eCbxListaCheck.val("Seleccione una...");
-                        u.camposObligatorios([self.$eCbxListaCheck], '1');
                     }
                 });
             },
             
-            desplegarLista: function() {
+            borrarColorante: function() {
                 var self = this;
                 
-                self.$tBodyNewListCheck.on('click', '#btnPlus', function(e) {
-                    e.preventDefault();
-                    
-                    var lista = $(this).closest('dl').find('dd');
-                    
-                    $('dd').not(lista).slideUp('fast');
-                    $('dd').not(lista)
-                            .closest('dl').find('i').removeClass('fa-minus-square');
-
-                    $(this).find('i').toggleClass('fa-minus-square');
-                    
-                    lista.slideToggle('fast');
-                });
-                
-                self.$eTBodyNewListCheck.on('click', '#btnPlus', function(e) {
-                    e.preventDefault();
-                    
-                    var lista = $(this).closest('dl').find('dd');
-                    
-                    $('dd').not(lista).slideUp('fast');
-                    $('dd').not(lista)
-                            .closest('dl').find('i').removeClass('fa-minus-square');
-
-                    $(this).find('i').toggleClass('fa-minus-square');
-                    
-                    lista.slideToggle('fast');
-                });
-            },
-            
-            borrarListaCheck: function() {
-                var self = this;
-                
-                self.$tBodyNewListCheck.on('click', '#btnDelLinea', function(e) {
+                self.$tColorantes.on('click', '#btnDelLinea', function(e) {
                     var fila = $(this).closest('tr');
+                    var rowIndex = fila[0].rowIndex;
+                    
+                    var d = um.noRepetirQuimicos({
+                        tipo: '-', 
+                        codQ: fila[0].cells[0].textContent,
+                        cant1: '',
+                        cant2: '',
+                        maestro: 'formula',
+                        codQpermitido: '',
+                        pos: (rowIndex - 2)}, 
+                        self.colorPorFormula);
+                    
+                    self.colorPorFormula = d.oQuim;
+                    self.cantQuimicos++;
                     
                     fila.remove();
-                   
+
                     e.stopPropagation();
                 });
-                
-                self.$eTBodyNewListCheck.on('click', '#btnDelLinea', function(e) {
-                    var fila = $(this).closest('tr');
-                    
-                    fila.remove();
-                   
-                    e.stopPropagation();
-                });
-            },
-            
-            consultaNombreCurva: function(){
-                var self = this;
-
-                self.$btnSaveCurva.on("click", function(e) {
-                    e.preventDefault();
-                    
-                    var campObligPrep = false;
-                    var elementos = [self.$nomCurva, self.$tiempoCurva, self.$llenadoCurva, self.$rinseCurva];
-
-                    campObligPrep = u.camposObligatorios(elementos, '2');
-
-                    if (campObligPrep) {                        
-                        consultas.consultarNombreMaestros(self.$nomCurva.val(), 'nuevo', 0, 'ServletCurvas');
-                    }
-                });
-                
-                self.$eBtnModificar.on("click", function(e) {
-                    e.preventDefault();
-                    
-                    var nombre = '';
-                    var campOblig = false;
-                    var elementos = [self.$eNombCurva, self.$eTiempCurva, self.$eLlenadCurva, self.$eRinseCurva, self.$eTextArea];
-
-                    campOblig = u.camposObligatorios(elementos, '2');
-
-                    if (campOblig) {
-                        for (var i = 0; i < self.oCurvas.length; i++) {
-                            if (self.oCurvas[i].idCurva === parseInt(self.idCurva)) {
-                                if (self.oCurvas[i].nomCurva !== self.$eNombCurva.val()) {
-                                    nombre = self.$eNombCurva.val();
-                                }
-                                break;
-                            }
-                        }
-                        
-                        consultas.consultarNombreMaestros(nombre, 'editar', self.idCurva, 'ServletCurvas');
-                    }
-                });
-            },
-            
-            agregarCurva: function(response) {
-                var self = this;
-
-                if (response === 'true') {
-                    self.mensajeObligatoriedad({
-                        titulo: 'Nombre de Curva Existente.',
-                        cuerpoMensaje: 'Ya hay un nombre de preparación para la fibra seleccionada, por favor intente nuevamente.'
-                    });
-                
-                } else if (response === 'false') {
-                    var nombre = self.$nomCurva.val();
-                    var tiempo = self.$tiempoCurva.val();
-                    var llenado = self.$llenadoCurva.val();
-                    var rinse = self.$rinseCurva.val();
-                    
-                    um.guardarRegistro({form: 'curva', nombre: nombre, tiempo: tiempo, llenado: llenado, rinse: rinse, tabla: $('#tableNewListCheck')}, 'ServletCurvas');
-                }
             },
             
             agregarMaestros: function() {
                 var self = this;
                 
                 self.$daTableProcesos.on('click', '#btnAdd', function (e) {
-                    //$('#tProcesos tbody tr:gt(0)').remove();
+                    e.preventDefault();
                     self.$tProcesos.find('tbody').remove();
                     self.$tProcesos.append('<tbody></tbody>');
                     self.$tProcesos.find('tbody').append(self.$loader);
@@ -701,181 +545,187 @@
                         }
                     }
                 });
-
-                /*self.$dataTableCurva.on('click', '#btnView', function (e) {
+                
+                self.$daTablePreparaciones.on('click', '#btnAdd', function (e) {
+                    e.preventDefault();
+                    
+                    self.$tPreparaciones.find('tbody').remove();
+                    self.$tPreparaciones.append('<tbody></tbody>');
+                    self.$tPreparaciones.find('tbody').append(self.$loader);
+                    var tempTrPrep = '<tr>' +
+                                        '<td class="center col-sm-2"><strong>Nombre Preparación:</strong></td>' +
+                                        '<td class="left col-sm-4">:NombrePreparacion:</td>' +
+                                        '<td class=" center col-sm-1"><strong>Fibra:</strong></td>' +
+                                        '<td class="left col-sm-1">:Fibra:</td>' +
+                                     '</tr>' +
+                                     '<tr style="background: #E0E3E5;">' +
+                                        '<td class="center"><strong>Código Químico</strong></td>' +
+                                        '<td class="center"><strong>Nombre Químico</strong></td>' +
+                                        '<td class="center"><strong>Gr/Lt</strong></td>' +
+                                        '<td class="center"><strong>%/Kl</strong></td>' +
+                                     '</tr>';
+                    
                     var fila = $(this).closest('tr');
-                    self.$eCbxListaCheck.val('Seleccione una...');
-                    var elementos = [self.$eNombCurva, self.$eTiempCurva, self.$eLlenadCurva, self.$eRinseCurva, self.$eTextArea];
+                    var nomPrep = fila[0].cells[0].textContent;
                     
-                    self.banderaModal = 1;
-                    self.idCurva = parseInt(fila[0].cells[0].textContent);
-                    
-                    u.limpiarCampos(elementos);                    
-                    self.$eTBodyNewListCheck.find('tr:gt(0)').remove();
-                    elementos.push(self.$eCbxListaCheck);
-                    u.camposObligatorios(elementos, '1');
-                    
-                    for (var i = 0; i < self.oCurvas.length; i++) {
-                        if (self.oCurvas[i].idCurva === self.idCurva) {
-                            self.$eNombCurva.val(self.oCurvas[i].nomCurva);
-                            self.$eTiempCurva.val(self.oCurvas[i].tiempoCurva);
-                            self.$eLlenadCurva.val(self.oCurvas[i].llenadoCurva);
-                            self.$eRinseCurva.val(self.oCurvas[i].rinseCurva);
+                    for (var i = 0; i < self.oPreparaciones.length; i++) {
+                        if (nomPrep === self.oPreparaciones[i].nomPreparacion) {
                             
-                            if (self.oCurvas[i].checkList !== null) {
-                                var idLista = self.oCurvas[i].checkList.split('-');
-                                
-                                for (var h = 0; h < idLista.length; h++) {
-                                    for (var i = 0; i < self.oListaCheck.length; i++) {
-                                        if (parseInt(idLista[h]) === self.oListaCheck[i].idNomLista) {
-                                            var newDd = '';
-                                            var ddTemp = '<dd>Etiqueta: :nombreLabel:</dd>';                     
-                                            var trTemp = '<tr>' +
-                                                            '<td class="center">:idNomLista:</td>' +
-                                                            '<td class="left">' +
-                                                                '<dl style="margin-bottom: 0;">' +
-                                                                    '<dt>' +
-                                                                        '<button type="button" class="btn" id="btnPlus" style="background: transparent">' +
-                                                                            '<i class="fa fa-plus-square"></i>' +
-                                                                        '</button>' +
-                                                                        ':nomLista:</dt> :dd:' +
-                                                                '</dl>' +
-                                                            '</td>' +
-                                                            '<td class="center">' +
-                                                                '<button type="button" class="btn" id="btnDelLinea">' +
-                                                                    '<i class="fa fa-trash-o"></i>' +
-                                                                '</button>' +
-                                                            '</td>' +
+                            var trPrep = tempTrPrep
+                                    .replace(':NombrePreparacion:', self.oPreparaciones[i].nomPreparacion)
+                                    .replace(':Fibra:', self.oPreparaciones[i].idFibra.nomFibra);
+                            
+                            self.$tPreparaciones.find('tbody').append(trPrep);
+                            
+                            var quimicos = self.oPreparaciones[i].preparacionCollection;
+                            
+                            for (var j = 0; j < quimicos.length; j++) {
+                                for (var k = 0; k < self.oQuimicos.length; k ++) {                                    
+                                    if (quimicos[j].codQuimico === self.oQuimicos[k].codProduct) {
+                                        var tempTrQuim = '<tr>' +
+                                                            '<td class="center">:CodQuim:</td>' +
+                                                            '<td class="center">:NombreQuim:</td>' +
+                                                            '<td class="center">:CantGrs:</td>' +
+                                                            '<td class="center">:Cant%:</td>' +
                                                          '</tr>';
-                                            
-                                            var label = self.oListaCheck[i].idLabel.split('-');
-                                            var aLabel = new Array(label.length);
-
-                                            for (var j = 0; j < label.length; j++) {
-                                                for (var k = 0; k < self.oLabel.length; k++) {
-                                                    if (parseInt(label[j]) === self.oLabel[k].idLabel) {
-                                                        aLabel[j] = ddTemp.replace(':nombreLabel:', self.oLabel[k].nombreLabel);
-                                                        newDd = newDd + aLabel[j];
-                                                        break;
-                                                    }
-                                                }
-                                            }
-
-                                            var newTr = trTemp
-                                                    .replace(':idNomLista:', self.oListaCheck[i].idNomLista)
-                                                    .replace(':nomLista:', self.oListaCheck[i].nomListaCheck)
-                                                    .replace(':dd:', newDd);
-                                            break;
-                                        }
-                                    }
-                                    self.$eTBodyNewListCheck.append(newTr);
-                                }
                                 
-                                $('dd').hide();
+                                        var trQuim = tempTrQuim
+                                                        .replace(':CodQuim:', quimicos[j].codQuimico)
+                                                        .replace(':NombreQuim:', self.oQuimicos[k].nomProducto)
+                                                        .replace(':CantGrs:', quimicos[j].cantGr)
+                                                        .replace(':Cant%:', quimicos[j].cantPtj);
 
-                                self.$eCbxListaCheck.val("Seleccione una...");
-                                u.camposObligatorios([self.$eCbxListaCheck], '1');
+                                        self.$tPreparaciones.find('tbody').append(trQuim);
+                                        break;
+                                    }
+                                }   
                             }
-                            
+                            self.$tPreparaciones.find('.loader').remove();
                             break;
                         }
                     }
-                    
-                    self.$modalEditCurva.modal('show', 'slow');
-                    
-                    u.camposObligatorios(elementos, '3');
-                    
-                    e.stopPropagation();
-                });*/
-            },
-            
-            solicitarModificarCurva: function(response) {
-                var self = this;
+                });
                 
-                if (response === 'true') {
-                    self.mensajeObligatoriedad({
-                        titulo: 'Nombre de Curva Existente.',
-                        cuerpoMensaje: 'Ya existe una curva con ese nombre, por favor intente nuevamente.'
-                    });
-                
-                } else if (response === 'false') {
-                    var nombre = '';
-                    var tiempo = '';
-                    var llenado = '';
-                    var rinse = '';
-                    var j = 0;
+                self.$daTableAuxiliares.on('click', '#btnAdd', function (e) {
+                    e.preventDefault();
                     
-                    var coment = self.$eTextArea.val();
+                    self.$tAuxiliares.find('tbody').remove();
+                    self.$tAuxiliares.append('<tbody></tbody>');
+                    self.$tAuxiliares.find('tbody').append(self.$loader);
+                    var tempTrAux = '<tr>' +
+                                        '<td class="center col-sm-2"><strong>Nombre Auxiliar:</strong></td>' +
+                                        '<td class="left col-sm-4">:NombreAuxiliar:</td>' +
+                                        '<td class=" center col-sm-1"><strong>Fibra:</strong></td>' +
+                                        '<td class="left col-sm-1">:Fibra:</td>' +
+                                     '</tr>' +
+                                     '<tr style="background: #E0E3E5;">' +
+                                        '<td class="center"><strong>Código Químico</strong></td>' +
+                                        '<td class="center"><strong>Nombre Químico</strong></td>' +
+                                        '<td class="center"><strong>Gr/Lt</strong></td>' +
+                                        '<td class="center"><strong>%/Kl</strong></td>' +
+                                     '</tr>';
                     
-                    for (var i = 0; i < self.oCurvas.length; i++) {
-                        if (self.oCurvas[i].idCurva === parseInt(self.idCurva)) {
-                            j = i;
-                            if (self.oCurvas[i].nomCurva !== self.$eNombCurva.val()) {
-                                nombre = self.$eNombCurva.val();
-                            } else {
-                                nombre = self.oCurvas[i].nomCurva;
-                            }
+                    var fila = $(this).closest('tr');
+                    var nomAux = fila[0].cells[0].textContent;
+                    
+                    for (var i = 0; i < self.oAuxiliares.length; i++) {
+                        if (nomAux === self.oAuxiliares[i].nomAuxiliar) {
                             
-                            if (self.oCurvas[i].tiempoCurva !== parseInt(self.$eTiempCurva.val())) {
-                                tiempo = self.$eTiempCurva.val();
-                            } else {
-                                tiempo = self.oCurvas[i].tiempoCurva;
-                            }
+                            var trAux = tempTrAux
+                                    .replace(':NombreAuxiliar:', self.oAuxiliares[i].nomAuxiliar)
+                                    .replace(':Fibra:', self.oAuxiliares[i].idFibra.nomFibra);
                             
-                            if (self.oCurvas[i].llenadoCurva !== parseInt(self.$eLlenadCurva.val())) {
-                                llenado = self.$eLlenadCurva.val();
-                            } else {
-                                llenado = self.oCurvas[i].llenadoCurva;
-                            }
+                            self.$tAuxiliares.find('tbody').append(trAux);
                             
-                            if (self.oCurvas[i].rinseCurva !== parseInt(self.$eRinseCurva.val())) {
-                                rinse = self.$eRinseCurva.val();
-                            } else {
-                                rinse = self.oCurvas[i].rinseCurva;
-                            }
+                            var quimicos = self.oAuxiliares[i].auxiliarCollection;
                             
+                            for (var j = 0; j < quimicos.length; j++) {
+                                for (var k = 0; k < self.oQuimicos.length; k ++) {                                    
+                                    if (quimicos[j].codQuimico === self.oQuimicos[k].codProduct) {
+                                        var tempTrQuim = '<tr>' +
+                                                            '<td class="center">:CodQuim:</td>' +
+                                                            '<td class="center">:NombreQuim:</td>' +
+                                                            '<td class="center">:CantGrs:</td>' +
+                                                            '<td class="center">:Cant%:</td>' +
+                                                         '</tr>';
+                                
+                                        var trQuim = tempTrQuim
+                                                        .replace(':CodQuim:', quimicos[j].codQuimico)
+                                                        .replace(':NombreQuim:', self.oQuimicos[k].nomProducto)
+                                                        .replace(':CantGrs:', quimicos[j].cantGr)
+                                                        .replace(':Cant%:', quimicos[j].cantPtj);
+
+                                        self.$tAuxiliares.find('tbody').append(trQuim);
+                                        break;
+                                    }
+                                }   
+                            }
+                            self.$tAuxiliares.find('.loader').remove();
                             break;
                         }
                     }
+                });
+                
+                self.$daTableProPosteriores.on('click', '#btnAdd', function (e) {
+                    e.preventDefault();
                     
-                    um.SolicitarModificarRegistro({tabla: $('#eTableNewListCheck'), nombre: nombre, tiempo: tiempo, llenado: llenado, rinse: rinse, idMaestro: self.idCurva, coment: coment, org: self.oCurvas[j]}, [], [], self.$eBtnCerrar, 'ServletCurvas');
-                }
-            },
-            
-            cerrarModalEdicion: function() {
-                var self = this;
-                
-                $(document).on('click', function(e) {
-                    e.preventDefault();
+                    self.$tProPosteriores.find('tbody').remove();
+                    self.$tProPosteriores.append('<tbody></tbody>');
+                    self.$tProPosteriores.find('tbody').append(self.$loader);
+                    var tempTrProPos = '<tr>' +
+                                        '<td class="center col-sm-2"><strong>Nombre Proceso Posterior:</strong></td>' +
+                                        '<td class="left col-sm-4">:NombreProPos:</td>' +
+                                        '<td class=" center col-sm-1"><strong>Fibra:</strong></td>' +
+                                        '<td class="left col-sm-1">:Fibra:</td>' +
+                                     '</tr>' +
+                                     '<tr style="background: #E0E3E5;">' +
+                                        '<td class="center"><strong>Código Químico</strong></td>' +
+                                        '<td class="center"><strong>Nombre Químico</strong></td>' +
+                                        '<td class="center"><strong>Gr/Lt</strong></td>' +
+                                        '<td class="center"><strong>%/Kl</strong></td>' +
+                                     '</tr>';
+                    
+                    var fila = $(this).closest('tr');
+                    var nomProPos = fila[0].cells[0].textContent;
+                    
+                    for (var i = 0; i < self.oProPosterior.length; i++) {
+                        if (nomProPos === self.oProPosterior[i].nomProcPost) {
+                            
+                            var trProPos = tempTrProPos
+                                    .replace(':NombreProPos:', self.oProPosterior[i].nomProcPost)
+                                    .replace(':Fibra:', self.oProPosterior[i].idFibra.nomFibra);
+                            
+                            self.$tProPosteriores.find('tbody').append(trProPos);
+                            
+                            var quimicos = self.oProPosterior[i].procesosPosterioresCollection;
+                            
+                            for (var j = 0; j < quimicos.length; j++) {
+                                for (var k = 0; k < self.oQuimicos.length; k ++) {
+                                    if (quimicos[j].codQuimico === self.oQuimicos[k].codProduct) {
+                                        var tempTrQuim = '<tr>' +
+                                                            '<td class="center">:CodQuim:</td>' +
+                                                            '<td class="center">:NombreQuim:</td>' +
+                                                            '<td class="center">:CantGrs:</td>' +
+                                                            '<td class="center">:Cant%:</td>' +
+                                                         '</tr>';
+                                
+                                        var trQuim = tempTrQuim
+                                                        .replace(':CodQuim:', quimicos[j].codQuimico)
+                                                        .replace(':NombreQuim:', self.oQuimicos[k].nomProducto)
+                                                        .replace(':CantGrs:', quimicos[j].cantGr)
+                                                        .replace(':Cant%:', quimicos[j].cantPtj);
 
-                    if (self.banderaModal === 1 && self.$modalEditCurva.is(':hidden')) {
-                        self.banderaModal = 0;
-                        self.tipoEdicion = 'nuevo';
-                        self.$eTextArea.val('');
+                                        self.$tProPosteriores.find('tbody').append(trQuim);
+                                        break;
+                                    }
+                                }   
+                            }
+                            self.$tProPosteriores.find('.loader').remove();
+                            break;
+                        }
                     }
                 });
-                
-                self.$modalEditCurva.on('keydown', function(e){
-                    if (self.banderaModal === 1 && self.$modalEditCurva.is(':visible') && e.keyCode === 27) {
-                        self.banderaModal = 0;
-                        self.tipoEdicion = 'nuevo';
-                        self.$eTextArea.val('');
-                    }
-                });
-                
-                self.$eBtnCerrar.on('click', function(e) {
-                    e.preventDefault();
-                    self.banderaModal = 0;
-                    self.tipoEdicion = 'nuevo';
-                    self.$eTextArea.val('');
-                });
-                
-                self.$eBtnCerrar2.on('click', function(e) {
-                    e.preventDefault();
-                    self.banderaModal = 0;
-                    self.tipoEdicion = 'nuevo';
-                    self.$eTextArea.val('');
-                });
+
             },
             
             nombreFormula: function() {

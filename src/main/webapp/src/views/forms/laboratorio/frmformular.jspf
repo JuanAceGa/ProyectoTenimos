@@ -183,11 +183,11 @@
                         
                         <div class="tab-pane" id="tabPreparacion">
                             <form class="form">
-                                <div class="row">
+                                <div class="row mb30">
                                     <div class="col-sm-10 col-sm-offset-1">
                                         <div class="table-responsive">
                                             <table class="table" id="tPreparaciones">
-                                                <tbody>
+                                                <!--<tbody>
                                                     <div class="loader" style=""></div>
                                                     <tr>
                                                         <td class="center col-sm-2"><strong>Nombre Preparación:</strong></td>
@@ -207,7 +207,7 @@
                                                         <td class="center">0.4</td>
                                                         <td class="center">0</td>
                                                     </tr>
-                                                </tbody>
+                                                </tbody>-->
                                             </table>
                                         </div><!-- table-responsive -->
                                     </div><!-- col-md-6 -->
@@ -235,11 +235,11 @@
                         </div> <!-- tabPreparacion -->
                         <div class="tab-pane" id="tabAuxiliar">
                             <form class="form">
-                                <div class="row">
+                                <div class="row mb30">
                                     <div class="col-sm-10 col-sm-offset-1">
                                         <div class="table-responsive">
                                             <table class="table" id="tAuxiliares">
-                                                <tbody>
+                                                <!--<tbody>
                                                     <div class="loader" style=""></div>
                                                     <tr>
                                                         <td class="center col-sm-2"><strong>Nombre Auxiliar:</strong></td>
@@ -259,7 +259,7 @@
                                                         <td class="center">0.4</td>
                                                         <td class="center">0</td>
                                                     </tr>
-                                                </tbody>
+                                                </tbody>-->
                                             </table>
                                         </div><!-- table-responsive -->
                                     </div><!-- col-md-6 -->
@@ -342,11 +342,11 @@
 
                         <div class="tab-pane" id="tabProPosterior">
                             <form class="form">
-                                <div class="row">
+                                <div class="row mb30">
                                     <div class="col-sm-10 col-sm-offset-1">
                                         <div class="table-responsive">
                                             <table class="table" id="tProPosteriores">
-                                                <tbody>
+                                                <!--<tbody>
                                                     <div class="loader" style=""></div>
                                                     <tr>
                                                         <td class="center col-sm-2"><strong>Nombre Proceso Posterior:</strong></td>
@@ -366,7 +366,7 @@
                                                         <td class="center">0.4</td>
                                                         <td class="center">0</td>
                                                     </tr>
-                                                </tbody>
+                                                </tbody>-->
                                             </table>
                                         </div><!-- table-responsive -->
                                     </div><!-- col-md-6 -->

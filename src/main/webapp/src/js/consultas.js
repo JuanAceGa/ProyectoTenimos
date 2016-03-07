@@ -5,6 +5,7 @@
             init: function() {
                 this.consultarFibras();
                 this.consultarQuimicosPrepAux();
+                this.consultarQuimicosColorantes();
                 this.consultarMaestros('');
             },
             
@@ -35,6 +36,14 @@
                     frmPreparacion.cargarDatos(response, 'q');
                     frmAuxiliar.cargarDatos(response, 'q');
                     frmProcPos.cargarDatos(response, 'q');
+                    frmFormula.cargarDatos(response, 'q');
+                });
+            },
+            
+            consultarQuimicosColorantes: function() {
+                
+                $.get('../../../ServletProdFormulacion', {accion: 'colorantes'}, function(response) {
+                    frmFormula.cargarDatos(response, 'clrts');
                 });
             },
             

@@ -67,7 +67,7 @@
                 var option1;
                 var option2;
 
-                if (tipo === 'q') {//Carga de los quimicos.
+                if (tipo === 'q') {//Carga de los quimicos o colorantes.
                     oDatos.forEach(function(quimico) {
                         option1 = document.createElement('option');
                         option2 = document.createElement('option');
@@ -363,14 +363,16 @@
                             elemento[1].val(data.codProduct);
                         }
                         
-                        if (data.codUndMedida.idUndMedida === 2) {
-                            elemento[2].attr('disabled', false);
-                            elemento[3].val("");
-                            elemento[3].attr('disabled', true);
-                        } else if (data.codUndMedida.idUndMedida === 5) {
-                            elemento[2].val("");
-                            elemento[2].attr('disabled', true);
-                            elemento[3].attr('disabled', false);
+                        if (elemento.length > 2) {
+                            if (data.codUndMedida.idUndMedida === 2) {
+                                elemento[2].attr('disabled', false);
+                                elemento[3].val("");
+                                elemento[3].attr('disabled', true);
+                            } else if (data.codUndMedida.idUndMedida === 5) {
+                                elemento[2].val("");
+                                elemento[2].attr('disabled', true);
+                                elemento[3].attr('disabled', false);
+                            }
                         }
                     }
                 }
@@ -501,7 +503,7 @@
                         return true;
                     } else if (cientos === 100 && decimas > 0) {
                         return true;
-                    } else if (cientos === 0) {
+                    } else if (cientos === 0 && decimas === 0) {
                         return true;
                     } else {
                         return false;
@@ -541,6 +543,25 @@
                         elemento[0].cells[3].textContent = oDatos.cantPctj;
                     }
                     
+                } else if (oDatos.tipo === 'nuevoColor'){                    
+                    var trTemplate = '<tr>' +
+                                        '<td style="text-align: center">:codQuim:</td>' +
+                                        '<td>:nomQuim:</td>' +
+                                        '<td style="text-align: center">:cantPctj:</td>' +
+                                        '<td>' +
+                                            '<button type="button" class="btn" id="btnDelLinea">' +
+                                                '<i class="fa fa-trash-o"></i>' +
+                                            '</button>' +
+                                        '</td>' +
+                                     '</tr>';
+                    
+                    var newTr = trTemplate
+                                    .replace(':codQuim:', oDatos.codQuim)
+                                    .replace(':nomQuim:', oDatos.nomQuim)
+                                    .replace(':cantPctj:', oDatos.cantPctj);
+                    
+                    elemento.append(newTr);
+                    
                 }
             },
             
@@ -567,7 +588,7 @@
                     }
                 }
                 
-                if (d.tipo === "-") {                    
+                if (d.tipo === "-") {
                     var oQuim = new Array();
                     
                     //if (d.maestro === 'prep') {
