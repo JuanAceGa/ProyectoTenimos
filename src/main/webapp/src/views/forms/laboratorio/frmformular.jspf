@@ -121,15 +121,21 @@
                                     </div>
                                 </div>
                                 
-                                <div class="row">
+                                <div class="row mb30">
                                     <div class="col-sm-5 col-sm-offset-1">
                                         <div class="table-responsive">
                                             <table class="table" id="tProcesos">
-                                                <tbody>
+                                                <!--<tbody>
                                                     <div class="loader" style=""></div>
                                                     <tr>
-                                                        <td class="col-sm-1">Proceso:</td>
-                                                        <td class="left">:NombreProceso:</td>
+                                                        <td class="col-sm-1">
+                                                            Proceso:<br>
+                                                            Tiempo:
+                                                        </td>
+                                                        <td class="left">
+                                                            :NombreProceso:<br>
+                                                            :Tiempo: (hrs)
+                                                        </td>
                                                     </tr>
                                                     <tr>
                                                         <td>Curva:</td>
@@ -140,10 +146,19 @@
                                                             Rinse: :RinseCurva:
                                                         </td>
                                                     </tr>
-                                                </tbody>
+                                                </tbody>-->
                                             </table>
                                         </div><!-- table-responsive -->
                                     </div><!-- col-md-6 -->
+                                    
+                                    <div class="form-group col-sm-5">
+                                        <label class="col-sm-3"></label>
+                                        <div class="col-sm-9">
+                                            <button id="btnLimpiarEncab" title="Limpiar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">
+                                                <i class="fa fa-eraser"></i>
+                                            </button>                                            
+                                       </div>
+                                    </div>
                                 </div>
                                 
                                 <div class="row">

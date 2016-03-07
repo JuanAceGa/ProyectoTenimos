@@ -76,6 +76,7 @@
                     $.get('../../../ServletCurvas', {accion: 'buscar'}, function(response) {
                         frmProceso.cargarDatos(response, 'c');
                         frmCurva.cargarDatos(response, 'c');
+                        frmFormula.cargarDatos(response, 'curv');
                     });
                 }
                 

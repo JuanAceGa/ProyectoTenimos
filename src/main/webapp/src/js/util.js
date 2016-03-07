@@ -79,7 +79,7 @@
             
             limpiarCampos: function (oElementos){
                 for (var i = 0; i < oElementos.length; i++){
-                    oElementos[i].val("");
+                    oElementos[i].val('');
                 }
             }, 
             

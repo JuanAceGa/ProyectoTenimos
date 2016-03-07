@@ -10,6 +10,7 @@
             oAuxiliares: [],
             oColorantes: [],
             oProPosterior: [],
+            oCurvas: [],
             $barraProgreso: $('#barraProgreso'),
             $nomFormula: $('#nomFormula'),
             $codFormula: $('#codFormula'),
@@ -23,13 +24,11 @@
             $colorpicker: $('#colorpicker'),
             $colorSelector: $('#colorSelector'),
             $tProcesos: $('#tProcesos'),
-            $tProcLoader: $('#tProcesos').find('div.loader'),
+            $btnLimpiarEncab: $('#btnLimpiarEncab'),
             $daTableProcesos: $('#daTableProcesos'),
             $tPreparaciones: $('#tPreparaciones'),
-            $tPrepLoader: $('#tPreparaciones').find('div.loader'),
             $daTablePreparaciones: $('#daTablePreparaciones'),
             $tAuxiliares: $('#tAuxiliares'),
-            $tAuxiLoader: $('#tAuxiliares').find('div.loader'),
             $daTableAuxiliares: $('#daTableAuxiliares'),
             $tColorantes: $('#tColorantes'),
             $codColor: $('#codColor'),
@@ -39,22 +38,21 @@
             $cantColor: $('#cantColor'),
             $btnAddColor: $('#btnAddColor'),
             $tProPosteriores: $('#tProPosteriores'),
-            $tPPosLoader: $('#tProPosteriores').find('div.loader'),
             $daTableProPosteriores: $('#daTableProPosteriores'),
             $observ: $('#observ'),
-            $tFormLoader: $('#tFormula').find('div.loader'),
             $tFormula: $('#tFormula').find('tbody'),
+            $loader: '<div class="loader"></div>',
             
             init: function() {
                 this.iniciarComplementos();
                 this.metodosUtiles();
-//                this.limpiarFormulario();
+                this.limpiarFormulario();
                 this.pintarCamposObligatorios();
 //                this.agregarListaChequeo();
 //                this.desplegarLista();
 //                this.borrarListaCheck()
 //                this.consultaNombreCurva();
-//                this.verCurva();
+                this.agregarMaestros();
 //                this.cerrarModalEdicion();
             },
             
@@ -158,6 +156,10 @@
                 if (opc === 'pp') { //Procesos Posteriores
                     self.oProPosterior = data;
                 }
+                
+                if (opc === 'curv') { //Curvas
+                    self.oCurvas = data;
+                }
             },
             
             metodosUtiles: function() {
@@ -222,6 +224,14 @@
                     }
                     u.camposObligatorios([self.$cbxFibra], '4');
                     
+                });
+                
+                self.$cbxFibra.change(function(e) {
+                    if (self.$cbxFibra.val() !== 'Seleccione una...') {
+                        self.nombreFormula();
+                        self.codigoFormula();
+                        u.camposObligatorios([self.$cbxFibra], '4');                    
+                    }
                 });
                 
                 self.$cbxCompos.focusout(function(e) {
@@ -328,15 +338,46 @@
             limpiarFormulario: function() {
                 var self = this;
                 
-                var elementos = [self.$nomCurva, self.$tiempoCurva, self.$llenadoCurva, self.$rinseCurva];
-                u.limpiarCampos(elementos);
+                self.$btnLimpiarEncab.on('click', function(e) {
+                    e.preventDefault();
+                    
+                    self.$cbxFibra.val('Seleccione una...');
+                    self.$cbxCompos.val('Seleccione una...');
+                    self.$cbxCompos.attr('disabled', true);
+                    self.$cbxColor.val('Seleccione una...');
+                    self.$cbxTono.val('Seleccione una...');
+                    self.$colorpicker.css('backgroundColor', '');
+                    
+                    u.limpiarCampos([
+                        self.$desColor,
+                        self.$codPantone,
+                        self.$phFormula,
+                        self.$colorpicker
+                    ]);
+                    
+                    u.camposObligatorios([
+                        self.$cbxFibra,
+                        self.$cbxColor,
+                        self.$desColor,
+                        self.$cbxTono,
+                        self.$codPantone,
+                        self.$phFormula,
+                        self.$colorpicker
+                    ], '4');
+                    
+                    self.$tProcesos.find('tbody').remove();
+                    self.nombreFormula();
+                    self.codigoFormula();
+                    
+                    $('#desColor, #desColor, #codPantone').css('text-transform', '');                    
+                });
                 
-                self.pintarCamposObligatorios();
             },
             
             pintarCamposObligatorios: function() {
               var self = this;
-              var campos = [
+              
+                var campos = [
                   self.$cbxFibra,
                   self.$cbxColor,
                   self.$desColor,
@@ -599,10 +640,69 @@
                 }
             },
             
-            verCurva: function() {
+            agregarMaestros: function() {
                 var self = this;
+                
+                self.$daTableProcesos.on('click', '#btnAdd', function (e) {
+                    //$('#tProcesos tbody tr:gt(0)').remove();
+                    self.$tProcesos.find('tbody').remove();
+                    self.$tProcesos.append('<tbody></tbody>');
+                    self.$tProcesos.find('tbody').append(self.$loader);
+                    var tempTrProceso = '<tr>' +
+                                            '<td class="col-sm-1">' +
+                                                'Proceso:<br>' +
+                                                'Tiempo:' +
+                                            '</td>' +
+                                            '<td class="left">' +
+                                                ':NombreProceso:<br>' +
+                                                ':Tiempo: (hrs)' +
+                                            '</td>' +
+                                        '</tr>';
+                    
+                    var fila = $(this).closest('tr');
+                    var nomProceso = fila[0].cells[0].textContent;
+                    var tiempo = (parseInt(fila[0].cells[2].textContent) / 60);
+                    
+                    var trProc = tempTrProceso
+                                    .replace(':NombreProceso:', nomProceso)
+                                    .replace(':Tiempo:', tiempo.toFixed(2));
+                    
+                    self.$tProcesos.find('tbody').append(trProc);
+                    
+                    for (var i = 0; i < self.oProcesos.length; i++) {
+                        if (nomProceso === self.oProcesos[i].nomProceso) {
+                            var curvas = self.oProcesos[i].idCurvas.split('-');
+                            var tempTrCurva = '<tr>' +
+                                                '<td>Curva:</td>' +
+                                                '<td>' +
+                                                    ':NombreCurva: <br>' +
+                                                    'Tiempo: :TiempoCurva: (hrs)<br>' +
+                                                    'Llenado: :LlenadoCurva: <br>' +
+                                                    'Rinse: :RinseCurva:' +
+                                                '</td>' +
+                                              '</tr>';
+                            
+                            for (var j = 0; j < curvas.length; j++) {
+                                for (var k = 0; k < self.oCurvas.length; k++){
+                                    if (parseInt(curvas[j]) === self.oCurvas[k].idCurva) {
+                                        var trCurva = tempTrCurva
+                                                        .replace(':NombreCurva:', self.oCurvas[k].nomCurva)
+                                                        .replace(':TiempoCurva:', ((self.oCurvas[k].tiempoCurva / 60).toFixed(2)))
+                                                        .replace(':LlenadoCurva:', self.oCurvas[k].llenadoCurva)
+                                                        .replace(':RinseCurva:', self.oCurvas[k].rinseCurva);
+                                        
+                                        self.$tProcesos.find('tbody').append(trCurva);
+                                        break;
+                                    }
+                                }
+                            }
+                            self.$tProcesos.find('.loader').remove();
+                            break;
+                        }
+                    }
+                });
 
-                self.$dataTableCurva.on('click', '#btnView', function (e) {
+                /*self.$dataTableCurva.on('click', '#btnView', function (e) {
                     var fila = $(this).closest('tr');
                     self.$eCbxListaCheck.val('Seleccione una...');
                     var elementos = [self.$eNombCurva, self.$eTiempCurva, self.$eLlenadCurva, self.$eRinseCurva, self.$eTextArea];
@@ -686,7 +786,7 @@
                     u.camposObligatorios(elementos, '3');
                     
                     e.stopPropagation();
-                });
+                });*/
             },
             
             solicitarModificarCurva: function(response) {
