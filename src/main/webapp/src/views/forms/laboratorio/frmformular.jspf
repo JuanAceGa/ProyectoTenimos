@@ -125,28 +125,7 @@
                                     <div class="col-sm-5 col-sm-offset-1">
                                         <div class="table-responsive">
                                             <table class="table" id="tProcesos">
-                                                <!--<tbody>
-                                                    <div class="loader" style=""></div>
-                                                    <tr>
-                                                        <td class="col-sm-1">
-                                                            Proceso:<br>
-                                                            Tiempo:
-                                                        </td>
-                                                        <td class="left">
-                                                            :NombreProceso:<br>
-                                                            :Tiempo: (hrs)
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Curva:</td>
-                                                        <td>
-                                                            :NombreCurva: <br>
-                                                            Tiempo: :TiempoCurva: <br>
-                                                            Llenado: :LlenadoCurva: <br>
-                                                            Rinse: :RinseCurva:
-                                                        </td>
-                                                    </tr>
-                                                </tbody>-->
+                                                
                                             </table>
                                         </div><!-- table-responsive -->
                                     </div><!-- col-md-6 -->
@@ -187,27 +166,7 @@
                                     <div class="col-sm-10 col-sm-offset-1">
                                         <div class="table-responsive">
                                             <table class="table" id="tPreparaciones">
-                                                <!--<tbody>
-                                                    <div class="loader" style=""></div>
-                                                    <tr>
-                                                        <td class="center col-sm-2"><strong>Nombre Preparación:</strong></td>
-                                                        <td class="left col-sm-4">REACTIVOS PREB. EN MQ. Y JAB. EN LAVADORA</td>
-                                                        <td class=" center col-sm-1"><strong>Fibra:</strong></td>
-                                                        <td class="left col-sm-1">POL/ALG(VIS/LYCR)</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="center"><strong>Código Químico</strong></td>
-                                                        <td class="center"><strong>Nombre Químico</strong></td>
-                                                        <td class="center"><strong>Gr/Lt</strong></td>
-                                                        <td class="center"><strong>%/Kl</strong></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="center">1460</td>
-                                                        <td class="center">ACIDO ACETICO</td>
-                                                        <td class="center">0.4</td>
-                                                        <td class="center">0</td>
-                                                    </tr>
-                                                </tbody>-->
+                                                
                                             </table>
                                         </div><!-- table-responsive -->
                                     </div><!-- col-md-6 -->
@@ -239,27 +198,7 @@
                                     <div class="col-sm-10 col-sm-offset-1">
                                         <div class="table-responsive">
                                             <table class="table" id="tAuxiliares">
-                                                <!--<tbody>
-                                                    <div class="loader" style=""></div>
-                                                    <tr>
-                                                        <td class="center col-sm-2"><strong>Nombre Auxiliar:</strong></td>
-                                                        <td class="left col-sm-4">REACTIVOS PREB. EN MQ. Y JAB. EN LAVADORA</td>
-                                                        <td class=" center col-sm-1"><strong>Fibra:</strong></td>
-                                                        <td class="left col-sm-1">POL/ALG(VIS/LYCR)</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="center"><strong>Código Químico</strong></td>
-                                                        <td class="center"><strong>Nombre Químico</strong></td>
-                                                        <td class="center"><strong>Gr/Lt</strong></td>
-                                                        <td class="center"><strong>%/Kl</strong></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="center">1460</td>
-                                                        <td class="center">ACIDO ACETICO</td>
-                                                        <td class="center">0.4</td>
-                                                        <td class="center">0</td>
-                                                    </tr>
-                                                </tbody>-->
+                                               
                                             </table>
                                         </div><!-- table-responsive -->
                                     </div><!-- col-md-6 -->
@@ -346,27 +285,7 @@
                                     <div class="col-sm-10 col-sm-offset-1">
                                         <div class="table-responsive">
                                             <table class="table" id="tProPosteriores">
-                                                <!--<tbody>
-                                                    <div class="loader" style=""></div>
-                                                    <tr>
-                                                        <td class="center col-sm-2"><strong>Nombre Proceso Posterior:</strong></td>
-                                                        <td class="left col-sm-4">REACTIVOS PREB. EN MQ. Y JAB. EN LAVADORA</td>
-                                                        <td class=" center col-sm-1"><strong>Fibra:</strong></td>
-                                                        <td class="left col-sm-1">POL/ALG(VIS/LYCR)</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="center"><strong>Código Químico</strong></td>
-                                                        <td class="center"><strong>Nombre Químico</strong></td>
-                                                        <td class="center"><strong>Gr/Lt</strong></td>
-                                                        <td class="center"><strong>%/Kl</strong></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="center">1460</td>
-                                                        <td class="center">ACIDO ACETICO</td>
-                                                        <td class="center">0.4</td>
-                                                        <td class="center">0</td>
-                                                    </tr>
-                                                </tbody>-->
+                                                
                                             </table>
                                         </div><!-- table-responsive -->
                                     </div><!-- col-md-6 -->
@@ -405,218 +324,89 @@
                         </div> <!-- tabObservacion -->
                         
                         <div class="tab-pane" id="tabFormula">
-                            <div class="col-sm-10 col-sm-offset-1">
-                                <div class="table-responsive">
-                                    <table class="table-bordered col-sm-12" id="tFormula">
-                                        <caption><h3>VISTA PRELIMINAR DE LA FORMULA</h3></caption>
-                                        <div class="loader" style=""></div>
-                                        <tbody>
-                                            <tr>
-                                                <td class="col-sm-1"><strong>Código:</strong></td>
-                                                <td class="col-sm-1 center">31362834</td>
-                                                <td class="col-sm-1"><strong>Fibra:</strong></td>
-                                                <td class="col-sm-1 center">POL/ALG(VIS/LYCR)</td>
-                                                <td class="col-sm-1"><strong>Composición:</strong></td>
-                                                <td class="col-sm-1 center">65/35</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="col-sm-1"><strong>Color:</strong></td>
-                                                <td class="col-sm-1" colspan="3">VERDE LIMON</td>
-                                                <td class="col-sm-1"><strong>Tono:</strong></td>
-                                                <td class="col-sm-1 center">OSCURO</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="col-sm-1"><strong>Proceso:</strong></td>
-                                                <td class="col-sm-1 center">54</td>
-                                                <td class="col-sm-1"><strong>Tiempo:</strong></td>
-                                                <td class="col-sm-1 center">8:47 Hora(s)</td>
-                                                <td class="col-sm-1"><strong>Curvas:</strong></td>
-                                                <td class="col-sm-1 center">12-03-16</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="col-sm-1"><strong>PH:</strong></td>
-                                                <td class="col-sm-1 center">4.30</td>
-                                                <td class="col-sm-1"><strong>Pantone:</strong></td>
-                                                <td class="col-sm-1 center">5654879</td>
-                                                <td class="col-sm-1"></td>
-                                                <td class="col-sm-1"></td>
-                                            </tr>
-                                            <tr style="background: #E0E3E5;">
-                                                <td class="col-sm-1 center"><strong>Sección</strong></td>
-                                                <td class="col-sm-1 center"><strong>Cód. Producto</strong></td>
-                                                <td class="col-sm-1 center" colspan="3"><strong>Nombre Producto</strong></td>
-                                                <td class="col-sm-1 center"><strong>Cantidad</strong></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="col-sm-1 center"><strong>PREPARACIÓN</strong></td>
-                                                <td class="col-sm-1 center">
-                                                    1460 <br>
-                                                    1881 <br>
-                                                    1940 <br>
-                                                    2510 <br>
-                                                    3350 <br>
-                                                    8040 <br>
-                                                    9888 <br>
-                                                    1280 <br>
-                                                    1460 <br>
-                                                    1550 <br>
-                                                    1881 <br>
-                                                    1940
-                                                </td>
-                                                <td class="col-sm-1" colspan="3">
-                                                    ACIDO ACETICO <br>
-                                                    PEROXIDO DE HIDROGENO (50%) <br>
-                                                    SODA CAUSTICA 50% (LIQ) <br>
-                                                    FELOSAN FOX <br>
-                                                    TE¥ILUBRI FH <br>
-                                                    CONTAVAN GAL <br>
-                                                    CATALASE T100 <br>
-                                                    NEW-ACID NEU <br>
-                                                    ACIDO ACETICO <br>
-                                                    CARBONATO DE SODIO <br>
-                                                    PEROXIDO DE HIDROGENO (50%) <br>
-                                                    SODA CAUSTICA 50% (LIQ)
-                                                </td>
-                                                <td class="col-sm-1 right">
-                                                    0.4 g<br>
-                                                    1.4 g<br>
-                                                    3 g<br>
-                                                    0.7 g<br>
-                                                    1 g<br>
-                                                    0.3 g<br>
-                                                    0.15 g<br>
-                                                    0.5 g<br>
-                                                    1 g<br>
-                                                    0.3 g<br>
-                                                    2.5 g<br>
-                                                    2 g
-                                                </td>
-                                            </tr>
-                                            <!-- ///////////////////////////////////////////////////////////////////// -->
-                                            <tr>
-                                                <td class="col-sm-1 center"><strong>AUXILIAR</strong></td>
-                                                <td class="col-sm-1 center">
-                                                    1460 <br>
-                                                    1881 <br>
-                                                    1940 <br>
-                                                    2510 <br>
-                                                    3350 <br>
-                                                    8040 <br>
-                                                    9888 <br>
-                                                    1280 <br>
-                                                    1460 <br>
-                                                    1550 <br>
-                                                    1881 <br>
-                                                    1940
-                                                </td>
-                                                <td class="col-sm-1" colspan="3">
-                                                    ACIDO ACETICO <br>
-                                                    PEROXIDO DE HIDROGENO (50%) <br>
-                                                    SODA CAUSTICA 50% (LIQ) <br>
-                                                    FELOSAN FOX <br>
-                                                    TE¥ILUBRI FH <br>
-                                                    CONTAVAN GAL <br>
-                                                    CATALASE T100 <br>
-                                                    NEW-ACID NEU <br>
-                                                    ACIDO ACETICO <br>
-                                                    CARBONATO DE SODIO <br>
-                                                    PEROXIDO DE HIDROGENO (50%) <br>
-                                                    SODA CAUSTICA 50% (LIQ)
-                                                </td>
-                                                <td class="col-sm-1 right">
-                                                    0.4 g<br>
-                                                    1.4 g<br>
-                                                    3 g<br>
-                                                    0.7 g<br>
-                                                    1 g<br>
-                                                    0.3 g<br>
-                                                    0.15 g<br>
-                                                    0.5 g<br>
-                                                    1 g<br>
-                                                    0.3 g<br>
-                                                    2.5 g<br>
-                                                    2 g
-                                                </td>
-                                            </tr>
-                                            <!-- ////////////////////////////////////////////////////////////////////////// -->
-                                            <tr>
-                                                <td class="col-sm-1 center"><strong>COLORANTES</strong></td>
-                                                <td class="col-sm-1 center">
-                                                    1460<br>
-                                                    1881<br>
-                                                    1940<br>
-                                                    2510<br>
-                                                    3350<br>
-                                                    8040
-                                                </td>
-                                                <td class="col-sm-1" colspan="3">
-                                                    ACIDO ACETICO<br>
-                                                    PEROXIDO DE HIDROGENO (50%)<br>
-                                                    SODA CAUSTICA 50% (LIQ)<br>
-                                                    FELOSAN FOX<br>
-                                                    TE¥ILUBRI FH<br>
-                                                    CONTAVAN GAL
-                                                </td>
-                                                <td class="col-sm-1 right">
-                                                    0.4 p<br>
-                                                    1.4 p<br>
-                                                    3 p<br>
-                                                    0.7 p<br>
-                                                    1 p<br>
-                                                    0.3 p
-                                                </td>
-                                            </tr>
-                                            <!-- ////////////////////////////////////////////////////////////////////////////////// -->
-                                            <tr>
-                                                <td class="col-sm-1 center"><strong>PROCESO POSTERIOR</strong></td>
-                                                <td class="col-sm-1 center">
-                                                    1460<br>
-                                                    1881<br>
-                                                    1940<br>
-                                                    2510<br>
-                                                    3350<br>
-                                                    8040<br>
-                                                    9888<br>
-                                                    1280<br>
-                                                    1460<br>
-                                                    1550<br>
-                                                    1881<br>
-                                                    1940
-                                                </td>
-                                                <td class="col-sm-1" colspan="3">
-                                                    ACIDO ACETICO<br>
-                                                    PEROXIDO DE HIDROGENO (50%)<br>
-                                                    SODA CAUSTICA 50% (LIQ)<br>
-                                                    FELOSAN FOX<br>
-                                                    TE¥ILUBRI FH<br>
-                                                    CONTAVAN GAL<br>
-                                                    CATALASE T100<br>
-                                                    NEW-ACID NEU<br>
-                                                    ACIDO ACETICO<br>
-                                                    CARBONATO DE SODIO<br>
-                                                    PEROXIDO DE HIDROGENO (50%)<br>
-                                                    SODA CAUSTICA 50% (LIQ)
-                                                </td>
-                                                <td class="col-sm-1 right">
-                                                    0.4 g<br>
-                                                    1.4 g<br>
-                                                    3 g<br>
-                                                    0.7 g<br>
-                                                    1 g<br>
-                                                    0.3 g<br>
-                                                    0.15 g<br>
-                                                    0.5 g<br>
-                                                    1 g<br>
-                                                    0.3 g<br>
-                                                    2.5 g<br>
-                                                    2 g
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="col-sm-1" colspan="6" style="text-align: justify;"><strong>OBSERVACIONES: </strong> Al contrario del pensamiento popular, el texto de Lorem Ipsum no es simplemente texto aleatorio. Tiene sus raices en una pieza cl´sica de la literatura del Latin, que data del año 45 antes de Cristo, haciendo que este adquiera mas de 2000 años de antiguedad. Richard McClintock, un profesor de Latin de la Universidad de Hampden-Sydney en Virginia, encontró una de las palabras más oscuras de la lengua del latín, "consecteur", en un pasaje de Lorem Ipsum, y al seguir leyendo distintos textos del latín, descubrió la fuente indudable. Lorem Ipsum viene de las secciones 1.10.32 y 1.10.33 de "de Finnibus Bonorum et Malorum" (Los Extremos del Bien y El Mal) por Cicero, escrito en el año 45 antes de Cristo. Este libro es un tratado de teoría de éticas, muy popular durante el Renacimiento. La primera linea del Lorem Ipsum, "Lorem ipsum dolor sit amet..", viene de una linea en la sección 1.10.32</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                            <div class="row">
+                                <div class="col-sm-10 col-sm-offset-1">
+                                    <button id="btnSaveForm" title="Guardar" data-placement="right" data-toggle="tooltip" class="btn tooltips">
+                                        Guardar Formula
+                                        <i class="fa fa-save"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-10 col-sm-offset-1">
+                                    <div class="table-responsive">
+                                        <table class="table-bordered col-sm-12" id="tFormula">
+                                            <caption><h3>VISTA PRELIMINAR DE LA FORMULA</h3></caption>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="col-sm-1"><strong>Código:</strong></td>
+                                                    <td class="col-sm-1 center" id="tCodFormula"></td>
+                                                    <td class="col-sm-1"><strong>Fibra:</strong></td>
+                                                    <td class="col-sm-1 center" id="tNomFibra"></td>
+                                                    <td class="col-sm-1"><strong>Composición:</strong></td>
+                                                    <td class="col-sm-1 center" id="tCompos"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-sm-1"><strong>Color:</strong></td>
+                                                    <td class="col-sm-1" colspan="3" id="tColor"></td>
+                                                    <td class="col-sm-1"><strong>Tono:</strong></td>
+                                                    <td class="col-sm-1 center" id="tTono"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-sm-1"><strong>Proceso:</strong></td>
+                                                    <td class="col-sm-1 center" id="tProceso"></td>
+                                                    <td class="col-sm-1"><strong>Tiempo:</strong></td>
+                                                    <td class="col-sm-1 center" id="tTiempo"></td>
+                                                    <td class="col-sm-1"><strong>Curvas:</strong></td>
+                                                    <td class="col-sm-1 center" id="tCurva"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-sm-1"><strong>PH:</strong></td>
+                                                    <td class="col-sm-1 center" id="tPh"></td>
+                                                    <td class="col-sm-1"><strong>Pantone:</strong></td>
+                                                    <td class="col-sm-1 center" id="tPantone"></td>
+                                                    <td class="col-sm-1"></td>
+                                                    <td class="col-sm-1"></td>
+                                                </tr>
+                                                <tr style="background: #E0E3E5;">
+                                                    <td class="col-sm-1 center"><strong>Sección</strong></td>
+                                                    <td class="col-sm-1 center"><strong>Cód. Producto</strong></td>
+                                                    <td class="col-sm-1 center" colspan="3"><strong>Nombre Producto</strong></td>
+                                                    <td class="col-sm-1 center"><strong>Cantidad</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-sm-1 center"><strong>PREPARACIÓN</strong></td>
+                                                    <td class="col-sm-1 center" id="tCodQuimPre"></td>
+                                                    <td class="col-sm-1" colspan="3" id="tNomQuimPre"></td>
+                                                    <td class="col-sm-1 right" id="tCantPre"></td>
+                                                </tr>
+                                                <!-- ///////////////////////////////////////////////////////////////////// -->
+                                                <tr>
+                                                    <td class="col-sm-1 center"><strong>AUXILIAR</strong></td>
+                                                    <td class="col-sm-1 center" id="tCodQuimAux"></td>
+                                                    <td class="col-sm-1" colspan="3" id="tNomQuimAux"></td>
+                                                    <td class="col-sm-1 right" id="tCantAux"></td>
+                                                </tr>
+                                                <!-- ////////////////////////////////////////////////////////////////////////// -->
+                                                <tr>
+                                                    <td class="col-sm-1 center"><strong>COLORANTES</strong></td>
+                                                    <td class="col-sm-1 center" id="tCodQuimCol"></td>
+                                                    <td class="col-sm-1" colspan="3" id="tNomQuimCol"></td>
+                                                    <td class="col-sm-1 right" id="tCantCol"></td>
+                                                </tr>
+                                                <!-- ////////////////////////////////////////////////////////////////////////////////// -->
+                                                <tr>
+                                                    <td class="col-sm-1 center"><strong>PROCESO POSTERIOR</strong></td>
+                                                    <td class="col-sm-1 center" id="tCodQuimPro"></td>
+                                                    <td class="col-sm-1" colspan="3" id="tNomQuimPro"></td>
+                                                    <td class="col-sm-1 right" id="tCantPro"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="col-sm-1" colspan="6" style="text-align: justify;" id="tObserv"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div> <!-- tabFormula -->
