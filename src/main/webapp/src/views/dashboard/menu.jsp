@@ -227,7 +227,7 @@
         <jsp:include page="../modal.alert/modalMensajeAlert.jspf"></jsp:include>
         
         <script src="../../js/lib/jquery-1.10.2.min.js"></script>
-        <script src="../../js/lib/code.jquery.com-jquery-1.11.3.min.js"></script>-->
+        <script src="../../js/lib/code.jquery.com-jquery-1.11.3.min.js"></script>
         <script src="../../js/lib/jquery-migrate-1.2.1.min.js"></script>
         <script src="../../js/lib/jquery-ui-1.10.3.min.js"></script>
         <script src="../../js/lib/bootstrap.min.js"></script>

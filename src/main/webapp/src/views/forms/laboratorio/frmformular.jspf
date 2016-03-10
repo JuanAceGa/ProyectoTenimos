@@ -2,7 +2,7 @@
     <div class="col-md-offset-1 col-md-10">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <div class="panel-btns">
+                <div class="panel-btns" id="frmFormular">
                     <a href="#" class="minimize">&minus;</a>
                 </div>
                 <h4 class="panel-title">Maestro para Formulación</h4>
@@ -228,14 +228,14 @@
                         <div class="tab-pane" id="tabColorante">
                             <form class="form">
                                 <div class="row">
-                                    <div class="col-sm-10 col-sm-offset-1">
+                                    <div class="col-sm-6 col-sm-offset-0">
                                         <div class="table-responsive">
                                             <table class="table" id="tColorantes">
                                                 <caption><h3>COLORANTES</h3></caption>
                                                 <thead>
                                                     <tr>
-                                                        <th class="col-sm-1 center">Código Color</th>
-                                                        <th class="col-sm-5 center">Nombre del Color</th>
+                                                        <th class="col-sm-2 center">Cód. Color</th>
+                                                        <th class="col-sm-4 center">Nombre del Color</th>
                                                         <th class="col-sm-1 center">Cant. %/Kl</th>
                                                         <th class="col-sm-1 center"></th>
                                                     </tr>
@@ -244,38 +244,70 @@
                                                     <tr>
                                                         <td>
                                                             <div class="form-group">
-                                                                <!--<div class="col-sm-12">-->
-                                                                    <input type="text" id="codColor" class="form-control center" placeholder="Código" maxlength="4" list="dlCodColor" required />
-                                                                    <datalist id="dlCodColor"></datalist>
-                                                                <!--</div>-->
+                                                                <input type="text" id="codColor" class="form-control center" placeholder="Código" maxlength="4" list="dlCodColor" required />
+                                                                <datalist id="dlCodColor"></datalist>
                                                             </div>
                                                         </td>
                                                         <td>
                                                             <div class="form-group">
-                                                                <!--<div class="col-sm-12">-->
-                                                                    <input type="text" id="nomColor" class="form-control" placeholder="Nombre del color" list="dlNomColor" required />
-                                                                    <datalist id="dlNomColor"></datalist>
-                                                                <!--</div>-->
+                                                                <input type="text" id="nomColor" class="form-control" placeholder="Nombre del color" list="dlNomColor" required />
+                                                                <datalist id="dlNomColor"></datalist>
                                                             </div>
                                                         </td>
                                                         <td>
                                                             <div class="form-group">
-                                                                <!--<div class="col-sm-12">-->
-                                                                    <input type="text" id="cantColor" class="form-control center" maxlength="8" placeholder="%/Kl" required />
-                                                                <!--</div>-->
+                                                                <input type="text" id="cantColor" class="form-control center" maxlength="8" placeholder="%/Kl" required />
                                                             </div>
                                                         </td>
                                                         <td class="table-action">
-                                                            <!--<div class="form-group col-md-12">-->
-                                                                <button id="btnAddColor" title="Agregar Color" data-placement="right" data-toggle="tooltip" class="btn tooltips"><i class="fa fa-plus-square"></i></button>
-                                                            <!--</div>-->
+                                                            <button id="btnAddColor" title="Agregar Color" data-placement="right" data-toggle="tooltip" class="btn tooltips"><i class="fa fa-plus-square"></i></button>
                                                         </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div><!-- table-responsive -->
-                                    </div><!-- col-md-6 -->
-                                </div>
+                                    </div><!-- col-md-6 TABLA COLORANTES-->
+                                    
+                                    <div class="col-sm-6 col-sm-offset-0">
+                                        <div class="table-responsive">
+                                            <table class="table" id="tAuxEsp">
+                                                <caption><h3>AUXILIARES ESPECIALES</h3></caption>
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-sm-2 center">Cód. Químico</th>
+                                                        <th class="col-sm-4 center">Nombre del Producto</th>
+                                                        <th class="col-sm-1 center">Cant. Grs/Lt</th>
+                                                        <th class="col-sm-1 center"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input type="text" id="codAuxEsp" class="form-control center" placeholder="Código" maxlength="4" list="dlCodAuxEsp" required />
+                                                                <datalist id="dlCodAuxEsp"></datalist>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input type="text" id="nomAuxEsp" class="form-control" placeholder="Nombre del Auxiliar" list="dlNomAuxEsp" required />
+                                                                <datalist id="dlNomAuxEsp"></datalist>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="form-group">
+                                                                <input type="text" id="cantColor" class="form-control center" maxlength="8" placeholder="Grs/Lt" required />
+                                                            </div>
+                                                        </td>
+                                                        <td class="table-action">
+                                                            <button id="btnAddAuxEsp" title="Agregar Químico" data-placement="right" data-toggle="tooltip" class="btn tooltips"><i class="fa fa-plus-square"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div><!-- table-responsive -->
+                                    </div><!-- col-md-6 TABLA AUXILIAR ESPECIAL -->
+                                </div> <!-- row -->
                             </form>
                         </div> <!-- tabColorante -->
 
@@ -422,5 +454,34 @@
             </div><!-- panel-body -->
         </div><!-- panel -->
     </div><!-- col-md-6 -->
-
+    
+    <div class=" col-md-offset-1 col-md-10">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-btns" id="tblMaestroFormulas">
+                    <a href="#" class="minimize">&minus;</a>
+                </div>
+                <h4 class="panel-title">Listado de Maestros de Formulas</h4>
+                <p>Si desea consultar o editar una formula, despliegue este panel.</p>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table" id="dataTableFormulas">
+                        <thead>
+                            <tr>
+                                <th class="col-md-1 center">Id. Fla.</th>
+                                <th class="col-md-4 center">Nombre de la Formula</th>
+                                <th class="col-md-1 center">Fibra</th>
+                                <th class="col-md-1 center">Composición</th>
+                                <th class="col-md-1 center">Color</th>
+                                <th class="col-md-1 center">Ult. Fecha de Uso</th>
+                                <th class="col-md-1 center">Estado</th>
+                                <th class="col-md-1 center">Editar</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div><!-- table-responsive -->
+            </div><!-- panel-body -->
+        </div><!-- panel -->
+    </div><!-- col-md-10 -->                
 </div><!-- row -->

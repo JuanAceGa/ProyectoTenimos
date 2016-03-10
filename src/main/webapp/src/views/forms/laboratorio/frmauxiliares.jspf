@@ -119,7 +119,7 @@
                                 <th class="col-md-1" style="text-align: center">Id. Aux.</th>
                                 <th class="col-md-4" style="text-align: center">Nombre del Auxiliar</th>
                                 <th class="col-md-1" style="text-align: center">Fibra</th>
-                                <th class="col-md-1" style="text-align: center">Coste</th>
+                                <th class="col-md-1" style="text-align: center">Costo $</th>
                                 <th class="col-md-1" style="text-align: center">Ult. Fecha de Uso</th>
                                 <th class="col-md-1" style="text-align: center">Ver</th>
                                 <!--<th class="col-md-1"></th>-->

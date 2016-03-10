@@ -19,6 +19,9 @@
             rowFibra: $("#rowFibra"),
             frmMaestroFibra: $("#frmMaestroFibra"),
             tblMaestroFibra: $("#tblMaestroFibra"),
+            rowFormular: $("#rowFormular"),
+            frmFormular: $("#frmFormular"),
+            tblMaestroFormulas: $("#tblMaestroFormulas"),
             rowProceso: $("#rowProceso"),
             frmMaestroProceso: $("#frmMaestroProceso"),
             tblMaestroProceso: $("#tblMaestroProceso"),
@@ -58,6 +61,7 @@
                 self.rowCurva.hide();
                 self.rowFormsLL.hide();
                 self.rowTablesLL.hide();
+                self.rowFormular.hide();
             },
             
             cargarSesion: function(){
@@ -173,15 +177,15 @@
                             this.children[3].className = "nav-parent";
                             
                             break;
-                            
+                        
                         case "Maestro Formulación":
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Formulación";
                             self.ocultarFormularios();
                             
-                            //self.rowFibra.show();
-                            //self.frmMaestroFibra.children(".minimize").click();
-                            //self.tblMaestroFibra.children(".minimize").click();
+                            self.rowFormular.show();
+                            self.frmFormular.children(".minimize").click();
+                            self.tblMaestroFormulas.children(".minimize").click();
                             
                             this.children[0].className = "";
                             this.children[1].className = "";
@@ -191,7 +195,7 @@
                         
                         case "Maestro Procesos":
                             this.children[3].className = "nav-parent active";
-                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Producción / Maestro Procesos";
+                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-gears'></i>Producción / Maestro Procesos";
                             self.ocultarFormularios();
                             
                             self.rowProceso.show();
@@ -206,7 +210,7 @@
                         
                         case "Maestro Curvas":
                             this.children[3].className = "nav-parent active";
-                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Producción / Maestro Curvas";
+                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-gears'></i>Producción / Maestro Curvas";
                             self.ocultarFormularios();
                             
                             self.rowCurva.show();
@@ -221,7 +225,7 @@
                         
                         case "Maestro Lista de Chequeo":
                             this.children[3].className = "nav-parent active";
-                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Producción / Maestro Lista de Chequeo";
+                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-gears'></i>Producción / Maestro Lista de Chequeo";
                             self.ocultarFormularios();
                             
                             self.rowFormsLL.show();

@@ -155,6 +155,18 @@
                         oDatos[i].btnView = '<button id="btnView" title="Ver/Editar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
                                                 '<i class="glyphicon glyphicon-eye-open"></i>' +
                                             '</button>';
+                        
+                        if (tipo === 'prep') {
+                            oDatos[i].costoPreparacion = oDatos[i].costoPreparacion.toFixed(1);
+                        }
+                        
+                        if (tipo === 'aux') {
+                            oDatos[i].costoAuxiliar = oDatos[i].costoAuxiliar.toFixed(1);
+                        }
+                        
+                        if (tipo === 'pp') {
+                            oDatos[i].costoProcPost = oDatos[i].costoProcPost.toFixed(1);
+                        }
                     }
                 }
             
@@ -545,10 +557,10 @@
                     
                 } else if (oDatos.tipo === 'nuevoColor'){                    
                     var trTemplate = '<tr>' +
-                                        '<td style="text-align: center">:codQuim:</td>' +
+                                        '<td class="center">:codQuim:</td>' +
                                         '<td>:nomQuim:</td>' +
-                                        '<td style="text-align: center">:cantPctj:</td>' +
-                                        '<td>' +
+                                        '<td class="center">:cantPctj:</td>' +
+                                        '<td class="center">' +
                                             '<button type="button" class="btn" id="btnDelLinea">' +
                                                 '<i class="fa fa-trash-o"></i>' +
                                             '</button>' +
@@ -562,6 +574,24 @@
                     
                     elemento.append(newTr);
                     
+                } else if (oDatos.tipo === 'nuevoAuxEsp'){                    
+                    var trTemplate = '<tr>' +
+                                        '<td class="center">:codQuim:</td>' +
+                                        '<td>:nomQuim:</td>' +
+                                        '<td class="center">:cantGrs:</td>' +
+                                        '<td class="center">' +
+                                            '<button type="button" class="btn" id="btnDelLinea">' +
+                                                '<i class="fa fa-trash-o"></i>' +
+                                            '</button>' +
+                                        '</td>' +
+                                     '</tr>';
+                    
+                    var newTr = trTemplate
+                                    .replace(':codQuim:', oDatos.codQuim)
+                                    .replace(':nomQuim:', oDatos.nomQuim)
+                                    .replace(':cantGrs:', oDatos.cantGrLt);
+                    
+                    elemento.append(newTr);
                 }
             },
             
