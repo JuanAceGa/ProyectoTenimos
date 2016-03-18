@@ -93,14 +93,14 @@
                 }
 
                 if (opc === 'pr') {
-                    self.oPreparaciones = data;
+                    self.oPreparaciones = u.cantidadDecimales(data, 1, 'preparacion');
                     um.renderDataTables(self.$dataTablePreparacion, self.oPreparaciones, 'prep');
                 }
 
                 if (opc === 'npr') {
                     if (data !== null) {
                         self.oPreparaciones = "";
-                        self.oPreparaciones = data;
+                        self.oPreparaciones = u.cantidadDecimales(data, 1, 'preparacion');
                         um.destruirDataTable(self.$dataTablePreparacion.dataTable(), '1');
                         self.limpiarFormulario();
                         um.renderDataTables(self.$dataTablePreparacion, self.oPreparaciones, 'prep');

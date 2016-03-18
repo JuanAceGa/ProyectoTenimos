@@ -92,14 +92,14 @@
                 }
 
                 if (opc === 'pp') {
-                    self.oProcPos = data;
+                    self.oProcPos = u.cantidadDecimales(data, 1, 'proPosterior');
                     um.renderDataTables(self.$dataTableProcPos, self.oProcPos, 'pp');
                 }
 
                 if (opc === 'npp') {
                     if (data !== null) {
                         self.oProcPos = "";
-                        self.oProcPos = data;
+                        self.oProcPos = u.cantidadDecimales(data, 1, 'proPosterior');
                         um.destruirDataTable(self.$dataTableProcPos.dataTable(), '3');
                         self.limpiarFormulario();
                         um.renderDataTables(self.$dataTableProcPos, self.oProcPos, 'pp');

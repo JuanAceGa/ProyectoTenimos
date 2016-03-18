@@ -82,7 +82,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row">
                                     <div class="form-group col-sm-5 col-sm-offset-1">
                                         <label class="col-sm-2">Tono:</label>
@@ -93,7 +93,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group col-sm-5">
                                         <label class="col-sm-3">Código Pantone:</label>
                                         <div class="col-sm-9">
@@ -101,7 +101,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row">
                                     <div class="form-group col-sm-5 col-sm-offset-1">
                                         <label class="col-sm-2">PH:</label>
@@ -117,47 +117,46 @@
                                             <span id="colorSelector" class="colorselector">
                                                 <span></span>
                                             </span>
-                                       </div>
+                                        </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row mb30">
                                     <div class="col-sm-5 col-sm-offset-1">
                                         <div class="table-responsive">
                                             <table class="table" id="tProcesos">
-                                                
+
                                             </table>
                                         </div><!-- table-responsive -->
                                     </div><!-- col-md-6 -->
-                                    
+
                                     <div class="form-group col-sm-5">
                                         <label class="col-sm-3"></label>
                                         <div class="col-sm-9">
                                             <button id="btnLimpiarEncab" title="Limpiar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">
                                                 <i class="fa fa-eraser"></i>
                                             </button>                                            
-                                       </div>
+                                        </div>
                                     </div>
                                 </div>
-                                
-                                <div class="row">
-                                    <div class="col-sm-10 col-md-offset-1">
-                                        <div class="table-responsive">
-                                            <table class="table" id="daTableProcesos">
-                                                <caption><h3>PROCESOS</h3></caption>
-                                                <thead>
-                                                    <tr>
-                                                        <th class="col-md-4 center">Nombre del Proceso</th>
-                                                        <th class="col-md-2 center">Curva(s)</th>
-                                                        <th class="col-md-2 center">Tiempo Estimado (Min)</th>
-                                                        <th class="col-md-1 center">Agregar</th>
-                                                    </tr>
-                                                </thead>
-                                            </table>
-                                        </div><!-- table-responsive -->
-                                    </div><!-- col-md-6 -->
-                                </div>
                             </form>
+                            <div class="row">
+                                <div class="col-sm-10 col-md-offset-1">
+                                    <div class="table-responsive">
+                                        <table class="table" id="daTableProcesos">
+                                            <caption><h3>PROCESOS</h3></caption>
+                                            <thead>
+                                                <tr>
+                                                    <th class="col-md-4 center">Nombre del Proceso</th>
+                                                    <th class="col-md-2 center">Curva(s)</th>
+                                                    <th class="col-md-2 center">Tiempo Estimado (Min)</th>
+                                                    <th class="col-md-1 center">Agregar</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div><!-- table-responsive -->
+                                </div><!-- col-md-6 -->
+                            </div>
                         </div> <!-- tabEncabezado -->
                         
                         <div class="tab-pane" id="tabPreparacion">
@@ -166,63 +165,62 @@
                                     <div class="col-sm-10 col-sm-offset-1">
                                         <div class="table-responsive">
                                             <table class="table" id="tPreparaciones">
-                                                
-                                            </table>
-                                        </div><!-- table-responsive -->
-                                    </div><!-- col-md-6 -->
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-sm-10 col-md-offset-1">
-                                        <div class="table-responsive">
-                                            <table class="table" id="daTablePreparaciones">
-                                                <caption><h3>PREPARACIONES</h3></caption>
-                                                <thead>
-                                                    <tr>
-                                                        <th class="col-md-4 center">Nombre de la Preparación</th>
-                                                        <th class="col-md-1 center">Fibra</th>
-                                                        <th class="col-md-1 center">$ Costo</th>
-                                                        <th class="col-md-2 center">Ult. Fecha de Uso</th>
-                                                        <th class="col-md-1 center">Agregar</th>
-                                                    </tr>
-                                                </thead>
+
                                             </table>
                                         </div><!-- table-responsive -->
                                     </div><!-- col-md-6 -->
                                 </div>
                             </form>
+                            <div class="row">
+                                <div class="col-sm-10 col-md-offset-1">
+                                    <div class="table-responsive">
+                                        <table class="table" id="daTablePreparaciones">
+                                            <caption><h3>PREPARACIONES</h3></caption>
+                                            <thead>
+                                                <tr>
+                                                    <th class="col-md-4 center">Nombre de la Preparación</th>
+                                                    <th class="col-md-1 center">Fibra</th>
+                                                    <th class="col-md-1 center">$ Costo</th>
+                                                    <th class="col-md-2 center">Ult. Fecha de Uso</th>
+                                                    <th class="col-md-1 center">Agregar</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div><!-- table-responsive -->
+                                </div><!-- col-md-6 -->
+                            </div>
                         </div> <!-- tabPreparacion -->
+                        
                         <div class="tab-pane" id="tabAuxiliar">
                             <form class="form">
                                 <div class="row mb30">
                                     <div class="col-sm-10 col-sm-offset-1">
                                         <div class="table-responsive">
                                             <table class="table" id="tAuxiliares">
-                                               
-                                            </table>
-                                        </div><!-- table-responsive -->
-                                    </div><!-- col-md-6 -->
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-sm-10 col-md-offset-1">
-                                        <div class="table-responsive">
-                                            <table class="table" id="daTableAuxiliares">
-                                                <caption><h3>AUXILIARES</h3></caption>
-                                                <thead>
-                                                    <tr>
-                                                        <th class="col-md-4 center">Nombre del Auxiliar</th>
-                                                        <th class="col-md-1 center">Fibra</th>
-                                                        <th class="col-md-1 center">$ Costo</th>
-                                                        <th class="col-md-2 center">Ult. Fecha de Uso</th>
-                                                        <th class="col-md-1 center">Agregar</th>
-                                                    </tr>
-                                                </thead>
+
                                             </table>
                                         </div><!-- table-responsive -->
                                     </div><!-- col-md-6 -->
                                 </div>
                             </form>
+                            <div class="row">
+                                <div class="col-sm-10 col-md-offset-1">
+                                    <div class="table-responsive">
+                                        <table class="table" id="daTableAuxiliares">
+                                            <caption><h3>AUXILIARES</h3></caption>
+                                            <thead>
+                                                <tr>
+                                                    <th class="col-md-4 center">Nombre del Auxiliar</th>
+                                                    <th class="col-md-1 center">Fibra</th>
+                                                    <th class="col-md-1 center">$ Costo</th>
+                                                    <th class="col-md-2 center">Ult. Fecha de Uso</th>
+                                                    <th class="col-md-1 center">Agregar</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div><!-- table-responsive -->
+                                </div><!-- col-md-6 -->
+                            </div>
                         </div> <!-- tabAuxiliar -->
 
                         <div class="tab-pane" id="tabColorante">
@@ -296,7 +294,7 @@
                                                         </td>
                                                         <td>
                                                             <div class="form-group">
-                                                                <input type="text" id="cantColor" class="form-control center" maxlength="8" placeholder="Grs/Lt" required />
+                                                                <input type="text" id="cantAuxEsp" class="form-control center" maxlength="8" placeholder="Grs/Lt" required />
                                                             </div>
                                                         </td>
                                                         <td class="table-action">
@@ -317,31 +315,30 @@
                                     <div class="col-sm-10 col-sm-offset-1">
                                         <div class="table-responsive">
                                             <table class="table" id="tProPosteriores">
-                                                
-                                            </table>
-                                        </div><!-- table-responsive -->
-                                    </div><!-- col-md-6 -->
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-sm-10 col-sm-offset-1">
-                                        <div class="table-responsive">
-                                            <table class="table" id="daTableProPosteriores">
-                                                <caption><h3>PROCESOS POSTERIORES</h3></caption>
-                                                <thead>
-                                                    <tr>
-                                                        <th class="col-md-4 center">Nombre del Proceso Posterior</th>
-                                                        <th class="col-md-1 center">Fibra</th>
-                                                        <th class="col-md-1 center">$ Costo</th>
-                                                        <th class="col-md-2 center">Ult. Fecha de Uso</th>
-                                                        <th class="col-md-1 center">Agregar</th>
-                                                    </tr>
-                                                </thead>
+
                                             </table>
                                         </div><!-- table-responsive -->
                                     </div><!-- col-md-6 -->
                                 </div>
                             </form>
+                            <div class="row">
+                                <div class="col-sm-10 col-sm-offset-1">
+                                    <div class="table-responsive">
+                                        <table class="table" id="daTableProPosteriores">
+                                            <caption><h3>PROCESOS POSTERIORES</h3></caption>
+                                            <thead>
+                                                <tr>
+                                                    <th class="col-md-4 center">Nombre del Proceso Posterior</th>
+                                                    <th class="col-md-1 center">Fibra</th>
+                                                    <th class="col-md-1 center">$ Costo</th>
+                                                    <th class="col-md-2 center">Ult. Fecha de Uso</th>
+                                                    <th class="col-md-1 center">Agregar</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div><!-- table-responsive -->
+                                </div><!-- col-md-6 -->
+                            </div>
                         </div> <!-- tabProPosterior -->
 
                         <div class="tab-pane" id="tabObservacion">
@@ -469,7 +466,7 @@
                     <table class="table" id="dataTableFormulas">
                         <thead>
                             <tr>
-                                <th class="col-md-1 center">Id. Fla.</th>
+                                <th class="col-md-1 center">Cod. Fla.</th>
                                 <th class="col-md-4 center">Nombre de la Formula</th>
                                 <th class="col-md-1 center">Fibra</th>
                                 <th class="col-md-1 center">Composición</th>

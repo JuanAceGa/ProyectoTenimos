@@ -66,6 +66,7 @@
                     });
                     
                     $.get('../../../ServletFormulas', {accion: 'buscar', tipo:'formula'}, function(response) {
+                        //console.log(JSON.parse(response));
                         frmFormula.cargarDatos(response, 'fla');
                     });
                     

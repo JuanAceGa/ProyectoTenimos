@@ -12,6 +12,13 @@
             oProPosterior: [],
             oCurvas: [],
             oQuimicos: [],
+            oFormulas: [],
+            cantQuimicos: 0,
+            cQuimicos: 0,
+            colorPorFormula: [],
+            auxEsporFormula: [],
+            tipoEdicionColor: 'nuevoColor',
+            tipoEdicionAuxEsp: 'nuevoAuxEsp',
             $barraProgreso: $('#barraProgreso'),
             $nomFormula: $('#nomFormula'),
             $codFormula: $('#codFormula'),
@@ -38,19 +45,23 @@
             $dlNomColor: $('#dlNomColor'),
             $cantColor: $('#cantColor'),
             $btnAddColor: $('#btnAddColor'),
+            $tAuxEsp: $('#tAuxEsp'),
+            $codAuxEsp: $('#codAuxEsp'),
+            $dlCodAuxEsp: $('#dlCodAuxEsp'),
+            $nomAuxEsp: $('#nomAuxEsp'),
+            $dlNomAuxEsp: $('#dlNomAuxEsp'),
+            $cantAuxEsp: $('#cantAuxEsp'),
+            $btnAddAuxEsp: $('#btnAddAuxEsp'), 
             $tProPosteriores: $('#tProPosteriores'),
             $daTableProPosteriores: $('#daTableProPosteriores'),
             $observ: $('#observ'),
             $tFormula: $('#tFormula').find('tbody'),
+            $dataTableFormulas: $('#dataTableFormulas'),
             $loader: '<div class="loader"></div>',
             $modalMensaje: $('#myModal'),
             $tituloMensaje: $('#myModalLabel'),
             $cuerpoMensaje: $('#cuerpoMensaje'),
             $btnSaveForm: $('#btnSaveForm'),
-            cantQuimicos: 0,
-            cQuimicos: 0,
-            colorPorFormula: [],
-            tipoEdicion: 'nuevoColor',
             
             init: function() {
                 this.iniciarComplementos();
@@ -63,6 +74,8 @@
 //                this.consultaNombreCurva();
                 this.agregarColorantes();
                 this.borrarColorante();
+                this.agregarAuxEsp();
+                this.borrarAuxEsp();
                 this.agregarMaestros();
                 this.guardarFormula();
             },
@@ -70,7 +83,17 @@
             iniciarComplementos: function() {
                 var self = this;
                 
-                u.habilitarDeshabilitarCampos([self.$cbxCompos, self.$codColor, self.$nomColor, self.$cantColor, self.$btnAddColor], 'des');
+                u.habilitarDeshabilitarCampos([
+                    self.$cbxCompos,
+                    self.$codColor,
+                    self.$nomColor,
+                    self.$cantColor,
+                    self.$btnAddColor,
+                    self.$codAuxEsp,
+                    self.$nomAuxEsp,
+                    self.$cantAuxEsp,
+                    self.$btnAddAuxEsp,
+                ], 'des');
                 
                 self.$barraProgreso.bootstrapWizard({
                     'nextSelector': '#siguiente',
@@ -107,8 +130,10 @@
                         },
                         onChange: function(hsb, hex, rgb) {
                             jQuery('#colorSelector span').css('backgroundColor', '#' + hex);
-                            self.$colorpicker.val('#' + hex);
-                            self.$colorpicker.css({color: '#' + hex, backgroundColor: '#' + hex});
+                            self.$colorpicker.val(rgb.r + ", " + rgb.g + ", " + rgb.b);
+                            self.$colorpicker.css({
+                                color: 'rgb(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')', 
+                                backgroundColor: 'rgb(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')'});
                             u.camposObligatorios([self.$colorpicker], '4');
                         }
                     });
@@ -129,6 +154,7 @@
                 
                 if (opc === 'q') {
                     self.oQuimicos = data;
+                    um.cargarDataList([self.$dlCodAuxEsp, self.$dlNomAuxEsp], self.oQuimicos, 'auxEsp');
                 }
                 
                 if (opc === 'pr') { //Procesos
@@ -138,7 +164,10 @@
                 }
                 
                 if (opc === 'fla') {
-                    
+                    self.oFormulas = data;
+                    um.destruirDataTable(self.$dataTableFormulas, '');
+                    self.$dataTableFormulas.find('tbody').remove();
+                    um.renderDataTables(self.$dataTableFormulas, self.oFormulas, {frm: 'formula', tbl: 'formulas'});
                 }
                 
                 if (opc === 'cps') { //Composicion
@@ -183,11 +212,16 @@
                 
                 //focusin
                 //focusout
-                self.$cbxFibra.focusout(function(e) {
+                self.$cbxFibra.on('focusout, change', function(e) {
                     var fibra = self.$cbxFibra.val();
                     var arrTemp = [];
                     
                     if (fibra !== 'Seleccione una...') {
+                        
+                        self.$tPreparaciones.find('tbody').remove();
+                        self.$tAuxiliares.find('tbody').remove();
+                        self.$tProPosteriores.find('tbody').remove();
+                        
                         for (var i = 0; i < self.oFibras.length; i++) {
                             if (self.oFibras[i].nomFibra === fibra) {
                                 var idFibra = self.oFibras[i].idFibra;
@@ -207,7 +241,13 @@
                                 
                                 self.colorPorFormula = [];
                                 self.$tColorantes.find('tr:gt(1)').remove();
-                                u.habilitarDeshabilitarCampos([self.$codColor, self.$nomColor, self.$cantColor, self.$btnAddColor], 'hab');
+                                self.$tAuxEsp.find('tr:gt(1)').remove();
+                                u.habilitarDeshabilitarCampos([
+                                    self.$codColor,
+                                    self.$nomColor,
+                                    self.$cantColor,
+                                    self.$btnAddColor
+                                ], 'hab');
                                 
                                 break;
                             }
@@ -215,7 +255,14 @@
                         
                         for (var j = 0; j < self.oPreparaciones.length; j++) {
                             if (self.oPreparaciones[j].idFibra.idFibra === idFibra) {
-                                arrTemp.push(self.oPreparaciones[j]);
+                                var obj = {
+                                    idNomPreparacion: self.oPreparaciones[j].idNomPreparacion,
+                                    nomPreparacion: self.oPreparaciones[j].nomPreparacion,
+                                    codFibra: self.oPreparaciones[j].idFibra.codFibra,
+                                    costoPreparacion: self.oPreparaciones[j].costoPreparacion.toFixed(1),
+                                    fechaUso: self.oPreparaciones[j].fechaUso
+                                };                                
+                                arrTemp.push(obj);
                             }
                         }
                         um.destruirDataTable(self.$daTablePreparaciones, '');
@@ -224,7 +271,13 @@
                         arrTemp = [];                        
                         for (var j = 0; j < self.oAuxiliares.length; j++) {
                             if (self.oAuxiliares[j].idFibra.idFibra === idFibra) {
-                                arrTemp.push(self.oAuxiliares[j]);
+                                var obj = {
+                                    nomAuxiliar: self.oAuxiliares[j].nomAuxiliar,
+                                    codFibra: self.oAuxiliares[j].idFibra.codFibra,
+                                    costoAuxiliar: self.oAuxiliares[j].costoAuxiliar.toFixed(1),
+                                    fechaUso: self.oAuxiliares[j].fechaUso
+                                };
+                                arrTemp.push(obj);
                             }
                         }
                         um.destruirDataTable(self.$daTableAuxiliares, '');
@@ -233,7 +286,13 @@
                         arrTemp = [];
                         for (var j = 0; j < self.oProPosterior.length; j++) {
                             if (self.oProPosterior[j].idFibra.idFibra === idFibra) {
-                                arrTemp.push(self.oProPosterior[j]);
+                                var obj = {
+                                    nomProcPost: self.oProPosterior[j].nomProcPost,
+                                    codFibra: self.oProPosterior[j].idFibra.codFibra,
+                                    costoProcPost: self.oProPosterior[j].costoProcPost.toFixed(1),
+                                    fechaUso: self.oProPosterior[j].fechaUso
+                                };
+                                arrTemp.push(obj);
                             }
                         }
                         um.destruirDataTable(self.$daTableProPosteriores, '');
@@ -244,10 +303,21 @@
                         self.vistaPreliminarFormula({in: ''});
                     } else {
                         self.cantQuimicos = 0;
-                        self.cQuimicos = 6;
+                        self.cQuimicos = 0;
                         self.colorPorFormula = [];
                         self.$tColorantes.find('tr:gt(1)').remove();
-                        u.habilitarDeshabilitarCampos([self.$cbxCompos, self.$codColor, self.$nomColor, self.$cantColor, self.$btnAddColor], 'des');
+                        self.$tAuxEsp.find('tr:gt(1)').remove();
+                        u.habilitarDeshabilitarCampos([
+                            self.$cbxCompos,
+                            self.$codColor,
+                            self.$nomColor,
+                            self.$cantColor,
+                            self.$btnAddColor,
+                            self.$codAuxEsp,
+                            self.$nomAuxEsp,
+                            self.$cantAuxEsp,
+                            self.$btnAddAuxEsp
+                        ], 'des');
                         u.camposObligatorios([self.$cbxCompos, self.$codColor, self.$nomColor, self.$cantColor], '4');
                         self.nombreFormula();
                         self.codigoFormula();
@@ -257,21 +327,12 @@
                     
                 });
                 
-                self.$cbxFibra.change(function(e) {
-                    if (self.$cbxFibra.val() !== 'Seleccione una...') {
-                        self.nombreFormula();
-                        self.codigoFormula();
-                        self.vistaPreliminarFormula({in: ''});
-                        u.camposObligatorios([self.$cbxFibra], '4');
-                    }
-                });
-                
-                self.$cbxCompos.focusout(function(e) {
+                self.$cbxCompos.on('focusout, change', function(e) {
                     u.camposObligatorios([self.$cbxCompos], '4');
                     self.vistaPreliminarFormula({in: ''});
                 });
                 
-                self.$cbxColor.focusout(function(e) {
+                self.$cbxColor.on('focusout, change', function(e) {
                     u.camposObligatorios([self.$cbxColor], '4');
                     self.nombreFormula();
                     self.codigoFormula();
@@ -292,7 +353,7 @@
                     }
                 });
                 
-                self.$cbxTono.focusout(function(e) {
+                self.$cbxTono.on('focusout, change', function(e) {
                     u.camposObligatorios([self.$cbxTono], '4');
                     self.nombreFormula();
                     self.codigoFormula();
@@ -312,7 +373,7 @@
                     }
                 });
                 
-                self.$phFormula.focusout(function(e) {
+                self.$phFormula.on('focusout, change', function(e) {
                     u.camposObligatorios([self.$phFormula], '4');
                     self.vistaPreliminarFormula({in: ''});
                 });
@@ -329,6 +390,10 @@
                     u.camposObligatorios([self.$nomColor, self.$codColor], '4');
                 });
                 
+                self.$cantColor.on('keyup keypress change', function() {
+                    u.camposObligatorios([self.$cantColor], '4');
+                });
+                
                 self.$cantColor.inputNumber({
                     allowDecimals: true,
                     allowNegative: false,
@@ -336,6 +401,45 @@
                     thousandSep: ',',
                     decimalSep: '.',
                     maxDecimalDigits: 3
+                });
+                
+                self.$codAuxEsp.on("keyup keypress change", function() {
+                    self.$nomAuxEsp.val("");
+                    
+                    for (var i = 0; i < self.oQuimicos.length; i++){
+                        if ((self.$codAuxEsp.val() === self.oQuimicos[i].codProduct) && (self.oQuimicos[i].auxEsp === true)) {
+                            um.cargarCoincidenciaProductoQuimico('cod', [self.$codAuxEsp, self.$nomAuxEsp], self.oQuimicos);
+                            break;
+                        } 
+                    }
+                    
+                    u.camposObligatorios([self.$codAuxEsp, self.$nomAuxEsp], '4');
+                });
+                
+                self.$nomAuxEsp.on('keyup keypress change', function() {
+                    self.$codAuxEsp.val("");
+                    
+                    for (var i = 0; i < self.oQuimicos.length; i++){
+                        if ((self.$nomAuxEsp.val() === self.oQuimicos[i].nomProducto) && (self.oQuimicos[i].auxEsp === true)) {
+                            um.cargarCoincidenciaProductoQuimico('nom', [self.$nomAuxEsp, self.$codAuxEsp], self.oQuimicos);
+                            break;
+                        }   
+                    }
+                    
+                    u.camposObligatorios([self.$nomAuxEsp, self.$codAuxEsp], '4');
+                });
+                
+                self.$cantAuxEsp.on('keyup keypress change', function() {
+                    u.camposObligatorios([self.$cantAuxEsp], '4');
+                });
+                
+                self.$cantAuxEsp.inputNumber({
+                    allowDecimals: true,
+                    allowNegative: false,
+                    allowLeadingZero: true,
+                    thousandSep: ',',
+                    decimalSep: '.',
+                    maxDecimalDigits: 4
                 });
                 
                 self.$phFormula.inputNumber({
@@ -347,17 +451,10 @@
                     maxDecimalDigits: 2
                 });
                 
-                self.$cantColor.on('keyup keypress change', function() {
-                    u.camposObligatorios([self.$cantColor], '4');
-                });
-                
-                self.$observ.focusin(function() {
+                self.$observ.on('focusin, focusout', function() {
                     self.vistaPreliminarFormula({in: ''});
                 });
                 
-                self.$observ.focusout(function() {
-                    self.vistaPreliminarFormula({in: ''});
-                });
             },
             
             limpiarFormulario: function() {
@@ -368,7 +465,6 @@
                     
                     self.$cbxFibra.val('Seleccione una...');
                     self.$cbxCompos.val('Seleccione una...');
-                    self.$cbxCompos.attr('disabled', true);
                     self.$cbxColor.val('Seleccione una...');
                     self.$cbxTono.val('Seleccione una...');
                     self.$colorpicker.css('backgroundColor', '');
@@ -377,7 +473,14 @@
                         self.$desColor,
                         self.$codPantone,
                         self.$phFormula,
-                        self.$colorpicker
+                        self.$colorpicker,
+                        self.$codColor,
+                        self.$nomColor,
+                        self.$cantColor,
+                        self.$codAuxEsp,
+                        self.$nomAuxEsp,
+                        self.$cantAuxEsp,
+                        self.$observ
                     ]);
                     
                     u.camposObligatorios([
@@ -387,10 +490,43 @@
                         self.$cbxTono,
                         self.$codPantone,
                         self.$phFormula,
-                        self.$colorpicker
+                        self.$colorpicker,
+                        self.$cbxCompos,
+                        self.$codColor,
+                        self.$nomColor,
+                        self.$cantColor,
+                        self.$codAuxEsp,
+                        self.$nomAuxEsp,
+                        self.$cantAuxEsp
                     ], '4');
                     
                     self.$tProcesos.find('tbody').remove();
+                    self.$tPreparaciones.find('tbody').remove();
+                    self.$tAuxiliares.find('tbody').remove();
+                    self.$tProPosteriores.find('tbody').remove();
+                    
+                    self.cantQuimicos = 0;
+                    self.cQuimicos = 0;
+                    self.colorPorFormula = [];
+                    self.$tColorantes.find('tr:gt(1)').remove();
+                    self.$tAuxEsp.find('tr:gt(1)').remove();
+                    
+                    u.habilitarDeshabilitarCampos([
+                        self.$cbxCompos,
+                        self.$codColor,
+                        self.$nomColor,
+                        self.$cantColor,
+                        self.$btnAddColor,
+                        self.$codAuxEsp,
+                        self.$nomAuxEsp,
+                        self.$cantAuxEsp,
+                        self.$btnAddAuxEsp
+                    ], 'des');
+                        
+                    um.destruirDataTable(self.$daTablePreparaciones, '');
+                    um.destruirDataTable(self.$daTableAuxiliares, '');
+                    um.destruirDataTable(self.$daTableProPosteriores, '');
+                    
                     self.nombreFormula();
                     self.codigoFormula();
                     
@@ -417,7 +553,10 @@
                   self.$colorpicker,
                   self.$codColor,
                   self.$nomColor,
-                  self.$cantColor
+                  self.$cantColor,
+                  self.$codAuxEsp,
+                  self.$nomAuxEsp,
+                  self.$cantAuxEsp
               ];
               
               u.camposObligatorios(campos, '1');
@@ -456,7 +595,7 @@
                             cuerpoMensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'});
                     }
 
-                    if (b && campObligQuim) {                        
+                    if (b && campObligQuim) {
                         if (self.cantQuimicos > 0) {
                             var d = um.noRepetirQuimicos({
                                 tipo: '+', 
@@ -471,9 +610,26 @@
 
                                 self.colorPorFormula.push({codQ: self.$codColor.val(), cant1: 0, cant2: parseFloat(self.$cantColor.val())});
                                 
+                                if (self.colorPorFormula.length > 0 && self.$tAuxiliares.find('tbody tr'). length > 0) {
+                                    u.habilitarDeshabilitarCampos([
+                                        self.$codAuxEsp,
+                                        self.$nomAuxEsp,
+                                        self.$cantAuxEsp,
+                                        self.$btnAddAuxEsp]
+                                    , 'hab');
+                                } else {
+                                    self.$tAuxEsp.find('tr:gt(1)').remove();
+                                    u.habilitarDeshabilitarCampos([
+                                        self.$codAuxEsp,
+                                        self.$nomAuxEsp,
+                                        self.$cantAuxEsp,
+                                        self.$btnAddAuxEsp]
+                                    , 'des');
+                                }
+                                
                                 um.agregarLinea(
                                         self.$tColorantes.find('tbody'),
-                                        {tipo: self.tipoEdicion,
+                                        {tipo: self.tipoEdicionColor,
                                         codQuim: self.$codColor.val(),
                                         nomQuim: self.$nomColor.val(),
                                         cantPctj: self.$cantColor.val()});
@@ -518,7 +674,88 @@
                     
                     fila.remove();
                     
+                    if (self.colorPorFormula.length > 0 && self.$tAuxiliares.find('tbody tr'). length > 0) {
+                        u.habilitarDeshabilitarCampos([
+                            self.$codAuxEsp,
+                            self.$nomAuxEsp,
+                            self.$cantAuxEsp,
+                            self.$btnAddAuxEsp]
+                        , 'hab');
+                        
+                    } else {
+                        self.$tAuxEsp.find('tr:gt(1)').remove();
+                        u.habilitarDeshabilitarCampos([
+                            self.$codAuxEsp,
+                            self.$nomAuxEsp,
+                            self.$cantAuxEsp,
+                            self.$btnAddAuxEsp]
+                        , 'des');
+                    }
+                    
                     self.vistaPreliminarFormula({in: 'colorante'});
+                    
+                    e.stopPropagation();
+                });
+            },
+            
+            agregarAuxEsp: function() {
+                var self = this;
+                
+                self.$btnAddAuxEsp.on('click', function(e) {
+                    e.preventDefault();
+                    
+                    var campObligQuim = u.camposObligatorios([self.$codAuxEsp, self.$nomAuxEsp, self.$cantAuxEsp], '2');
+
+                    var b = true;
+
+                    if (um.cantidadDeQuimico({val: self.$cantAuxEsp.val(), input: 'grlt'})) {
+                        b = false;
+                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Gramos por Litro',
+                            cuerpoMensaje: 'La cantida de gramos debe ser superior a 0 (Cero).'});
+                    }
+
+                    if (b && campObligQuim) {
+
+                        self.auxEsporFormula.push({codQuimico: self.$codAuxEsp.val(), nomQuimico: self.$nomAuxEsp.val(), cantGr: self.$cantAuxEsp.val()});
+
+                        um.agregarLinea(
+                                self.$tAuxEsp.find('tbody'), {
+                                tipo: self.tipoEdicionAuxEsp,
+                                codQuim: self.$codAuxEsp.val(),
+                                nomQuim: self.$nomAuxEsp.val(),
+                                cantGrLt: self.$cantAuxEsp.val()
+                        });
+
+                        self.vistaPreliminarFormula({in: 'auxEsp'});
+
+                        u.limpiarCampos([self.$codAuxEsp, self.$nomAuxEsp, self.$cantAuxEsp]);
+                        u.camposObligatorios([self.$codAuxEsp, self.$nomAuxEsp, self.$cantAuxEsp], '4');
+                    }
+                });
+            },
+            
+            borrarAuxEsp: function() {
+                var self = this;
+                
+                self.$tAuxEsp.on('click', '#btnDelLinea', function(e) {
+                    var fila = $(this).closest('tr');
+                    var rowIndex = fila[0].rowIndex;
+                    
+                    var d = um.noRepetirQuimicos({
+                        tipo: '-', 
+                        codQ: fila[0].cells[0].textContent,
+                        cant1: '',
+                        cant2: '',
+                        maestro: '',
+                        codQpermitido: '',
+                        pos: (rowIndex - 2)}, 
+                        self.auxEsporFormula);
+                    
+                    self.auxEsporFormula = d.oQuim;
+                    
+                    fila.remove();
+                    
+                    self.vistaPreliminarFormula({in: 'auxEsp'});
                     
                     e.stopPropagation();
                 });
@@ -641,7 +878,7 @@
                                         self.$tPreparaciones.find('tbody').append(trQuim);
                                         break;
                                     }
-                                }   
+                                }
                             }
                             
                             self.vistaPreliminarFormula({in: 'preparacion', quimicos: quimicos});
@@ -660,7 +897,7 @@
                     self.$tAuxiliares.find('tbody').append(self.$loader);
                     var tempTrAux = '<tr>' +
                                         '<td class="center col-sm-2"><strong>Nombre Auxiliar:</strong></td>' +
-                                        '<td class="left col-sm-4">:NombreAuxiliar:</td>' +
+                                        '<td class="left col-sm-4" id="tNomAux">:NombreAuxiliar:</td>' +
                                         '<td class=" center col-sm-1"><strong>Fibra:</strong></td>' +
                                         '<td class="left col-sm-1">:Fibra:</td>' +
                                      '</tr>' +
@@ -705,6 +942,23 @@
                                         break;
                                     }
                                 }   
+                            }
+                            
+                            if (self.colorPorFormula.length > 0 && self.$tAuxiliares.find('tbody tr'). length > 0) {
+                                u.habilitarDeshabilitarCampos([
+                                    self.$codAuxEsp,
+                                    self.$nomAuxEsp,
+                                    self.$cantAuxEsp,
+                                    self.$btnAddAuxEsp]
+                                , 'hab');
+                            } else {
+                                self.$tAuxEsp.find('tr:gt(1)').remove();
+                                u.habilitarDeshabilitarCampos([
+                                    self.$codAuxEsp,
+                                    self.$nomAuxEsp,
+                                    self.$cantAuxEsp,
+                                    self.$btnAddAuxEsp]
+                                , 'des');
                             }
                             
                             self.vistaPreliminarFormula({in: 'auxiliar', quimicos: quimicos});
@@ -977,6 +1231,55 @@
                     $('#tCantAux').html(cantAux);
                 }
                 
+                if (oD.in === 'auxEsp') {
+                    var nomAux = $('#tNomAux').text();
+                    
+                    for (var i = 0; i < self.oAuxiliares.length; i++) {
+                        
+                        if (nomAux === self.oAuxiliares[i].nomAuxiliar) {
+                            var quimicos = self.oAuxiliares[i].auxiliarCollection;
+                            
+                            for (var i = 0; i < quimicos.length; i++) {
+                                for (var k = 0; k < self.oQuimicos.length; k++) {
+                                    if (self.oQuimicos[k].codProduct === quimicos[i].codQuimico) {
+                                        if (codQuimAux === '') {
+                                            codQuimAux = quimicos[i].codQuimico + ' <br>';
+                                            nomQuimAux = self.oQuimicos[k].nomProducto + ' <br>';
+
+                                            if (quimicos[i].cantGr !== 0) {
+                                                cantAux = quimicos[i].cantGr + ' g <br>';
+                                            } else {
+                                                cantAux = quimicos[i].cantPtj + ' p <br>';
+                                            }
+                                        } else {
+                                            codQuimAux = codQuimAux + quimicos[i].codQuimico + ' <br>';
+                                            nomQuimAux = nomQuimAux + self.oQuimicos[k].nomProducto + ' <br>';
+
+                                            if (quimicos[i].cantGr !== 0) {
+                                                cantAux = cantAux + quimicos[i].cantGr + ' g <br>';
+                                            } else {
+                                                cantAux = cantAux + quimicos[i].cantPtj + ' p <br>';
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    for (var i = 0; i < self.auxEsporFormula.length; i++) {
+                        
+                        codQuimAux = codQuimAux + self.auxEsporFormula[i].codQuimico + ' <br>';
+                        nomQuimAux = nomQuimAux + self.auxEsporFormula[i].nomQuimico + ' <br>';
+                        cantAux = cantAux + self.auxEsporFormula[i].cantGr + ' g <br>';
+                    }
+                    
+                    $('#tCodQuimAux').html(codQuimAux);
+                    $('#tNomQuimAux').html(nomQuimAux);
+                    $('#tCantAux').html(cantAux);
+                }
+                
                 if (oD.in === 'colorante') {
                     for (var i = 0; i < self.colorPorFormula.length; i++) {
                         for (var j = 0; j < self.oColorantes.length; j++) {
@@ -1055,9 +1358,9 @@
                                 self.$phFormula,
                                 self.$colorpicker
                             ], '2');
-
+                            
                     if ($('#tProceso').text() === '' || $('#tCodQuimPre').text() === '' || $('#tCodQuimAux').text() === '' ||
-                        $('#tCodQuimCol').text() === '' || $('#tCodQuimPro').text() === '') {
+                        $('#tCodQuimCol').text() === '' || $('#tCodQuimPro').text() === '' || (self.$tAuxEsp.find('tbody tr').length < 2)) {
                         resp2 = false;
 
                         self.mensajeObligatoriedad({

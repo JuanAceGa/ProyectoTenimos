@@ -69,14 +69,16 @@
 
                 if (tipo === 'q') {//Carga de los quimicos o colorantes.
                     oDatos.forEach(function(quimico) {
-                        option1 = document.createElement('option');
-                        option2 = document.createElement('option');
+                        if (quimico.auxEsp !== true) {
+                            option1 = document.createElement('option');
+                            option2 = document.createElement('option');
 
-                        option1.value = quimico.codProduct;
-                        option2.value = quimico.nomProducto;
+                            option1.value = quimico.codProduct;
+                            option2.value = quimico.nomProducto;
 
-                        oElement[0].append(option1);
-                        oElement[1].append(option2);
+                            oElement[0].append(option1);
+                            oElement[1].append(option2);
+                        }
                     });
                 } else if (tipo === 'c') {//Carga de las curvas.
                     oElement[0].empty();
@@ -105,6 +107,19 @@
                         
                         $(oElement[0]).append(option1);
                         $(oElement[1]).append(option2);
+                    });
+                } else if (tipo === 'auxEsp') {//Carga de los quimicos para Auxiliareas especiales.
+                    oDatos.forEach(function(quimico) {
+                        if (quimico.auxEsp === true) {
+                            option1 = document.createElement('option');
+                            option2 = document.createElement('option');
+
+                            option1.value = quimico.codProduct;
+                            option2.value = quimico.nomProducto;
+
+                            oElement[0].append(option1);
+                            oElement[1].append(option2);
+                        }
                     });
                 }
             },
@@ -150,23 +165,11 @@
             renderDataTables: function(tabla, oDatos, tipo) {
                 var i;
 
-                if (tipo !== 'formula') {
+                if (tipo !== 'formula' || tipo.frm !== 'formula') {
                     for (i = 0; i < oDatos.length; i++) {
                         oDatos[i].btnView = '<button id="btnView" title="Ver/Editar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
                                                 '<i class="glyphicon glyphicon-eye-open"></i>' +
                                             '</button>';
-                        
-                        if (tipo === 'prep') {
-                            oDatos[i].costoPreparacion = oDatos[i].costoPreparacion.toFixed(1);
-                        }
-                        
-                        if (tipo === 'aux') {
-                            oDatos[i].costoAuxiliar = oDatos[i].costoAuxiliar.toFixed(1);
-                        }
-                        
-                        if (tipo === 'pp') {
-                            oDatos[i].costoProcPost = oDatos[i].costoProcPost.toFixed(1);
-                        }
                     }
                 }
             
@@ -294,10 +297,13 @@
                 }
                 
                 if (tipo.frm === 'formula') {
-                    for (i = 0; i < oDatos.length; i++) {
-                        oDatos[i].btnAdd = '<button id="btnAdd" title="Agregar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
-                                                '<i class="fa fa-plus-square"></i>' +
-                                            '</button>';
+                    
+                    if (tipo.tbl !== 'formulas') {
+                        for (i = 0; i < oDatos.length; i++) {
+                            oDatos[i].btnAdd = '<button id="btnAdd" title="Agregar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
+                                                    '<i class="fa fa-plus-square"></i>' +
+                                                '</button>';
+                        }
                     }
                     
                     if (tipo.tbl === 'procesos') {
@@ -319,7 +325,7 @@
                             data: oDatos,
                             columns: [
                                 {data: 'nomPreparacion', className: 'left'},
-                                {data: 'idFibra.codFibra', className: 'center'},
+                                {data: 'codFibra', className: 'center'},
                                 {data: 'costoPreparacion', className: 'right'},
                                 {data: 'fechaUso', className: 'center'},
                                 {data: 'btnAdd', className: 'center'}
@@ -334,7 +340,7 @@
                             data: oDatos,
                             columns: [
                                 {data: 'nomAuxiliar', className: 'left'},
-                                {data: 'idFibra.codFibra', className: 'center'},
+                                {data: 'codFibra', className: 'center'},
                                 {data: 'costoAuxiliar', className: 'right'},
                                 {data: 'fechaUso', className: 'center'},
                                 {data: 'btnAdd', className: 'center'}
@@ -349,7 +355,7 @@
                             data: oDatos,
                             columns: [
                                 {data: 'nomProcPost', className: 'left'},
-                                {data: 'idFibra.codFibra', className: 'center'},
+                                {data: 'codFibra', className: 'center'},
                                 {data: 'costoProcPost', className: 'right'},
                                 {data: 'fechaUso', className: 'center'},
                                 {data: 'btnAdd', className: 'center'}
@@ -357,6 +363,76 @@
                             sPaginationType: 'full_numbers',
                             dAutoWidth: false
                         });
+                    }
+                    
+                    if (tipo.tbl === 'formulas') {
+                        $(tabla).append('<tbody></tbody>');
+                        var tbody = $(tabla).find('tbody');
+                        
+                        for (var i = 0; i < oDatos.length; i++) {
+                            var trTemplate = '<tr>' +
+                                                '<td class="col-md-1 center">:codFormula:</td>' +
+                                                '<td class="col-md-4">:nombreForm:</td>' +
+                                                '<td class="col-md-1 center">:codFibra:</td>' +
+                                                '<td class="col-md-1 center">:compos:</td>' +
+                                                '<td class="col-md-1" style="background: rgb(:rgb:)"></td>' +
+                                                '<td class="col-md-1 center">:fechaUso:</td>' +
+                                                '<td class="col-md-1 center">:estado:</td>' +
+                                                '<td class="col-md-1 center">' +
+                                                    '<button id="btnView" title="Ver/Editar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
+                                                        '<i class="glyphicon glyphicon-eye-open"></i>' +
+                                                    '</button>' +
+                                                '</td>' +
+                                            '</tr>';
+                        
+                        var d = new Date(oDatos[i].fechaUso);
+                        var estado = '';
+                        
+                        var codFormula = oDatos[i].codFibra + oDatos[i].codColor + oDatos[i].codTono + oDatos[i].consecutivo;
+                        
+                        if (oDatos[i].estado) {
+                            estado = 'DETENIDA';
+                        }
+                            
+                        var newTr = trTemplate
+                                    .replace(':codFormula:', codFormula)
+                                    .replace(':nombreForm:', oDatos[i].nombreForm)
+                                    .replace(':codFibra:', oDatos[i].codFibra)
+                                    .replace(':compos:', oDatos[i].compos)
+                                    .replace(':rgb:', oDatos[i].color)
+                                    .replace(':fechaUso:', d.toLocaleDateString())
+                                    .replace(':estado:', estado);
+                        
+                        $(tbody).append(newTr);
+                    }    
+                    
+                    $(tabla).dataTable({
+                        sPaginationType: 'full_numbers',
+                        dAutoWidth: false
+                    });
+                        
+                    /*codColor:"3"
+                    codFibra:"313"
+                    codTono:"0"
+                    color:"#ff93b4"
+                    compos:"80/20"
+                    consecutivo:"860"
+                    estado:true
+                    fechaCreacion:993618000000
+                    fechaModificacion:1390453200000
+                    fechaUso:1390453200000
+                    idFormula:51
+                    labFormulaDetalleCollection:Array[13]                    
+                            cantGrs:1
+                            cantPtje:0
+                            codProducto:"3350"
+                            idFrmDetalle:351
+                            seccion:2
+                    nombreForm:"P/A (2F) ROSADO CLARO"
+                    observ:"Preblanqueo"
+                    pantone:"no Pantone"
+                    phFormula:"no PH"
+                    proceso:76*/
                     }
                 }
             },
@@ -368,7 +444,7 @@
                 if (elemento[0].val() !== "" && elemento[0].val().length >= 4) {
                     elemento[1].val("");
                     data = self.buscarCoincidenciaProductosQuimicos(tipo, elemento[0].val(), oDatos);
-                    if (data != null) {
+                    if (data !== null) {
                         if (tipo === 'cod') {
                             elemento[1].val(data.nomProducto);
                         } else if (tipo === 'nom') {
@@ -523,9 +599,21 @@
                 }
             },
             
+            /**
+             * Método para agregar una fila al final de una tabla que contenga 5 columnas y la última columna tendrá un botón para eliminar la misma fila.
+             * @param {html JQuery Object} elemento 
+             * Es el tbody de la tabla donde se va a agregar la nueva fila.
+             * @param {JSON} oDatos 
+             * Contiene los siguientes atributos: <br>
+             * <strong>tipo:</strong> corresponde a si es una nueva fila o si se va a editar una fila; para los formularios que son diferentes al maestro de fórmulas, se debe enviar como parámetro <strong>nuevo</strong> o <strong>editar</strong>; para el maestro de fórmulas se debe enviar <strong>nuevoColor</strong> o <strong>editarColor</strong> para la tabla donde se agregan los colorantes, para la tabla donde se agregan los auxiliares especiales se debe enviar <strong>nuevoAuxEsp</strong> o <strong>editarAuxEsp</strong>.<br>
+             * <strong>codQuim:</strong> cogido del químico a agregar.<br>
+             * <strong>nomQuim:</strong> nombre del químico.<br>
+             * <strong>cant:</strong> es la cantidad en gramos o porcentaje del químico a agregar. Según la tabla se debe cambiar el nombre del atributo a <strong>cantGrLt</strong> o <strong>cantPctj</strong>.<br>
+             * @returns {undefined} No retorna elementos.
+             */
             agregarLinea: function(elemento, oDatos) {
                 
-                if (oDatos.tipo === 'nuevo'){                    
+                if (oDatos.tipo === 'nuevo'){
                     var trTemplate = '<tr>' +
                                         '<td style="text-align: center">:codQuim:</td>' +
                                         '<td>:nomQuim:</td>' +
@@ -555,7 +643,7 @@
                         elemento[0].cells[3].textContent = oDatos.cantPctj;
                     }
                     
-                } else if (oDatos.tipo === 'nuevoColor'){                    
+                } else if (oDatos.tipo === 'nuevoColor'){
                     var trTemplate = '<tr>' +
                                         '<td class="center">:codQuim:</td>' +
                                         '<td>:nomQuim:</td>' +
@@ -574,7 +662,7 @@
                     
                     elemento.append(newTr);
                     
-                } else if (oDatos.tipo === 'nuevoAuxEsp'){                    
+                } else if (oDatos.tipo === 'nuevoAuxEsp'){
                     var trTemplate = '<tr>' +
                                         '<td class="center">:codQuim:</td>' +
                                         '<td>:nomQuim:</td>' +
@@ -620,22 +708,12 @@
                 
                 if (d.tipo === "-") {
                     var oQuim = new Array();
-                    
-                    //if (d.maestro === 'prep') {
-                        for (var i = 0; i < oQuimicos.length; i++) {
-                            if (i !== d.pos) {
-                               oQuim.push(oQuimicos[i]);
-                            }
+
+                    for (var i = 0; i < oQuimicos.length; i++) {
+                        if (i !== d.pos) {
+                            oQuim.push(oQuimicos[i]);
                         }
-                    //} 
-                    
-                    /*if (d.maestro === 'aux') {
-                        for (var i = 0; i < oQuimicos.length; i++) {
-                            if (i !== d.pos) {
-                               oQuim.push(oQuimicos[i]);
-                            } 
-                        }
-                    }*/
+                    }
                 }
                 return {existe: existe, oQuim: oQuim};
             },

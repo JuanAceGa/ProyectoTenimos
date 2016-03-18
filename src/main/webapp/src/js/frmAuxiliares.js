@@ -91,14 +91,14 @@
                 }
 
                 if (opc === 'au') {
-                    self.oAuxiliares = data;
+                    self.oAuxiliares = u.cantidadDecimales(data, 1, 'auxiliar');
                     um.renderDataTables(self.$dataTableAuxiliar, self.oAuxiliares, 'aux');
                 }
 
                 if (opc === 'nau') {
                     if (data !== null) {
                         self.oAuxiliares = "";
-                        self.oAuxiliares = data;
+                        self.oAuxiliares = u.cantidadDecimales(data, 1, 'auxiliar');
                         um.destruirDataTable(self.$dataTableAuxiliar.dataTable(), '2');
                         self.limpiarFormulario();
                         um.renderDataTables(self.$dataTableAuxiliar, self.oAuxiliares, 'aux');
@@ -120,21 +120,34 @@
 
                 self.$btnSaveAux.attr('disabled', true);
             },
+            
             coincidenciaQuimico: function() {
                 var self = this;                
 
                 $(self.$codQuimAux).on("keyup keypress change", function() {
                     self.$nomQuimAux.val("");
                     var elementos = [self.$codQuimAux, self.$nomQuimAux, self.$cantGrLtAux, self.$cantPctjAux];
-
-                    um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
+                    
+                    for (var i = 0; i < self.oQuimicos.length; i++){
+                        if ((self.$codQuimAux.val() === self.oQuimicos[i].codProduct) && (self.oQuimicos[i].auxEsp !== true)) {
+                            um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
+                        } else {
+                            break;
+                        }
+                    }
                 });
 
                 $(self.$nomQuimAux).on('keyup keypress change', function() {
                     self.$codQuimAux.val("");
                     var elementos = [self.$nomQuimAux, self.$codQuimAux, self.$cantGrLtAux, self.$cantPctjAux];
                     
-                    um.cargarCoincidenciaProductoQuimico('nom', elementos, self.oQuimicos);
+                    for (var i = 0; i < self.oQuimicos.length; i++){
+                        if ((self.$nomQuimAux.val() === self.oQuimicos[i].nomProducto) && (self.oQuimicos[i].auxEsp !== true)) {
+                            um.cargarCoincidenciaProductoQuimico('nom', elementos, self.oQuimicos);
+                        } else {
+                            break;
+                        }
+                    }
                 });
 
                 $(self.$eCodQuimAux).on('keyup keypress change', function() {
@@ -142,7 +155,13 @@
                     self.tipoEdicion = 'nuevo';
                     var elementos = [self.$eCodQuimAux, self.$eNomQuimAux, self.$eCantGrLtAux, self.$eCantPctjAux];
                     
-                    um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
+                    for (var i = 0; i < self.oQuimicos.length; i++){
+                        if ((self.$eCodQuimAux.val() === self.oQuimicos[i].codProduct) && (self.oQuimicos[i].auxEsp !== true)) {
+                            um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
+                        } else {
+                            break;
+                        }
+                    }
                     
                     elementos.push(self.$eBtnAddLineaAux);
                     um.verificarSolicitudes(self.$eCodQuimAux.val(), elementos, self.solicitudesEnviadas, {});
@@ -154,7 +173,13 @@
                     self.tipoEdicion = 'nuevo';
                     var elementos = [self.$eNomQuimAux, self.$eCodQuimAux, self.$eCantGrLtAux, self.$eCantPctjAux];
                     
-                    um.cargarCoincidenciaProductoQuimico('nom', elementos, self.oQuimicos);
+                    for (var i = 0; i < self.oQuimicos.length; i++){
+                        if ((self.$eNomQuimAux.val() === self.oQuimicos[i].nomProducto) && (self.oQuimicos[i].auxEsp !== true)) {
+                            um.cargarCoincidenciaProductoQuimico('nom', elementos, self.oQuimicos);
+                        } else {
+                            break;
+                        }
+                    }
                     
                     elementos.push(self.$eBtnAddLineaAux);
                     um.verificarSolicitudes(self.$eCodQuimAux.val(), elementos, self.solicitudesEnviadas, {});
