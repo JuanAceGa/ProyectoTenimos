@@ -124,27 +124,25 @@
             coincidenciaQuimico: function() {
                 var self = this;                
 
-                $(self.$codQuimAux).on("keyup keypress change", function() {
+                $(self.$codQuimAux).on("keyup keypress change focusout", function() {
                     self.$nomQuimAux.val("");
                     var elementos = [self.$codQuimAux, self.$nomQuimAux, self.$cantGrLtAux, self.$cantPctjAux];
                     
                     for (var i = 0; i < self.oQuimicos.length; i++){
                         if ((self.$codQuimAux.val() === self.oQuimicos[i].codProduct) && (self.oQuimicos[i].auxEsp !== true)) {
                             um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
-                        } else {
                             break;
                         }
                     }
                 });
 
-                $(self.$nomQuimAux).on('keyup keypress change', function() {
+                $(self.$nomQuimAux).on('keyup keypress change focusout', function() {
                     self.$codQuimAux.val("");
                     var elementos = [self.$nomQuimAux, self.$codQuimAux, self.$cantGrLtAux, self.$cantPctjAux];
                     
                     for (var i = 0; i < self.oQuimicos.length; i++){
                         if ((self.$nomQuimAux.val() === self.oQuimicos[i].nomProducto) && (self.oQuimicos[i].auxEsp !== true)) {
                             um.cargarCoincidenciaProductoQuimico('nom', elementos, self.oQuimicos);
-                        } else {
                             break;
                         }
                     }
@@ -158,7 +156,6 @@
                     for (var i = 0; i < self.oQuimicos.length; i++){
                         if ((self.$eCodQuimAux.val() === self.oQuimicos[i].codProduct) && (self.oQuimicos[i].auxEsp !== true)) {
                             um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
-                        } else {
                             break;
                         }
                     }
@@ -176,7 +173,6 @@
                     for (var i = 0; i < self.oQuimicos.length; i++){
                         if ((self.$eNomQuimAux.val() === self.oQuimicos[i].nomProducto) && (self.oQuimicos[i].auxEsp !== true)) {
                             um.cargarCoincidenciaProductoQuimico('nom', elementos, self.oQuimicos);
-                        } else {
                             break;
                         }
                     }

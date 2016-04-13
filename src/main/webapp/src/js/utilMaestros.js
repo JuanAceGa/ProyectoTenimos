@@ -297,16 +297,28 @@
                 }
                 
                 if (tipo.frm === 'formula') {
-                    
                     if (tipo.tbl !== 'formulas') {
-                        for (i = 0; i < oDatos.length; i++) {
+                        var trTemplate = '<tr>' +
+                                            '<td class="col-md-5 left">:nombre:</td>' +
+                                            '<td class="col-md-1 center">:codFibra:</td>' +
+                                            '<td class="col-md-1 right">:costo:</td>' +
+                                            '<td class="col-md-2 center">:fechaUso:</td>' +
+                                            '<td class="col-md-1 center">' + 
+                                                '<button id="btnAdd" title="Agregar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
+                                                    '<i class="fa fa-plus-square"></i>' +
+                                                '</button>' +
+                                            '</td>' +
+                                        '</tr>';
+                    }
+                    
+                    if (tipo.tbl === 'procesos') {
+                        
+                        for (var i = 0; i < oDatos.length; i++) {
                             oDatos[i].btnAdd = '<button id="btnAdd" title="Agregar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
                                                     '<i class="fa fa-plus-square"></i>' +
                                                 '</button>';
                         }
-                    }
-                    
-                    if (tipo.tbl === 'procesos') {
+                        
                         $(tabla).dataTable({
                             data: oDatos,
                             columns: [
@@ -321,45 +333,69 @@
                     }
                     
                     if (tipo.tbl === 'preparacion') {
+                        $(tabla).append('<tbody></tbody>');
+                        var tbody = $(tabla).find('tbody');
+                        
+                        for (var i = 0; i < oDatos.length; i++) {
+                            var tr = trTemplate;
+                            
+                            var d = new Date(oDatos[i].fechaUso);
+                            
+                            var newTr = tr.replace(':nombre:', oDatos[i].nomPreparacion)
+                                          .replace(':codFibra:', oDatos[i].codFibra)
+                                          .replace(':costo:', oDatos[i].costoPreparacion)
+                                          .replace(':fechaUso:', (d > 1/1/1900) ? d.toLocaleDateString() : '');
+
+                            $(tbody).append(newTr);
+                        }    
+                    
                         $(tabla).dataTable({
-                            data: oDatos,
-                            columns: [
-                                {data: 'nomPreparacion', className: 'left'},
-                                {data: 'codFibra', className: 'center'},
-                                {data: 'costoPreparacion', className: 'right'},
-                                {data: 'fechaUso', className: 'center'},
-                                {data: 'btnAdd', className: 'center'}
-                            ],
                             sPaginationType: 'full_numbers',
-                            bAutoWidth: false
+                            dAutoWidth: false
                         });
                     }
                     
                     if (tipo.tbl === 'auxiliar') {
+                        $(tabla).append('<tbody></tbody>');
+                        var tbody = $(tabla).find('tbody');
+                        
+                        for (var i = 0; i < oDatos.length; i++) {
+                            var tr = trTemplate;
+                            
+                            var d = new Date(oDatos[i].fechaUso);
+                            
+                            var newTr = tr.replace(':nombre:', oDatos[i].nomAuxiliar)
+                                          .replace(':codFibra:', oDatos[i].codFibra)
+                                          .replace(':costo:', oDatos[i].costoAuxiliar)
+                                          .replace(':fechaUso:', (d > 1/1/1900) ? d.toLocaleDateString() : '');
+
+                            $(tbody).append(newTr);
+                        }    
+                    
                         $(tabla).dataTable({
-                            data: oDatos,
-                            columns: [
-                                {data: 'nomAuxiliar', className: 'left'},
-                                {data: 'codFibra', className: 'center'},
-                                {data: 'costoAuxiliar', className: 'right'},
-                                {data: 'fechaUso', className: 'center'},
-                                {data: 'btnAdd', className: 'center'}
-                            ],
                             sPaginationType: 'full_numbers',
-                            bAutoWidth: false
+                            dAutoWidth: false
                         });
                     }
 
                     if (tipo.tbl === 'proPost') {
+                        $(tabla).append('<tbody></tbody>');
+                        var tbody = $(tabla).find('tbody');
+                        
+                        for (var i = 0; i < oDatos.length; i++) {
+                            var tr = trTemplate;
+                            
+                            var d = new Date(oDatos[i].fechaUso);
+                            
+                            var newTr = tr.replace(':nombre:', oDatos[i].nomProcPost)
+                                          .replace(':codFibra:', oDatos[i].codFibra)
+                                          .replace(':costo:', oDatos[i].costoProcPost)
+                                          .replace(':fechaUso:', (d > 1/1/1900) ? d.toLocaleDateString() : '');
+
+                            $(tbody).append(newTr);
+                        }    
+                    
                         $(tabla).dataTable({
-                            data: oDatos,
-                            columns: [
-                                {data: 'nomProcPost', className: 'left'},
-                                {data: 'codFibra', className: 'center'},
-                                {data: 'costoProcPost', className: 'right'},
-                                {data: 'fechaUso', className: 'center'},
-                                {data: 'btnAdd', className: 'center'}
-                            ],
                             sPaginationType: 'full_numbers',
                             dAutoWidth: false
                         });
@@ -371,12 +407,14 @@
                         
                         for (var i = 0; i < oDatos.length; i++) {
                             var trTemplate = '<tr>' +
+                                                '<td class="col-md-1 center" style="display: none">:id:</td>' +
                                                 '<td class="col-md-1 center">:codFormula:</td>' +
-                                                '<td class="col-md-4">:nombreForm:</td>' +
+                                                '<td class="col-md-3">:nombreForm:</td>' +
                                                 '<td class="col-md-1 center">:codFibra:</td>' +
                                                 '<td class="col-md-1 center">:compos:</td>' +
                                                 '<td class="col-md-1" style="background: rgb(:rgb:)"></td>' +
                                                 '<td class="col-md-1 center">:fechaUso:</td>' +
+                                                '<td class="col-md-1 center">:costoFormula:</td>' +
                                                 '<td class="col-md-1 center">:estado:</td>' +
                                                 '<td class="col-md-1 center">' +
                                                     '<button id="btnView" title="Ver/Editar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
@@ -395,12 +433,14 @@
                         }
                             
                         var newTr = trTemplate
+                                    .replace(':id:', oDatos[i].idFormula)
                                     .replace(':codFormula:', codFormula)
                                     .replace(':nombreForm:', oDatos[i].nombreForm)
                                     .replace(':codFibra:', oDatos[i].codFibra)
                                     .replace(':compos:', oDatos[i].compos)
                                     .replace(':rgb:', oDatos[i].color)
-                                    .replace(':fechaUso:', d.toLocaleDateString())
+                                    .replace(':fechaUso:', (d > 1/1/1900) ? d.toLocaleDateString() : '')
+                                    .replace(':costoFormula:', oDatos[i].costoFormula.toFixed(0))
                                     .replace(':estado:', estado);
                         
                         $(tbody).append(newTr);
@@ -422,7 +462,7 @@
                     fechaModificacion:1390453200000
                     fechaUso:1390453200000
                     idFormula:51
-                    labFormulaDetalleCollection:Array[13]                    
+                    labFormulaDetalleCollection:Array[13]
                             cantGrs:1
                             cantPtje:0
                             codProducto:"3350"

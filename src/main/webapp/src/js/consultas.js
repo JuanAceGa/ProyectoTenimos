@@ -65,11 +65,6 @@
                         frmFormula.cargarDatos(response, 'pp');
                     });
                     
-                    $.get('../../../ServletFormulas', {accion: 'buscar', tipo:'formula'}, function(response) {
-                        //console.log(JSON.parse(response));
-                        frmFormula.cargarDatos(response, 'fla');
-                    });
-                    
                     $.get('../../../ServletFormulas', {accion: 'buscar', tipo:'compos'}, function(response) {
                         frmFormula.cargarDatos(response, 'cps');
                     });
@@ -425,6 +420,156 @@
                         });
                     }
                 });
+            },
+            
+            consultarMaestroFormulas: function(fibra, compos, color, tono, tipoFecha, fechaDes, fechaHas, rango, valor1, valor2, activa) {
+                
+                $.get('../../../ServletFormulas', {
+                    accion: 'buscar',
+                    tipo:'formula',
+                    fibra: fibra,
+                    compos: compos,
+                    color: color,
+                    tono: tono,
+                    tipoFecha: tipoFecha,
+                    fechaDes: fechaDes,
+                    fechaHas: fechaHas,
+                    rango: rango,
+                    valor1: valor1,
+                    valor2: valor2,
+                    activa: activa
+                    }, 
+                    function(response) {
+                        frmFormula.cargarDatos(response, 'fla');
+                });                
+            },
+            
+            consultarNombreFormula: function(nom) {
+                $.get('../../../ServletFormulas', {
+                    accion: 'buscarNombre',
+                    idFibra: nom.idFibra,
+                    idColor: nom.idColor,
+                    codTono: nom.codTono,
+                    compos: nom.compos
+                    },
+                    function(response) {
+                        var data = JSON.parse(response);
+                        
+                        if (data === 'true') {
+                            $.gritter.add({
+                                title: 'Nombre Formula',
+                                text: 'Ya existe una formula con las características seleccionadas.',
+                                class_name: 'growl-info',
+                                sticky: false,
+                                time: ""
+                            });
+                        } else {
+                            //frmFormula.cargarDatos(response, 'fla');
+                        }
+                            
+                });
+            }, 
+            
+            guardarFormula: function(obj) {
+                
+                $.get('../../../ServletFormulas', {
+                    accion: 'guardar',
+                    nomFormula: obj.nomFormula,
+                    idFibra: obj.idFibra,
+                    compos: obj.compos,
+                    idColor: obj.idColor,
+                    desColor: obj.desColor,
+                    codTono: obj.codTono,
+                    codPantone: obj.codPantone,
+                    phFormula: obj.phFormula,
+                    color: obj.color,
+                    idProceso: obj.idProceso,
+                    idPreparacion: obj.idPreparacion,
+                    idAuxiliar: obj.idAuxiliar,
+                    idProPost: obj.idProPost,
+                    codColorante: obj.codColorante,
+                    cantColorante: obj.cantColorante,
+                    codAuxEsp: obj.codAuxEsp,
+                    cantCodAuxEsp: obj.cantCodAuxEsp,
+                    observ: obj.observ,
+                    idFormula: obj.idFormula,
+                    consec: obj.consec
+                }, function(response) {
+                    var data = JSON.parse(response);
+
+                    if (data) {
+                        $.gritter.add({
+                            title: "Registro Guardado",
+                            text: "¡Se ha guardado satisfactoriamente!",
+                            class_name: "growl-success",
+                            sticky: false,
+                            time: ""
+                        });
+
+                        /*
+                         if (servlet === 'ServletListaCheck') {
+                         frmListaC.cargarDatos(response, 'nlc');
+                         frmCurva.cargarDatos(response, 'lc');
+                         }
+                         */
+                    } else {
+                        $.gritter.add({
+                            title: "Registro No Guardado",
+                            text: "¡No se ha guardado el registro!",
+                            class_name: "growl-danger",
+                            sticky: false,
+                            time: ""
+                        });
+                    }
+                });                
+            },
+            
+            editarFormula: function(obj) {
+                
+                $.get('../../../ServletFormulas', {
+                    accion: 'editar',
+                    nomFormula: obj.nomFormula,
+                    idFibra: obj.idFibra,
+                    compos: obj.compos,
+                    idColor: obj.idColor,
+                    desColor: obj.desColor,
+                    codTono: obj.codTono,
+                    codPantone: obj.codPantone,
+                    phFormula: obj.phFormula,
+                    color: obj.color,
+                    idProceso: obj.idProceso,
+                    idPreparacion: obj.idPreparacion,
+                    idAuxiliar: obj.idAuxiliar,
+                    idProPost: obj.idProPost,
+                    codColorante: obj.codColorante,
+                    cantColorante: obj.cantColorante,
+                    codAuxEsp: obj.codAuxEsp,
+                    cantCodAuxEsp: obj.cantCodAuxEsp,
+                    observ: obj.observ,
+                    idFormula: obj.idFormula,
+                    consec: obj.consec
+                }, function(response) {
+                    var data = JSON.parse(response);
+
+                    if (data) {
+                        $.gritter.add({
+                            title: "Registro Editado",
+                            text: "¡Se ha editado satisfactoriamente!",
+                            class_name: "growl-success",
+                            sticky: false,
+                            time: ""
+                        });
+
+                    } else {
+                        $.gritter.add({
+                            title: "Registro No Editado",
+                            text: "¡No se ha editado el registro!",
+                            class_name: "growl-danger",
+                            sticky: false,
+                            time: ""
+                        });
+                    }
+                });                
             }
         };
     })();

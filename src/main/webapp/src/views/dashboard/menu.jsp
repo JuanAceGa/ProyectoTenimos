@@ -21,6 +21,7 @@
         <link href="../../css/jquery.datatables.css" rel="stylesheet">
         <link href="../../css/display.css" rel="stylesheet">
         <link href="../../css/datatable-align-text.css" rel="stylesheet">
+        <link href="../../css/bootstrap-timepicker.min.css" rel="stylesheet">
         <link href="../../css/colorpicker.css" rel="stylesheet">        
     </head>
 
@@ -244,6 +245,9 @@
         <script src="../../js/lib/chosen.jquery.min.js"></script>
 
         <script src="../../js/lib/jquery.validate.min.js"></script>
+        
+        <script src="../../js/lib/bootstrap-timepicker.min.js"></script>
+        <script src="../../js/lib/jquery.maskedinput.min.js"></script>
         
         <script src="../../js//lib/bootstrap-wizard.min.js"></script>
         <script src="../../js/lib/colorpicker.js"></script>

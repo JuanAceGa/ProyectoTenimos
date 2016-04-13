@@ -178,7 +178,7 @@
                                             <caption><h3>PREPARACIONES</h3></caption>
                                             <thead>
                                                 <tr>
-                                                    <th class="col-md-4 center">Nombre de la Preparación</th>
+                                                    <th class="col-md-5 center">Nombre de la Preparación</th>
                                                     <th class="col-md-1 center">Fibra</th>
                                                     <th class="col-md-1 center">$ Costo</th>
                                                     <th class="col-md-2 center">Ult. Fecha de Uso</th>
@@ -210,7 +210,7 @@
                                             <caption><h3>AUXILIARES</h3></caption>
                                             <thead>
                                                 <tr>
-                                                    <th class="col-md-4 center">Nombre del Auxiliar</th>
+                                                    <th class="col-md-5 center">Nombre del Auxiliar</th>
                                                     <th class="col-md-1 center">Fibra</th>
                                                     <th class="col-md-1 center">$ Costo</th>
                                                     <th class="col-md-2 center">Ult. Fecha de Uso</th>
@@ -328,7 +328,7 @@
                                             <caption><h3>PROCESOS POSTERIORES</h3></caption>
                                             <thead>
                                                 <tr>
-                                                    <th class="col-md-4 center">Nombre del Proceso Posterior</th>
+                                                    <th class="col-md-5 center">Nombre del Proceso Posterior</th>
                                                     <th class="col-md-1 center">Fibra</th>
                                                     <th class="col-md-1 center">$ Costo</th>
                                                     <th class="col-md-2 center">Ult. Fecha de Uso</th>
@@ -462,16 +462,131 @@
                 <p>Si desea consultar o editar una formula, despliegue este panel.</p>
             </div>
             <div class="panel-body">
+                <form>
+                    <div class="mb10">
+                        <div class="row">
+                            <div class="form-group col-sm-3">
+                                <label class="col-sm-4">Fibra:</label>
+                                <div class="col-sm-8">
+                                    <select id="cbxFibraFiltro" class="form-control">
+                                        <option>Seleccione una...</option>
+                                        <option>FIBRA</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label class="col-sm-5">Composición:</label>
+                                <div class="col-sm-7">
+                                    <select id="cbxComposFiltro" class="form-control">
+                                        <option>Seleccione una...</option>
+                                        <option>10/90</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-sm-3">
+                                <label class="col-sm-3">Color:</label>
+                                <div class="col-sm-9">
+                                    <select id="cbxColorFiltro" class="form-control">
+                                        <option>Seleccione una...</option>
+                                        <option>COLOR</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-sm-3">
+                                <label class="col-sm-3">Tono:</label>
+                                <div class="col-sm-9">
+                                    <select id="cbxTonoFiltro" class="form-control">
+                                        <option>Seleccione una...</option>
+                                        <option>TONO</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-3">
+                                <label class="col-sm-4">Tipo de fecha:</label>
+                                <div class="col-sm-8">
+                                    <select id="cbxFechaFiltro" class="form-control">
+                                        <option>Seleccione una...</option>
+                                        <option>FECHA DE CREACIÓN</option>
+                                        <option>FECHA DE MODIFICACIÓN</option>
+                                        <option>FECHA DE USO</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label class="col-sm-5">Desde:</label>
+                                <div class="input-group col-sm-7">
+                                    <input type="text" class="form-control" placeholder="aaaa/mm/dd" id="fechaDesde"/>
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label class="col-sm-5">Hasta:</label>
+                                <div class="input-group col-sm-7">
+                                    <input type="text" class="form-control" placeholder="aaaa/mm/dd" id="fechaHasta"/>
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label class="col-sm-5 control-label">Formula Activa</label>
+                                <div class="col-sm-7 control-label">
+                                    <div class="toggle toggle-default" id="check"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-3">
+                                <label class="col-sm-4">Rango:</label>
+                                <div class="col-sm-8">
+                                    <select id="cbxCostoFiltro" class="form-control">
+                                        <option>Seleccione una...</option>
+                                        <option>MAYOR QUE</option>
+                                        <option>MENOR QUE</option>
+                                        <option>ENTRE</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label class="col-sm-5"></label>
+                                <div class="input-group col-sm-7">
+                                    <span class="input-group-addon">$</span>
+                                    <input type="text" class="form-control" id="valorFiltro1" maxlength="6" />
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label class="col-sm-5">Y</label>
+                                <div class="input-group col-sm-7">
+                                    <span class="input-group-addon">$</span>
+                                    <input type="text" class="form-control" id="valorFiltro2" maxlength="6" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-9 col-sm-offset-5">
+                                <button id="btnFiltro" title="Consultar con Filtro" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">
+                                    Consultar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div id="divLoader">
+                </div>
                 <div class="table-responsive">
                     <table class="table" id="dataTableFormulas">
                         <thead>
                             <tr>
+                                <th class="col-md-1 center" style="display: none">Id</th> <!-- style="display: initial" -->
                                 <th class="col-md-1 center">Cod. Fla.</th>
-                                <th class="col-md-4 center">Nombre de la Formula</th>
+                                <th class="col-md-3 center">Nombre de la Formula</th>
                                 <th class="col-md-1 center">Fibra</th>
                                 <th class="col-md-1 center">Composición</th>
                                 <th class="col-md-1 center">Color</th>
                                 <th class="col-md-1 center">Ult. Fecha de Uso</th>
+                                <th class="col-md-1 center">Costo Formula</th>
                                 <th class="col-md-1 center">Estado</th>
                                 <th class="col-md-1 center">Editar</th>
                             </tr>
