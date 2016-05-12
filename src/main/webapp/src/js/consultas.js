@@ -1,6 +1,9 @@
 (function(document, window, $, undefined) {
     (function() {
         return consultas = {
+            UrlFibras: 'http://localhost:8084/ERPTenimosBackend/rest/fibras/',
+            UrlProdQuimicos: 'http://localhost:8084/ERPTenimosBackend/rest/productformulacion/',
+            UrlPreparacion: 'http://localhost:8084/ERPTenimosBackend/rest/preparacion/',
             
             init: function() {
                 this.consultarFibras();
@@ -17,8 +20,8 @@
                     dataType: 'text',
                     data: {accion: 'buscar'},
                     success: function(response) {
-                        frmPreparacion.cargarDatos(response, 'f');
-                        frmAuxiliar.cargarDatos(response, 'f');
+                        //frmPreparacion.cargarDatos(response, 'f');
+                        //frmAuxiliar.cargarDatos(response, 'f');
                         frmProcPos.cargarDatos(response, 'f');
                         frmFibra.cargarDatos(response, 'f');
                         frmFormula.cargarDatos(response, 'f');
@@ -33,8 +36,8 @@
             consultarQuimicosPrepAux: function() {
                 
                 $.get('../../../ServletProdFormulacion', {accion: 'quimicos'}, function(response) {
-                    frmPreparacion.cargarDatos(response, 'q');
-                    frmAuxiliar.cargarDatos(response, 'q');
+                    //frmPreparacion.cargarDatos(response, 'q');
+                    //frmAuxiliar.cargarDatos(response, 'q');
                     frmProcPos.cargarDatos(response, 'q');
                     frmFormula.cargarDatos(response, 'q');
                 });
@@ -51,12 +54,12 @@
                 
                 if (m === '') {
                     $.get('../../../ServletPreparaciones', {accion: 'buscar'}, function(response) {
-                        frmPreparacion.cargarDatos(response, 'pr');
+                        //frmPreparacion.cargarDatos(response, 'pr');
                         frmFormula.cargarDatos(response, 'pre');
                     });
 
                     $.get('../../../ServletAuxiliares', {accion: 'buscar'}, function(response) {
-                        frmAuxiliar.cargarDatos(response, 'au');
+                        //frmAuxiliar.cargarDatos(response, 'au');
                         frmFormula.cargarDatos(response, 'aux');
                     });
 
@@ -112,8 +115,65 @@
                 }
             },
             
-            consultarNombreMaestros: function(nombre, tipo, idMaestro, servlet) {
+            formularioPreparacion: function() {
+                var self = this;
                 
+                $.get(self.UrlFibras + 'listadoFibras', function (data){
+                    frmPreparacion.cargarDatos(data, 'f');
+                });
+
+                $.get(self.UrlProdQuimicos + 'noColorantes', function(data) {
+                    frmPreparacion.cargarDatos(data, 'q');
+                });
+
+                $.get(self.UrlPreparacion + 'maestros', function(data) {
+                    frmPreparacion.cargarDatos(data, 'pr');
+                });
+            },
+            
+            consultarNombreMaestros: function(nombre, tipo, idMaestro, form) {
+                var self = this;
+                var url;
+                
+                if (form === 'preparacion') {
+                    url = self.UrlPreparacion;
+                } else if (form === 'auxiliar') {
+                    url = '';
+                } else if (form === 'proPost') {
+                    url = '';
+                } 
+                
+                    $.ajax({
+                        url: url + 'buscarNombre',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            tipo: tipo,
+                            idMaestro: idMaestro,
+                            nombre: nombre
+                        },
+                        contentType: 'application/json',
+                        mimeType: 'application/json',
+                        success: function(res) {
+                            if (tipo === 'nuevo') {
+                                frmPreparacion.agregarPreparacion(res);
+                                
+                            } else if (tipo === 'editar') {
+                                frmPreparacion.solicitarModificarPreparacion(res);
+                            }
+                        },
+                        error: function(res, status, er) {
+                            $.gritter.add({
+                                title: "Problema con la Aplicación",
+                                text: "error: " + res + " status: " + status + " er:" + er,
+                                class_name: "growl-danger",
+                                sticky: false,
+                                time: ""
+                            });
+                        }
+                    });
+                
+                /*
                 $.ajax({
                     url: '../../../' + servlet,
                     type: 'GET',
@@ -198,84 +258,66 @@
                     error: function(response, status, er) {
                         console.log("error: " + response + " status: " + status + " er:" + er);
                     }
-                });
+                });*/
             },
-                      
-            guardarNuevoMaestro: function(datos, servlet) {
+            
+            guardarParaAprobar: function(datos, form) {
+                var self = this;
+                var usuario = JSON.parse(sessionStorage.user);
+                var url;
+                
+                if (form === 'preparacion') {
+                    url = self.UrlPreparacion;
+                } else if (form === '') {
+                    
+                } else if (form === '') {
+                    
+                }
+                
                 $.ajax({
-                    url: '../../../' + servlet,
+                    url: url + 'guardarParaAprobacion',
                     type: 'GET',
                     dataType: 'json',
                     data: {
-                        accion: "guardar",
-                        datos: JSON.stringify(datos)
+                        datos: JSON.stringify(datos),
+                        idUsuario: usuario.numUsuario
                     },
                     contentType: 'application/json',
                     mimeType: 'application/json',
-                    
-                    success: function(response) {
-                        var data = JSON.parse(response);
-                        
-                        if (data[0].resp) {
+                    success: function(res) {
+                        if (res) {
+
                             $.gritter.add({
-                                title: "Registro Guardado",
-                                text: "¡Se ha guardado satisfactoriamente!",
-                                class_name: "growl-success",
+                                title: "Aprobación de Maestro",
+                                text: "¡Se ha enviado la solicitud satisfactoriamente!",
                                 sticky: false,
                                 time: ""
                             });
-                            
-                            if (servlet === 'ServletPreparaciones') {
-                                frmPreparacion.cargarDatos(response, 'npr');
-                            }
-                            
-                            if (servlet === 'ServletAuxiliares') {
-                                frmAuxiliar.cargarDatos(response, 'nau');
-                            }
-                            
-                            if (servlet === 'ServletProcesosPost') {
-                                frmProcPos.cargarDatos(response, 'npp');
-                            }
-                            
-                            if (servlet === 'ServletFibras') {
-                                frmFibra.cargarDatos(response, 'nf');
-                            }
-                            
-                            if (servlet === 'ServletProcesos') {
-                                frmProceso.cargarDatos(response, 'npr');
-                            }
-                            
-                            if (servlet === 'ServletCurvas') {
-                                frmCurva.cargarDatos(response, 'nc');
-                            }
-                            
-                            if (servlet === 'ServletLabelList') {
-                                frmListaC.cargarDatos(response, 'nll');
-                                frmListaC.cargarDatos(response, 'll');
-                            }
-                            
-                            
-                            if (servlet === 'ServletListaCheck') {
-                                frmListaC.cargarDatos(response, 'nlc');
-                                frmCurva.cargarDatos(response, 'lc');
-                            }
-                            
-                        } else {
+
+                            $.get(url + 'maestros', function(data) {
+                                if (form === 'preparacion') {
+                                    frmPreparacion.cargarDatos(data, 'npr');
+                                } else if (form === '') {
+                                    
+                                } else if (form === '') {
+                                    
+                                }
+                            });
+
+                        } else if (!res) {
                             $.gritter.add({
-                                title: "Registro No Guardado",
-                                text: "¡No se ha guardado el registro!",
+                                title: "Aprobación de Maestro",
+                                text: "¡No se entrego la solicitud!",
                                 class_name: "growl-danger",
                                 sticky: false,
                                 time: ""
                             });
                         }
-                        
                     },
-                    error: function(response, status, er) {
-                        
+                    error: function(res, status, er) {
                         $.gritter.add({
                             title: "Problema con la Aplicación",
-                            text: "error: " + response + " status: " + status + " er:" + er,
+                            text: "error: " + res + " status: " + status + " er:" + er,
                             class_name: "growl-danger",
                             sticky: false,
                             time: ""
@@ -284,7 +326,87 @@
                 });
             },
             
+            guardarNuevoMaestro: function(datos, form, btnCerrar, fila) {
+                var self = this;
+                var usuario = JSON.parse(sessionStorage.user);                
+                datos.idUsuario = usuario.numUsuario;
+                
+                if (form === 'preparacion') {
+                    $.ajax({
+                        url: self.UrlPreparacion + 'guardar',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            datos: JSON.stringify(datos)
+                        },
+                        contentType: 'application/json',
+                        mimeType: 'application/json',
+                        success: function(res) {
+                            if (res) {
+                                
+                                $.gritter.add({
+                                    title: "Registro Guardado",
+                                    text: "¡Se ha guardado satisfactoriamente!",
+                                    class_name: "growl-success",
+                                    sticky: false,
+                                    time: ""
+                                });
+                                
+                                $(btnCerrar).click();
+                                $(fila).remove();
+                                
+                                $.get(self.UrlPreparacion + 'maestros', function(data) {
+                                    frmPreparacion.cargarDatos(data, 'npr');
+                                });
+
+                            } else if (!res) {
+                                $.gritter.add({
+                                    title: "Registro No Guardado",
+                                    text: "¡No se ha guardado el registro!",
+                                    class_name: "growl-danger",
+                                    sticky: false,
+                                    time: ""
+                                });
+                            }
+                        },
+                        error: function(res, status, er) {
+                            $.gritter.add({
+                                title: "Problema con la Aplicación",
+                                text: "error: " + res + " status: " + status + " er:" + er,
+                                class_name: "growl-danger",
+                                sticky: false,
+                                time: ""
+                            });
+                        }
+                    });
+                }
+            },
+            
             verificarEstadoModificacion: function(idMaestro, servlet){
+                var self = this;
+                
+                /*$.ajax({
+                    url: self.UrlPreparacion + 'verificarModificacion',
+                    type: "GET",
+                    dataType: 'json',
+                    data: {
+                        idMaestro: idMaestro
+                    },
+                    contentType: 'application/json',
+                    mimeType: 'application/json',
+                    success: function(res){
+                        frmPreparacion.cargarDatos(res, 'solic');
+                    },
+                    error: function(response, status, er) {
+                        $.gritter.add({
+                            title: "Problema con la Aplicación",
+                            text: "error: " + response + " status: " + status + " er:" + er,
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+                    }
+                });
                 
                 $.ajax({
                     url: '../../../' + servlet,
@@ -323,14 +445,59 @@
                             time: ""
                         });
                     }
-                });
-
+                });*/
             },
             
-            solicitarModificarMaestro: function(datos, btnCerrar, servlet) {
+            //solicitarModificarMaestro: function(datos, btnCerrar, servlet) {
+            solicitarModificarMaestro: function(datos, btnCerrar, form) {
                 var self = this;
                 
-                $.ajax({
+                if (form === 'preparacion') {
+                    $.ajax({
+                        url: self.UrlPreparacion + 'editar',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            datos: JSON.stringify(datos)
+                        },
+                        contentType: 'application/json',
+                        mimeType: 'application/json',
+                        success: function(res) {
+                            if (res) {
+                                $.gritter.add({
+                                    title: 'Modificar Registro',
+                                    text: '¡Solicitud enviada con éxito.!',
+                                    sticky: false,
+                                    time: ""
+                                });
+
+                                $(btnCerrar).click();
+
+                            } else {
+
+                                $.gritter.add({
+                                    title: 'Modificar Registro',
+                                    text: '¡No se entregó la solicitud de modificación.!',
+                                    class_name: 'growl-danger',
+                                    sticky: false,
+                                    time: ""
+                                });
+                            }
+                        },
+                        error: function(response, status, er) {
+
+                            $.gritter.add({
+                                title: "Problema con la Aplicación",
+                                text: "error: " + response + " status: " + status + " er:" + er,
+                                class_name: "growl-warning",
+                                sticky: false,
+                                time: ""
+                            });
+                        }
+                    });
+                }
+                
+                /*$.ajax({
                     url: '../../../' + servlet,
                     type: 'GET',
                     dataType: 'json',
@@ -419,7 +586,7 @@
                             time: ""
                         });
                     }
-                });
+                });*/
             },
             
             consultarMaestroFormulas: function(fibra, compos, color, tono, tipoFecha, fechaDes, fechaHas, rango, valor1, valor2, activa) {
@@ -570,6 +737,94 @@
                         });
                     }
                 });                
+            },
+            
+            consultarPendientes: function() {
+                var self = this;
+                var usuario = JSON.parse(sessionStorage.user);
+                
+                $.get(self.UrlProdQuimicos + 'noColorantes', function(data) {
+                    pa.cargarDatos(data, 'q');
+                });
+                
+                $.ajax({
+                    url: self.UrlPreparacion + 'pendientesPorAprobar',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        idUser: usuario.numUsuario
+                    },
+                    contentType: 'application/json',
+                    mimeType: 'application/json',
+                    success: function(res) {
+                        if (!$.isEmptyObject(res)) {                            
+                            pa.cargarDatos(res, 'preparacion', 'nuevo');
+                        } else {
+                            $.gritter.add({
+                                title: 'Maestros Pendientes',
+                                text: 'No hay preparaciones pendientes para aprobar.',
+                                sticky: false,
+                                time: ""
+                            });
+                        }
+                    },
+                    error: function(response, status, er) {
+
+                        $.gritter.add({
+                            title: "Problema con la Aplicación",
+                            text: "error: " + response + " status: " + status + " er:" + er,
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+                    }
+                });
+            },
+            
+            consultarPendientesParaEditar: function() {
+                var self = this;
+                var usuario = JSON.parse(sessionStorage.user);
+                
+                $.get(self.UrlProdQuimicos + 'noColorantes', function(data) {
+                    pa.cargarDatos(data, 'q');
+                });
+                
+                $.get(self.UrlFibras + 'listadoFibras', function (data){
+                    pa.cargarDatos(data, 'f');
+                });
+                
+                $.ajax({
+                    url: self.UrlPreparacion + 'pendientesPorAprobarYeditar',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        idUser: usuario.numUsuario
+                    },
+                    contentType: 'application/json',
+                    mimeType: 'application/json',
+                    success: function(res) {
+                        if (!$.isEmptyObject(res)) {                            
+                            pa.cargarDatos(res, 'preparacion', 'editar');
+                        } else {
+                            $.gritter.add({
+                                title: 'Maestros Pendientes',
+                                text: 'No hay preparaciones pendientes para aprobar.',
+                                sticky: false,
+                                time: ""
+                            });
+                        }
+                    },
+                    error: function(response, status, er) {
+
+                        $.gritter.add({
+                            title: "Problema con la Aplicación",
+                            text: "error: " + response + " status: " + status + " er:" + er,
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+                    }
+                });
             }
         };
     })();

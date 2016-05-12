@@ -873,12 +873,25 @@
             mensajeObligatoriedad: function(mensaje) {
                 var self = this;
 
-                try {
-                    self.$tituloMensaje.text(mensaje.titulo);
-                    self.$cuerpoMensaje.text(mensaje.cuerpoMensaje);
-                    self.$modalMensaje.modal("show");
-                } catch (e) {
-                    alert(mensaje.cuerpoMensaje);
+                if (mensaje.t === 'modal') {
+                    try {
+                        self.$tituloMensaje.text(mensaje.titulo);
+                        self.$cuerpoMensaje.text(mensaje.cuerpoMensaje);
+                        self.$modalMensaje.modal("show");
+                    } catch (e) {
+                        alert(mensaje.cuerpoMensaje);
+                    }
+                } else if (mensaje.t === 'gritter') {
+                    try {
+                        $.gritter.add({
+                            title: mensaje.titulo,
+                            text: mensaje.cuerpoMensaje,
+                            sticky: false,
+                            time: "30000"
+                        });
+                    } catch (e) {
+                        alert(mensaje.cuerpoMensaje);
+                    }
                 }
             },
             
@@ -899,7 +912,9 @@
 
                     if (um.cantidadDeQuimico({val: self.$cantColor.val(), input: 'pctj'})) {
                         b = false;
-                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Porcentaje por Kilo',
+                        self.mensajeObligatoriedad({
+                            t: 'modal',
+                            titulo: 'Unidad de Medida Porcentaje por Kilo',
                             cuerpoMensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'});
                     }
 
@@ -949,12 +964,16 @@
                                 self.cantQuimicos--;
                                 
                             } else {
-                                self.mensajeObligatoriedad({titulo: 'Registro de Colorantes',
-                                cuerpoMensaje: 'No puede agregar más de una vez un mismo color.'});
+                                self.mensajeObligatoriedad({
+                                    t: 'modal',
+                                    titulo: 'Registro de Colorantes',
+                                    cuerpoMensaje: 'No puede agregar más de una vez un mismo color.'});
                             }
                         } else {
-                            self.mensajeObligatoriedad({titulo: 'Cantidad Colorantes',
-                            cuerpoMensaje: 'La cantidad permitida para la fibra seleccionada es de ' + self.cQuimicos + ' colorantes.'});
+                            self.mensajeObligatoriedad({
+                                t: 'modal',
+                                titulo: 'Cantidad Colorantes',
+                                cuerpoMensaje: 'La cantidad permitida para la fibra seleccionada es de ' + self.cQuimicos + ' colorantes.'});
                         }
                     }
                 });
@@ -1018,7 +1037,9 @@
 
                     if (um.cantidadDeQuimico({val: self.$cantAuxEsp.val(), input: 'grlt'})) {
                         b = false;
-                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Gramos por Litro',
+                        self.mensajeObligatoriedad({
+                            t: 'modal',
+                            titulo: 'Unidad de Medida Gramos por Litro',
                             cuerpoMensaje: 'La cantida de gramos debe ser superior a 0 (Cero).'});
                     }
 
@@ -1363,8 +1384,8 @@
                                 self.$desColor.val(nom.trim());
                             }
                             
-                            self.$codPantone.val(formula.pantone);
-                            self.$phFormula.val(formula.phFormula);
+                            self.$codPantone.val((formula.pantone !== 'no Pantone') ? formula.pantone : '');
+                            self.$phFormula.val((formula.phFormula !== 'no PH') ? formula.phFormula : '');
                         }
                         
                         for (var i = 0; i < self.oTonos.length; i++) {
@@ -1379,10 +1400,6 @@
                         
                         for (var i = 0; i < self.oProcesos.length; i++) {
                             if (formula.proceso === self.oProcesos[i].idProceso) {
-                            /*  idCurvas:"2"
-                                idProceso:2
-                                nomProceso:"TINTURA REACTIVO A 60°C"
-                                tiempoEst:132 */
                                 self.renderTablas('proceso', {nombre: self.oProcesos[i].nomProceso, tiempo: self.oProcesos[i].tiempoEst});
                             }
                         }
@@ -1412,6 +1429,8 @@
                                     var trPrep = tempTrPrep
                                                     .replace(':NombrePreparacion:', self.oPreparaciones[i].nomPreparacion)
                                                     .replace(':Fibra:', self.$cbxFibra.val());
+                                    
+                                    self.formula.idPreparacion = self.oPreparaciones[i].idNomPreparacion;
                                     break;
                                 }
                             }    
@@ -1419,6 +1438,7 @@
                             var trPrep = tempTrPrep
                                             .replace(':NombrePreparacion:', 'SIN MAESTRO ASIGNADO')
                                             .replace(':Fibra:', self.$cbxFibra.val());
+                            self.formula.idPreparacion = 0;
                         }
                         
                         self.$tPreparaciones.find('tbody').append(trPrep);
@@ -1429,6 +1449,8 @@
                                     var trAux = tempTrAux
                                                 .replace(':NombreAuxiliar:', self.oAuxiliares[i].nomAuxiliar)
                                                 .replace(':Fibra:', self.$cbxFibra.val());
+                                    
+                                    self.formula.idAuxiliar = self.oAuxiliares[i].idNomAuxiliar;
                                     break;
                                 }
                             }
@@ -1436,6 +1458,8 @@
                             var trAux = tempTrAux
                                         .replace(':NombreAuxiliar:', 'SIN MAESTRO ASIGNADO')
                                         .replace(':Fibra:', self.$cbxFibra.val());
+                            
+                            self.formula.idAuxiliar = 0;
                         }
                             
                         self.$tAuxiliares.find('tbody').append(trAux);
@@ -1446,6 +1470,8 @@
                                     var trPpos = tempTrProPos
                                                 .replace(':NombreProPos:', self.oProPosterior[i].nomProcPost)
                                                 .replace(':Fibra:', self.$cbxFibra.val());
+                                        
+                                    self.formula.idProPost = self.oProPosterior[i].idNomProcPost;
                                     break;
                                 }
                             }
@@ -1453,6 +1479,8 @@
                             var trPpos = tempTrProPos
                                         .replace(':NombreProPos:', 'SIN MAESTRO ASIGNADO')
                                         .replace(':Fibra:', self.$cbxFibra.val());
+                            
+                            self.formula.idProPost = 0;
                         }
                             
                         self.$tProPosteriores.find('tbody').append(trPpos);
@@ -1530,7 +1558,9 @@
                                                 self.cantQuimicos--;
 
                                             } else {
-                                                self.mensajeObligatoriedad({titulo: 'Registro de Colorantes',
+                                                self.mensajeObligatoriedad({
+                                                    t: 'modal',
+                                                    titulo: 'Registro de Colorantes',
                                                     cuerpoMensaje: 'No puede agregar más de una vez un mismo color.'});
                                             }
                                         }
@@ -2106,76 +2136,107 @@
                         resp2 = false;
 
                         self.mensajeObligatoriedad({
+                            t: 'gritter',
                             titulo: 'Campos obligatorios',
                             cuerpoMensaje: 'No ha seleccionado una fibra.'
                         });
-                    } else if ($('#tColor').text() === '') {
+                    } 
+                    
+                    if ($('#tColor').text() === '') {
                         resp2 = false;
 
                         self.mensajeObligatoriedad({
+                            t: 'gritter',
                             titulo: 'Campos obligatorios',
                             cuerpoMensaje: 'No ha seleccionado un color.'
                         });
-                    } else if ($('#tTono').text() === '') {
+                    } 
+                    
+                    if ($('#tTono').text() === '') {
                         resp2 = false;
 
                         self.mensajeObligatoriedad({
+                            t: 'gritter',
                             titulo: 'Campos obligatorios',
                             cuerpoMensaje: 'No ha seleccionado un tono.'
                         });
-                    } else if ($('#tProceso').text() === '') {
+                    } 
+                    
+                    if ($('#tProceso').text() === '') {
                         resp2 = false;
 
                         self.mensajeObligatoriedad({
+                            t: 'gritter',
                             titulo: 'Campos obligatorios',
                             cuerpoMensaje: 'No ha seleccionado un proceso.'
                         });
-                    } else if ($('#tPh').text() === '') {
+                    } 
+                    
+                    if ($('#tPh').text() === '') {
                         resp2 = false;
 
                         self.mensajeObligatoriedad({
+                            t: 'gritter',
                             titulo: 'Campos obligatorios',
                             cuerpoMensaje: 'No ha indicado el ph para la formula.'
                         });
-                    } else if ($('#tPantone').text() === '') {
+                    } 
+                    
+                    if ($('#tPantone').text() === '') {
                         resp2 = false;
 
                         self.mensajeObligatoriedad({
+                            t: 'gritter',
                             titulo: 'Campos obligatorios',
                             cuerpoMensaje: 'No ha indicado el código pantone para la formula.'
                         });
-                    } else if ($('#tNomPrep').text() === '' || $('#tNomPrep').text() === 'SIN MAESTRO ASIGNADO') {
+                    } 
+                    
+                    if ($('#tNomPrep').text() === '' || $('#tNomPrep').text() === 'SIN MAESTRO ASIGNADO') {
                         resp2 = false;
 
                         self.mensajeObligatoriedad({
+                            t: 'gritter',
                             titulo: 'Campos obligatorios',
                             cuerpoMensaje: 'No ha seleccionado una preparación.'
                         });
-                    } else if ($('#tNomAux').text() === '' || $('#tNomAux').text() === 'SIN MAESTRO ASIGNADO') {
+                    } 
+                    
+                    if ($('#tNomAux').text() === '' || $('#tNomAux').text() === 'SIN MAESTRO ASIGNADO') {
                         resp2 = false;
 
                         self.mensajeObligatoriedad({
+                            t: 'gritter',
                             titulo: 'Campos obligatorios',
                             cuerpoMensaje: 'No ha seleccionado un auxiliar.'
                         });
-                    } else if (self.$tAuxEsp.find('tbody tr').length < 2) {
+                    }
+                    
+                    if (self.$tAuxEsp.find('tbody tr').length < 2) {
                         resp2 = false;
 
                         self.mensajeObligatoriedad({
+                            t: 'gritter',
                             titulo: 'Campos obligatorios',
                             cuerpoMensaje: 'No ha seleccionado un auxiliar especial.'
                         });
-                    } else if ($('#tCodQuimCol').text() === '') {
+                    }
+                    
+                    if ($('#tCodQuimCol').text() === '') {
                         resp2 = false;
 
                         self.mensajeObligatoriedad({
+                            t: 'gritter',
                             titulo: 'Campos obligatorios',
                             cuerpoMensaje: 'No ha seleccionado un colorante.'
                         });
-                    } else if ($('#tNomProPos').text() === '' || $('#tNomProPos').text() === 'SIN MAESTRO ASIGNADO') {
+                    }
+                    
+                    if ($('#tNomProPos').text() === '' || $('#tNomProPos').text() === 'SIN MAESTRO ASIGNADO') {
                         resp2 = false;
 
                         self.mensajeObligatoriedad({
+                            t: 'gritter',
                             titulo: 'Campos obligatorios',
                             cuerpoMensaje: 'No ha seleccionado un proceso posterior.'
                         });
@@ -2210,7 +2271,8 @@
                             self.limpiarTodo();
                             
                         } else if (self.proceso === 'editar') {
-                            self.formula.nomFormula = self.$nomFormula.val().toUpperCase();
+                            var nombre = self.$cbxFibra.val() + ' ' + self.$cbxColor.val() + ' ' + self.$desColor.val().toUpperCase() + ' ' + self.$cbxTono.val();
+                            self.formula.nomFormula = nombre.trim();
                             self.formula.desColor = self.$desColor.val().toUpperCase();
                             self.formula.codPantone = self.$codPantone.val().toUpperCase();
                             self.formula.phFormula = self.$phFormula.val();

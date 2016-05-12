@@ -1,6 +1,9 @@
 (function(document, window, $, undefined) {
     (function() {
         return frmPreparacion = {
+            UrlFibras: 'http://localhost:8084/ERPTenimosBackend/rest/fibras/',
+            UrlProdQuimicos: 'http://localhost:8084/ERPTenimosBackend/rest/productformulacion/',
+            UrlPreparacion: 'http://localhost:8084/ERPTenimosBackend/rest/preparacion/',
             oFibras: {},
             oQuimicos: {},
             oPreparaciones: {},
@@ -60,20 +63,34 @@
                 this.pintarCamposObligatorios();
                 this.agregarLineaPreparacion();
                 this.borrarLineaPreparacion();
-                this.consultaNombrePreparacion();
+                this.consultarNombres();
                 this.verPreparacion();
                 this.modificarQuimicoPreparacion();
                 this.cerrarModalEdicion();
             },
+            
+            consultas: function() {
+                var self = this;
+                
+                $.get(self.UrlFibras + 'listadoFibras', function(data) {
+                    self.cargarDatos(data, 'f');
+                });
+
+                $.get(self.UrlProdQuimicos + 'noColorantes', function(data) {
+                    self.cargarDatos(data, 'q');
+                });
+
+                $.get(self.UrlPreparacion + 'maestros', function(data) {
+                    self.cargarDatos(data, 'pr');
+                });
+            },
+            
             cargarDatos: function(dato, opc) {
                 var self = this;
-                var data = JSON.parse(dato);
                 var elementos = [];
                 
                 if (opc === 'f') {
-                    if ($.type(data) !== 'array') {
-                        self.oFibras = JSON.parse(data);
-                    }
+                    self.oFibras = dato;
                     
                     elementos.push(self.$cbxfibraPrep);
                     elementos.push(self.$eCbxfibraPrep);
@@ -81,7 +98,7 @@
                 }
 
                 if (opc === 'q') {
-                    self.oQuimicos = data;
+                    self.oQuimicos = dato;
                     elementos.push(self.$dlCodQuimPrep);
                     elementos.push(self.$dlNomQuimPrep);
                     um.cargarDataList(elementos, self.oQuimicos, 'q');
@@ -93,14 +110,19 @@
                 }
 
                 if (opc === 'pr') {
-                    self.oPreparaciones = u.cantidadDecimales(data, 1, 'preparacion');
+                    
+                    self.oPreparaciones = "";
+                    self.oPreparaciones = u.cantidadDecimales(dato, 1, '');
+                    um.destruirDataTable(self.$dataTablePreparacion.dataTable(), '1');
+                    self.limpiarFormulario();
                     um.renderDataTables(self.$dataTablePreparacion, self.oPreparaciones, 'prep');
+                    self.pintarCamposObligatorios();
                 }
 
-                if (opc === 'npr') {
-                    if (data !== null) {
+                /*if (opc === 'npr') {
+                    if (dato !== null) {
                         self.oPreparaciones = "";
-                        self.oPreparaciones = u.cantidadDecimales(data, 1, 'preparacion');
+                        self.oPreparaciones = u.cantidadDecimales(dato, 1, '');
                         um.destruirDataTable(self.$dataTablePreparacion.dataTable(), '1');
                         self.limpiarFormulario();
                         um.renderDataTables(self.$dataTablePreparacion, self.oPreparaciones, 'prep');
@@ -109,14 +131,15 @@
                 }
                 
                 if (opc === 'solic') {
-                    if (data !== null) {
-                        self.solicitudesEnviadas = data;
+                    if (!$.isEmptyObject(dato)) {
+                        self.solicitudesEnviadas = dato;
                         self.solcNombre = false;
                         self.solcFibra = false;
                         self.verificarSolicitudes();
                     }
-                }
+                }*/
             },
+            
             inhabilitarCampos: function() {
                 var self = this;
 
@@ -168,7 +191,7 @@
                 self.$cantGrLtPrep.inputNumber({
                     allowDecimals: true,
                     allowNegative: false,
-                    allowLeadingZero: false,
+                    allowLeadingZero: true,
                     thousandSep: ',',
                     decimalSep: '.',
                     maxDecimalDigits: 4
@@ -177,7 +200,7 @@
                 self.$cantPctjPrep.inputNumber({
                     allowDecimals: true,
                     allowNegative: false,
-                    allowLeadingZero: false,
+                    allowLeadingZero: true,
                     thousandSep: ',',
                     decimalSep: '.',
                     maxDecimalDigits: 5
@@ -186,7 +209,7 @@
                 self.$eCantGrLtPrep.inputNumber({
                     allowDecimals: true,
                     allowNegative: false,
-                    allowLeadingZero: false,
+                    allowLeadingZero: true,
                     thousandSep: ',',
                     decimalSep: '.',
                     maxDecimalDigits: 4
@@ -195,7 +218,7 @@
                 self.$eCantPctjPrep.inputNumber({
                     allowDecimals: true,
                     allowNegative: false,
-                    allowLeadingZero: false,
+                    allowLeadingZero: true,
                     thousandSep: ',',
                     decimalSep: '.',
                     maxDecimalDigits: 5
@@ -203,27 +226,87 @@
             },
             metodosUtiles: function() {
                 var self = this;
-
-                self.$nomPrep.on('keyup keypress', function() {
-                    self.$nomPrep.val(self.$nomPrep.val().toUpperCase());
+                
+                self.$nomPrep.focusin(function(e) {
+                    self.$nomPrep.css('text-transform', 'uppercase');
                 });
-
-                self.$nomQuimPrep.on('keyup keypress', function() {
-                    self.$nomQuimPrep.val(self.$nomQuimPrep.val().toUpperCase());
+                
+                self.$nomPrep.focusout(function(e) {
+                    u.camposObligatorios([self.$nomPrep], '4');
+                    
+                    (self.$nomPrep.val() === '') ? self.$nomPrep.css('text-transform', '') : '';
                 });
-
-                self.$eNomPrep.on('keyup keypress', function() {
-                    self.$eNomPrep.val(self.$eNomPrep.val().toUpperCase());
+                
+                self.$cbxfibraPrep.focusout(function (e) {
+                    u.camposObligatorios([self.$cbxfibraPrep], '4');
                 });
-
-                self.$eNomQuimPrep.on('keyup keypress', function() {
-                    self.$eNomQuimPrep.val(self.$eNomQuimPrep.val().toUpperCase());
+                
+                self.$codQuimPrep.focusout(function (e) {
+                    u.camposObligatorios([self.$codQuimPrep, self.$nomQuimPrep], '4');
                 });
-
+                
+                self.$nomQuimPrep.focusin(function(e) {
+                    self.$nomQuimPrep.css('text-transform', 'uppercase');
+                });
+                
+                self.$nomQuimPrep.focusout(function(e) {
+                    u.camposObligatorios([self.$nomQuimPrep, self.$codQuimPrep], '4');
+                    
+                    (self.$nomQuimPrep.val() === '') ? self.$nomQuimPrep.css('text-transform', '') : '';
+                });
+                
+                self.$cantGrLtPrep.focusout(function (e) {
+                    u.camposObligatorios([self.$cantGrLtPrep, self.$cantPctjPrep], '4');
+                });
+                
+                self.$cantPctjPrep.focusout(function (e) {
+                    u.camposObligatorios([self.$cantGrLtPrep, self.$cantPctjPrep], '4');
+                });
+                
+                self.$eNomPrep.focusin(function(e) {
+                    self.$eNomPrep.css('text-transform', 'uppercase');
+                });
+                
+                self.$eNomPrep.focusout(function(e) {
+                    u.camposObligatorios([self.$eNomPrep], '4');
+                    
+                    (self.$eNomPrep.val() === '') ? self.$eNomPrep.css('text-transform', '') : '';
+                });
+                
+                self.$eCbxfibraPrep.focusout(function(e) {
+                    u.camposObligatorios([self.$eCbxfibraPrep], '4');
+                });
+                
+                self.$eCodQuimPrep.focusout(function(e) {
+                    u.camposObligatorios([self.$eCodQuimPrep, self.$eNomQuimPrep], '4');
+                });
+                
+                self.$eNomQuimPrep.focusin(function(e) {
+                    self.$eNomQuimPrep.css('text-transform', 'uppercase');
+                });
+                
+                self.$eNomQuimPrep.focusout(function(e) {
+                    u.camposObligatorios([self.$eNomQuimPrep, self.$eCodQuimPrep], '4');
+                    
+                    (self.$eNomQuimPrep.val() === '') ? self.$eNomQuimPrep.css('text-transform', '') : '';
+                });
+                
+                self.$eCantGrLtPrep.focusout(function(e) {
+                    u.camposObligatorios([self.$eCantGrLtPrep, self.$eCantPctjPrep], '4');
+                });
+                
+                self.$eCantPctjPrep.focusout(function(e) {
+                    u.camposObligatorios([self.$eCantGrLtPrep, self.$eCantPctjPrep], '4');
+                });
+                
                 self.$codQuimPrep.on('keypress', function(eve) {
                     if (eve.keyCode < 48 || eve.keyCode > 57) {
                         eve.preventDefault();
                     }
+                });
+                
+                self.$eTextArea.focusout(function(e) {
+                    u.camposObligatorios([self.$eTextArea], '4');
                 });
 
                 self.$eCodQuimPrep.on('keypress', function(eve) {
@@ -272,16 +355,38 @@
               u.camposObligatorios(campos, '1');
             },
             
-            mensajeObligatoriedad: function(mensaje) {
+            mensajeModalAndGritter: function(m) {
                 var self = this;
-
-                try {
-                    self.$tituloMensaje.text(mensaje.titulo);
-                    self.$cuerpoMensaje.text(mensaje.cuerpoMensaje);
-                    self.$modalMensaje.modal("show");
-                } catch (e) {
-                    alert(mensaje.cuerpoMensaje);
-                }
+                
+                if (m.tipo === 'modal') {
+                
+                    try {
+                        self.$tituloMensaje.text(m.titulo);
+                        self.$cuerpoMensaje.text(m.mensaje);
+                        self.$modalMensaje.modal("show");
+                    } catch (e) {
+                        alert(m.mensaje);
+                    }
+                    
+                } else if (m.tipo === 'gritter') {
+                
+                    if (m.clase === '') {
+                        $.gritter.add({
+                            title: m.titulo,
+                            text: m.mensaje,
+                            sticky: false,
+                            time: ''
+                        });
+                    } else {
+                        $.gritter.add({
+                            title: m.titulo,
+                            text: m.mensaje,
+                            class_name: m.clase,
+                            sticky: false,
+                            time: ''
+                        });
+                    }
+                }                
             },
             
             agregarLineaPreparacion: function() {
@@ -298,29 +403,35 @@
 
                     if (um.cantidadDeQuimico({val: self.$cantGrLtPrep.val(), input: 'grlt'})) {
                         b = false;
-                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Gramos por Litro',
-                            cuerpoMensaje: 'La cantidad debe ser superior a 0.'});
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
+                            titulo: 'Unidad de Medida Gramos por Litro',
+                            mensaje: 'La cantidad debe ser superior a 0.'
+                        });
 
                     } else if (um.cantidadDeQuimico({val: self.$cantPctjPrep.val(), input: 'pctj'})) {
                         b = false;
-                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Porcentaje por Kilo',
-                            cuerpoMensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'});
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
+                            titulo: 'Unidad de Medida Porcentaje por Kilo',
+                            mensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'
+                        });
                     }
 
                     if (b && campObligQuim) {
                         
                         var d = um.noRepetirQuimicos({
                             tipo: '+', 
-                            codQ: self.$codQuimPrep.val(),
-                            cant1: parseFloat(self.$cantGrLtPrep.val()),
-                            cant2: parseFloat(self.$cantPctjPrep.val()),
+                            codQuimico: self.$codQuimPrep.val(),
+                            cantGr: parseFloat(self.$cantGrLtPrep.val()),
+                            cantPtj: parseFloat(self.$cantPctjPrep.val()),
                             maestro: 'prep', 
                             codQpermitido: '1550'},
                             self.quimicosPorPrep);
                             
                         if (!d.existe) {
                             
-                            self.quimicosPorPrep.push({codQ: self.$codQuimPrep.val(), cant1: parseFloat(self.$cantGrLtPrep.val()), cant2: parseFloat(self.$cantPctjPrep.val())});
+                            self.quimicosPorPrep.push({codQuimico: self.$codQuimPrep.val(), cantGr: parseFloat(self.$cantGrLtPrep.val()), cantPtj: parseFloat(self.$cantPctjPrep.val())});
                             
                             um.agregarLinea(
                                     self.$tBodyNewQPreparacion,
@@ -330,12 +441,16 @@
                                     cantGrLt: self.$cantGrLtPrep.val(),
                                     cantPctj: self.$cantPctjPrep.val()});
                             
-                            u.limpiarCampos([self.$codQuimPrep, self.$nomQuimPrep, self.$cantGrLtPrep, self.$cantPctjPrep]);
+                            u.limpiarCampos(elementos);
+                            u.camposObligatorios(elementos, '4');
 
                             self.$btnSavePrep.attr('disabled', false);
                         } else {
-                            self.mensajeObligatoriedad({titulo: 'Registro de Químicos',
-                            cuerpoMensaje: 'No puede agregar más de una vez un mismo químico.'});
+                            self.mensajeModalAndGritter({
+                                tipo: 'modal',
+                                titulo: 'Registro de Químicos',
+                                mensaje: 'No puede agregar más de una vez un mismo químico.'
+                            });
                         }
                     }
                 });
@@ -351,13 +466,19 @@
                     
                     if (um.cantidadDeQuimico({val: self.$eCantGrLtPrep.val(), input: 'grlt'})) {
                         b = false;
-                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Gramos por Litro', 
-                            cuerpoMensaje: 'Los gramos debe ser superior a 0.'});
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
+                            titulo: 'Unidad de Medida Gramos por Litro',
+                            mensaje: 'Los gramos debe ser superior a 0.'
+                        });
 
                     } else if (um.cantidadDeQuimico({val: self.$eCantPctjPrep.val(), input: 'pctj'})) {
                         b = false;
-                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Porcentaje por Kilo',
-                            cuerpoMensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'});
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
+                            titulo: 'Unidad de Medida Porcentaje por Kilo',
+                            cuerpoMensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'
+                        });
                     }
                     
                     if (b && campObligQuim) {
@@ -384,14 +505,14 @@
                             
                             var d = um.noRepetirQuimicos({
                                     tipo: '+', 
-                                    codQ: self.$eCodQuimPrep.val(),
-                                    cant1: gr,
-                                    cant2: pctj,
+                                    codQuimico: self.$eCodQuimPrep.val(),
+                                    cantGr: gr,
+                                    cantPtj: pctj,
                                     maestro: 'prep', 
                                     codQpermitido: '1550'},
                                     self.quimicosPorPrep);
                             if (!d.existe) {
-                                self.quimicosPorPrep.push({codQ: self.$eCodQuimPrep.val(), cant1: gr, cant2: pctj});
+                                self.quimicosPorPrep.push({codQuimico: self.$eCodQuimPrep.val(), cantGr: gr, cantPtj: pctj});
                                 self.eNuevosQuimicos.push({codQ: self.$eCodQuimPrep.val(), cant1: gr, cant2: pctj});
                             }
                             
@@ -417,8 +538,11 @@
                             self.filaEditar = null;
                             
                        } else {
-                            self.mensajeObligatoriedad({titulo: 'Registro de Químicos',
-                            cuerpoMensaje: 'No puede agregar más de una vez un mismo químico.'});
+                            self.mensajeModalAndGritter({
+                                tipo: 'modal',
+                                titulo: 'Registro de Químicos',
+                                mensaje: 'No puede agregar más de una vez un mismo químico.'
+                            });
                         }
                     }
                 });
@@ -444,7 +568,7 @@
                     
                     fila.remove();
                     
-                    if ($('#dataTableNewQPreparacion tbody tr').length - 1 == 0) {
+                    if ($('#dataTableNewQPreparacion tbody tr').length - 1 === 0) {
                         self.$btnSavePrep.attr('disabled', true);
                     }
 
@@ -456,50 +580,47 @@
                     var fila = $(this).closest('tr');
                     var rowIndex = fila[0].rowIndex;
                     var codigo = fila[0].cells[0].textContent;
-                    var r = um.verificarSolicitudes(codigo, [], self.solicitudesEnviadas, {});
                     
-                    if (!r.estado) {
-                        var posN = ((rowIndex - 2) - (self.quimicosPorAux.length - self.eNuevosQuimicos.length));
-                        
-                        d = um.noRepetirQuimicos({
-                            tipo: '-',
-                            codQ: fila[0].cells[0].textContent,
-                            cant1: parseFloat(fila[0].cells[2].textContent),
-                            cant2: parseFloat(fila[0].cells[3].textContent),
-                            maestro: 'prep',
-                            codQpermitido: '',
-                            pos: (rowIndex - 2)},
+                    var posN = ((rowIndex - 2) - (self.quimicosPorPrep.length - self.eNuevosQuimicos.length));
+
+                    d = um.noRepetirQuimicos({
+                        tipo: '-',
+                        codQ: codigo,
+                        cant1: parseFloat(fila[0].cells[2].textContent),
+                        cant2: parseFloat(fila[0].cells[3].textContent),
+                        maestro: 'prep',
+                        codQpermitido: '',
+                        pos: (rowIndex - 2)},
                         self.quimicosPorPrep);
 
-                        self.quimicosPorPrep = d.oQuim;
+                    self.quimicosPorPrep = d.oQuim;
 
-                        d = um.noRepetirQuimicos({
-                            tipo: '-',
-                            codQ: fila[0].cells[0].textContent,
-                            cant1: parseFloat(fila[0].cells[2].textContent),
-                            cant2: parseFloat(fila[0].cells[3].textContent),
-                            maestro: 'prep',
-                            codQpermitido: '', 
-                            pos: posN},
-                        self.eNuevosQuimicos);
+                    d = um.noRepetirQuimicos({
+                        tipo: '-',
+                        codQ: codigo,
+                        cant1: parseFloat(fila[0].cells[2].textContent),
+                        cant2: parseFloat(fila[0].cells[3].textContent),
+                        maestro: 'prep',
+                        codQpermitido: '', 
+                        pos: posN},
+                    self.eNuevosQuimicos);
 
-                        self.eNuevosQuimicos = d.oQuim;
+                    self.eNuevosQuimicos = d.oQuim;
 
-                        for (var i = 0; i < self.eQuimicosModif.length; i++) {
-                            if (self.eQuimicosModif[i].codQ === fila[0].cells[0].textContent) {
-                                self.eQuimicosModif[i].tipo = 'eli';
-                                break;
-                            }
+                    for (var i = 0; i < self.eQuimicosModif.length; i++) {
+                        if (self.eQuimicosModif[i].codQ === codigo) {
+                            self.eQuimicosModif[i].tipo = 'eli';
+                            break;
                         }
-                        
-                        fila.remove();
                     }
+
+                    fila.remove();
                     
                     e.stopPropagation();
                 });
             },
             
-            consultaNombrePreparacion: function(){
+            consultarNombres: function(){
                 var self = this;
 
                 self.$btnSavePrep.on("click", function(e) {
@@ -517,15 +638,17 @@
                         b = false;
                     }
 
-                    if (b && campObligPrep) {                        
-                        consultas.consultarNombreMaestros(self.$nomPrep.val() + " (" + self.$cbxfibraPrep.val() + ")", 'nuevo', 0, 'ServletPreparaciones');
+                    if (b && campObligPrep) {
+                        var n = self.$nomPrep.val().trim();
+                        
+                        self.consultarNombresPreparaciones('nuevo', 0, n.toUpperCase() + ' (' + self.$cbxfibraPrep.val() + ')');
                     }
                 });
                 
                 self.$eBtnModificar.on("click", function(e) {
                     e.preventDefault();
                     
-                    if (!self.$eNomAux.attr('disabled') || !self.$eCbxfibraAux.attr('disabled')) {
+                    if (!self.$eNomPrep.attr('disabled') && !self.$eCbxfibraPrep.attr('disabled')) {
                     
                         var campObligPrep = false;
                         var campos = [self.$eNomPrep, self.$eCbxfibraPrep, self.$eTextArea];
@@ -541,35 +664,124 @@
                         }
 
                         if (b && campObligPrep) {
-                            consultas.consultarNombreMaestros(self.$eNomPrep.val() + " (" + self.$eCbxfibraPrep.val() + ")", 'editar', self.idPreparacion, 'ServletPreparaciones');
+                            var n = self.$eNomPrep.val().trim();
+                            var nombre = n.toUpperCase();
+                            var fibra = self.$eCbxfibraPrep.val();
+                            
+                            for (var i = 0; i < self.oPreparaciones.length; i++) {
+                                if (self.idPreparacion === self.oPreparaciones[i].idMaestro) {
+                                    var nombreOrg = um.separarNombreDeFibra({nombre: self.oPreparaciones[i].nombMaestro, fibra: self.oPreparaciones[i].nomFibra});
+                                    
+                                    self.consultarNombresPreparaciones('editar', self.idPreparacion, (nombre !== nombreOrg || fibra !== self.oPreparaciones[i].nomFibra) ? nombre + ' (' + fibra + ')' : '');
+                                    
+                                    break;
+                                }
+                            }
                         }
-                    } else {
-                        consultas.consultarNombreMaestros('', 'editar', self.idPreparacion, 'ServletPreparaciones');
+                    } else {                        
+                        var n = self.$eNomPrep.val().trim();
+                        
+                        for (var i = 0; i < self.solicitudesEnviadas.length; i++) {                            
+                            var nombre = (self.solicitudesEnviadas[i].nombreNue !== null) ? self.solicitudesEnviadas[i].nombreNue : n.toUpperCase();
+
+                            if (self.solicitudesEnviadas[i].idFibraNue !== null) {
+                                for (var j = 0; j < self.oFibras.length; j++) {
+                                    var fibra = (self.solicitudesEnviadas[i].idFibraNue === self.oFibras[i].idFibra) ? self.oFibras[i].nomFibra : self.$eCbxfibraPrep.val();
+                                    break;
+                                }
+                            }
+                        }
+                        self.consultarNombresPreparaciones('editar', self.idPreparacion, nombre + ' (' + fibra + ')');
                     }
                 });
             },
             
-            agregarPreparacion: function(response) {
+            consultarNombresPreparaciones: function(t, i, n) {
                 var self = this;
-
-                if (response === 'true') {
-                    self.mensajeObligatoriedad({
-                        titulo: 'Nombre de Preparación Existente.',
-                        cuerpoMensaje: 'Ya hay un nombre de preparación para la fibra seleccionada, por favor intente nuevamente.'
-                    });
                 
-                } else if (response === 'false') {
-                    var nombre = self.$nomPrep.val() + " (" + self.$cbxfibraPrep.val() + ")";
-                    
+                $.get(self.UrlPreparacion + 'buscarNombre', {
+                    tipo: t,
+                    idMaestro: i,
+                    nombre: n
+                }, function(res) {
+                    if (t === 'nuevo') {
+                        self.agregarPreparacion(res);
+                    } else {
+                        self.solicitarModificarPreparacion(res);
+                    }
+
+                }).fail(function(res, status, er) {
+                    self.mensajeModalAndGritter({
+                        tipo: 'gritter',
+                        titulo: 'Problema con la Aplicación',
+                        mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
+                        clase: 'growl-danger'
+                    });
+                });
+            },
+            
+            agregarPreparacion: function(res) {
+                var self = this;
+                var dPrep = new Object();
+                var usuario = JSON.parse(sessionStorage.user);
+                
+                if (res) {
+                    self.mensajeModalAndGritter({
+                        tipo: 'modal',
+                        titulo: 'Nombre de Preparación Existente.',
+                        mensaje: 'Ya hay un nombre de preparación para la fibra seleccionada, por favor intente nuevamente.'
+                    });
+
+                } else if (!res) {
+                    var n = self.$nomPrep.val();
+                    var nombre = n.toUpperCase() + " (" + self.$cbxfibraPrep.val() + ")";
+
                     for (var i = 0; self.oFibras.length; i++) {
                         if (self.oFibras[i].nomFibra === self.$cbxfibraPrep.val()) {
                             var idFib = "" + self.oFibras[i].idFibra;
                             break;
                         }
                     }
-                    
-                    um.guardarRegistro({form: '', tabla: self.$dataTableNewQPreparacion, nombre: nombre, idFib: idFib}, 'ServletPreparaciones');
-                    
+
+                    dPrep.nombMaestro = nombre;
+                    dPrep.idFibra = idFib;
+                    dPrep.quimicos = new Array();
+
+                    for (var i = 0; i < self.quimicosPorPrep.length; i++) {
+                        dPrep.quimicos.push(self.quimicosPorPrep[i]);
+                    }
+
+                    $.get(self.UrlPreparacion + 'guardarParaAprobacion', {
+                        datos: JSON.stringify(dPrep),
+                        idUsuario: usuario.numUsuario
+
+                    }, function(res) {
+                        if (res) {
+                            self.mensajeModalAndGritter({
+                                tipo: 'gritter',
+                                titulo: 'Aprobación de Maestro',
+                                mensaje: "¡Se ha enviado la solicitud!",
+                                clase: ''
+                            });
+
+                            self.limpiarFormulario();
+
+                        } else if (!res) {
+                            self.mensajeModalAndGritter({
+                                tipo: 'gritter',
+                                titulo: 'Aprobación de Maestro',
+                                mensaje: "¡No se entrego la solicitud!",
+                                clase: "growl-danger"
+                            });
+                        }
+                    }).fail(function(res, status, er) {
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
+                            titulo: 'Problema con la Aplicación',
+                            mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
+                            clase: "growl-danger"
+                        });
+                    });
                 }
             },
             verPreparacion: function() {
@@ -580,7 +792,7 @@
                     var fila = $(this).closest('tr');
                     self.idPreparacion = parseInt(fila[0].cells[0].textContent);
                     var elementos = [self.$eNomPrep, self.$eCodQuimPrep, self.$eNomQuimPrep, self.$eCantGrLtPrep, self.$eCantPctjPrep];
-                    consultas.verificarEstadoModificacion(fila[0].cells[0].textContent, 'ServletPreparaciones');
+
                     var datos = {
                         frm: 'prep',
                         idReg: parseInt(fila[0].cells[0].textContent),
@@ -590,7 +802,7 @@
                         eNombreFib: self.$eCbxfibraPrep,
                         eTabla: self.$tBodyEditPrep,
                         eModal: self.$modalEditPrep
-                    }
+                    };
                     
                     $("#tableEditPrep tr:gt(1)").remove();
                     u.limpiarCampos(elementos);
@@ -603,9 +815,9 @@
                     
                     for (var i = 0; i < self.quimicosPorPrep.length; i++) {
                         var q = {
-                            codQ: self.quimicosPorPrep[i].codQ,
-                            cantGrLt: self.quimicosPorPrep[i].cant1,
-                            cantPctj: self.quimicosPorPrep[i].cant2,
+                            codQ: self.quimicosPorPrep[i].codQuimico,
+                            cantGrLt: self.quimicosPorPrep[i].cantGr,
+                            cantPctj: self.quimicosPorPrep[i].cantPtj,
                             cantGrLtNue: -1,
                             cantPctjNue: -1,
                             tipo: ''
@@ -615,17 +827,16 @@
                     
                     e.stopPropagation();
                 });
-                    
             },
             
-            verificarSolicitudes: function() {
+            /*verificarSolicitudes: function() {
                 var self = this;
                 var elementos = [self.$eNomPrep, self.$eCbxfibraPrep];
                 var estado = um.verificarSolicitudes('', elementos, self.solicitudesEnviadas, {solcNombre: self.solcNombre, solcFibra: self.solcFibra});
                 
                 self.solcNombre = estado.solcNombre;
                 self.solcFibra = estado.solcFibra;
-            },
+            },*/
             
             modificarQuimicoPreparacion: function() {
                 var self = this;
@@ -634,69 +845,140 @@
                     var fila = $(this).closest('tr');
                     self.tipoEdicion = 'editar';
                     self.filaEditar = fila;
-                    var r = um.verificarSolicitudes(fila[0].cells[0].textContent, [], self.solicitudesEnviadas, {});
                     
-                    if (!r.estado) {
-                        self.$eCodQuimPrep.val(parseInt(fila[0].cells[0].textContent));
-                        self.$eNomQuimPrep.val(fila[0].cells[1].textContent);
-                        self.$eCantGrLtPrep.val(fila[0].cells[2].textContent);
-                        self.$eCantPctjPrep.val(fila[0].cells[3].textContent);
+                    self.$eCodQuimPrep.val(fila[0].cells[0].textContent);
+                    self.$eNomQuimPrep.val(fila[0].cells[1].textContent);
+                    self.$eCantGrLtPrep.val(fila[0].cells[2].textContent);
+                    self.$eCantPctjPrep.val(fila[0].cells[3].textContent);
 
-                        var elementos = [self.$eCodQuimPrep, self.$eNomQuimPrep, self.$eCantGrLtPrep, self.$eCantPctjPrep];
-                        um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
-                        self.$eCodQuimPrep.attr('disabled', true);
-                        self.$eNomQuimPrep.attr('disabled', true);
+                    var elementos = [self.$eCodQuimPrep, self.$eNomQuimPrep, self.$eCantGrLtPrep, self.$eCantPctjPrep];
+                    um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
+                    self.$eCodQuimPrep.attr('disabled', true);
+                    self.$eNomQuimPrep.attr('disabled', true);
 
-                        u.camposObligatorios(elementos, '2');
-                    }
+                    u.camposObligatorios(elementos, '2');
                                    
                     e.stopPropagation();
                 });
 
             },
             
-            solicitarModificarPreparacion: function(response) {
+            solicitarModificarPreparacion: function(res) {
                 var self = this;
                 
-                if (response === 'true') {
-                    self.mensajeObligatoriedad({
+                if (res) {
+                    self.mensajeModalAndGritter({
+                        tipo: 'modal',
                         titulo: 'Nombre de Preparación Existente.',
-                        cuerpoMensaje: 'Ya hay un nombre de preparación para la fibra seleccionada, por favor intente nuevamente.'
+                        mensaje: 'Ya hay un nombre de preparación para la fibra seleccionada, por favor intente nuevamente.'
                     });
-                
-                } else if (response === 'false') {
+
+                } else if (!res) {
+                    var usuario = JSON.parse(sessionStorage.user);
+                    var dModPrep = new Object();
                     var nombre = '';
                     var nombreNue = '';
                     var idFib = '';
                     var idFibNue = '';
-                    
+                    var compos = '';
+                    var composNue = '';
+
                     var coment = self.$eTextArea.val();
-                    
+
                     for (var i = 0; self.oFibras.length; i++) {
                         if (self.oFibras[i].nomFibra === self.$eCbxfibraPrep.val()) {
-                            var idFibNue = self.oFibras[i].idFibra;
+                            idFibNue = self.oFibras[i].idFibra;
+                            composNue = self.oFibras[i].composicion;
                             break;
                         }
                     }
-                    
+
                     for (var i = 0; i < self.oPreparaciones.length; i++) {
-                        if (self.idPreparacion === self.oPreparaciones[i].idNomPreparacion) {
-                            //nombre = self.oPreparaciones[i].nomPreparacion;
-                            nombre = um.separarNombreDeFibra({nombre: self.oPreparaciones[i].nomPreparacion, fibra: self.oPreparaciones[i].idFibra.nomFibra});
-                            idFib = self.oPreparaciones[i].idFibra.idFibra;
+                        if (self.idPreparacion === self.oPreparaciones[i].idMaestro) {
+                            nombre = um.separarNombreDeFibra({nombre: self.oPreparaciones[i].nombMaestro, fibra: self.oPreparaciones[i].nomFibra});
+                            idFib = self.oPreparaciones[i].idFibra;
+                            compos = self.oPreparaciones[i].composFibra;
+                            var n = self.$eNomPrep.val();
                             
-                            if (nombre !== self.$eNomPrep.val()) {
-                                nombreNue = self.$eNomPrep.val();
+                            if (nombre !== n.toUpperCase()) {
+                                nombreNue = n.toUpperCase() + ' (' + self.$eCbxfibraPrep.val() + ')';
                             }
-                            
+
                             if (idFib === idFibNue) {
                                 idFibNue = '';
+                                composNue = '';
+                            }
+
+                            dModPrep.idReg = self.idPreparacion;
+                            dModPrep.nombreReg = self.oPreparaciones[i].nombMaestro;
+                            dModPrep.nombreRegNue = nombreNue;
+                            dModPrep.idFibra = idFib;
+                            dModPrep.idFibraNue = idFibNue;
+                            dModPrep.idSolicitante = usuario.idUsuario.idPersonal;
+                            dModPrep.comentario = coment;
+                            dModPrep.quimicoMod = new Array();
+                            dModPrep.quimicoNue = new Array();
+                            dModPrep.compos = compos;
+                            dModPrep.composNue = composNue;
+
+                            for (var i = 0; i < self.eQuimicosModif.length; i++) {
+                                if (self.eQuimicosModif[i].tipo !== '') {
+                                    dModPrep.quimicoMod.push(self.eQuimicosModif[i]);
+                                }
+                            }
+
+                            for (var i = 0; i < self.eNuevosQuimicos.length; i++) {
+                                dModPrep.quimicoNue.push(self.eNuevosQuimicos[i]);
+                            }
+
+                            if (dModPrep.nombreRegNue !== '' || dModPrep.idFibraNue !== '' || dModPrep.quimicoMod.length > 0 || dModPrep.quimicoNue.length > 0) {
+
+                                $.get(self.UrlPreparacion + 'editar', {
+                                    datos: JSON.stringify(dModPrep)
+                                }, function(res) {
+
+                                    if (res) {
+                                        self.mensajeModalAndGritter({
+                                            tipo: 'gritter',
+                                            titulo: 'Modificar Registro',
+                                            mensaje: '¡El maestro ha sido modificado.!',
+                                            clase: ''
+                                        });
+
+                                        self.$eBtnCerrar.click();
+
+                                        $.get(self.UrlPreparacion + 'maestros', function(data) {
+                                            self.cargarDatos(data, 'pr');
+                                        });
+
+                                    } else {
+                                        self.mensajeModalAndGritter({
+                                            tipo: 'gritter',
+                                            titulo: 'Modificar Registro',
+                                            mensaje: '¡El maestro no se modifico.!',
+                                            clase: 'growl-warning'
+                                        });
+                                    }
+                                }).fail(function(response, status, er) {
+                                    self.mensajeModalAndGritter({
+                                        tipo: 'gritter',
+                                        titulo: 'Problema con la Aplicación',
+                                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
+                                        clase: "growl-danger",
+                                    });
+                                });
+
+                            } else {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: "Modificar Registro",
+                                    mensaje: "¡No hay datos a modificar.!",
+                                    clase: "growl-warning",
+                                });
                             }
                             break;
                         }
                     }
-                    
-                    um.SolicitarModificarRegistro({tabla: self.$tableEditPrep, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idPreparacion, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar, 'ServletPreparaciones');
                 }
             },
             

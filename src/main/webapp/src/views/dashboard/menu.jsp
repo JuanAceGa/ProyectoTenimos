@@ -74,6 +74,8 @@
                         <li><a href="#"><i class="fa fa-envelope-o"></i><span>Email</span></a></li>
                         <li class="nav-parent" id="navLab"><a href="#"><i class="fa fa-edit"></i><span>Laboratorio</span></a>
                             <ul class="children">
+                                <li><a href="#"><i class="fa fa-caret-right"></i>Maestros Pendientes por Aprobar</a></li>
+                                <li><a href="#"><i class="fa fa-caret-right"></i>Solicitudes Enviadas</a></li>
                                 <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Preparación</a></li>
                                 <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Auxiliares</a></li>
                                 <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Procesos Posteriores</a></li>
@@ -213,6 +215,8 @@
                 </div>
 
                 <div class="contentpanel" id="contenido">
+                    <jsp:include page="../forms/laboratorio/preparacionpendiente.jspf"></jsp:include>
+                    <jsp:include page="../forms/laboratorio/editarpendiente.jspf"></jsp:include>
                     <jsp:include page="../forms/laboratorio/frmpreparacion.jspf"></jsp:include>
                     <jsp:include page="../forms/laboratorio/frmauxiliares.jspf"></jsp:include>
                     <jsp:include page="../forms/laboratorio/frmprocesospost.jspf"></jsp:include>
@@ -255,7 +259,8 @@
         <script src="../../js/lib/custom.js"></script>
         <script src="../../js/lib/datatables.min.js"></script>
         <script src="../../js/lib/jquery-inputformat.min.js"></script>
-
+        
+        <script src="../../js/pendientesAprobacion.js"></script>
         <script src="../../js/util.js"></script>
         <script src="../../js/utilMaestros.js"></script>
         <script src="../../js/frmPreparacion.js"></script>

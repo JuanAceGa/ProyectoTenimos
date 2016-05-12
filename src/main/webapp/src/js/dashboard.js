@@ -1,12 +1,19 @@
 (function (document, window, $, undefined){
     (function (){
         return dashboard = {
+            UrlFibras: 'http://localhost:8084/ERPTenimosBackend/rest/fibras/',
+            UrlProdQuimicos: 'http://localhost:8084/ERPTenimosBackend/rest/productformulacion/',
+            UrlPreparacion: 'http://localhost:8084/ERPTenimosBackend/rest/preparacion/',
             user: "",
             ubicacionActual: $("#ubicacionActual"),
             nav: $("#nav"),
             navLab: $("#navLab"),
             nomUser: $("#nomUser"),
             nomUser2: $("#nomUser2"),
+            rowMaestrosPendientes: $('#rowMaestrosPendientes'),
+            tblMaestroPend: $('#tblMaestroPend'),
+            rowEditarPendientes: $('#rowEditarPendientes'),
+            tblEditarPend: $('#tblEditarPend'),
             rowPreparacion: $("#rowPreparacion"),
             frmMaestroPrep: $("#frmMaestroPrep"),
             tblMaestroPrep: $("#tblMaestroPrep"),
@@ -53,6 +60,8 @@
             ocultarFormularios: function() {
                 var self = this;
                 
+                
+                self.rowMaestrosPendientes.hide();
                 self.rowPreparacion.hide();
                 self.rowAuxiliares.hide();
                 self.rowProcPos.hide();
@@ -62,6 +71,7 @@
                 self.rowFormsLL.hide();
                 self.rowTablesLL.hide();
                 self.rowFormular.hide();
+                self.rowEditarPendientes.hide();
             },
             
             cargarSesion: function(){
@@ -97,6 +107,7 @@
                     
                     switch (selec) {
                         case "Dashboard":
+                            
                             this.children[0].className = "active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-home'></i>Dashboard";
                             self.ocultarFormularios();
@@ -117,8 +128,45 @@
                             this.children[3].className = "nav-parent";
                             
                             break;
+                        
+                        case "Maestros Pendientes por Aprobar":
                             
+                            consultas.consultarPendientes();
+                            
+                            this.children[2].className = "nav-parent active";
+                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestros Pendientes por Aprobar";
+                            self.ocultarFormularios();
+                            
+                            self.rowMaestrosPendientes.show();
+                            self.tblMaestroPend.children(".minimize").click();
+                            
+                            this.children[0].className = "";
+                            this.children[1].className = "";
+                            this.children[3].className = "nav-parent";
+                            
+                            break;
+                        
+                        case "Solicitudes Enviadas":
+                            
+                            consultas.consultarPendientesParaEditar();
+                            
+                            this.children[2].className = "nav-parent active";
+                            self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Solicitudes Enviadas para Aprobación";
+                            self.ocultarFormularios();
+                            
+                            self.rowEditarPendientes.show();;
+                            self.tblEditarPend.children(".minimize").click();
+                            
+                            this.children[0].className = "";
+                            this.children[1].className = "";
+                            this.children[3].className = "nav-parent";
+                            
+                            break;
+                        
                         case "Maestro Preparación":
+                            
+                            frmPreparacion.consultas();
+                            
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Preparación";
                             self.ocultarFormularios();

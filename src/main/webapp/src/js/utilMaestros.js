@@ -21,6 +21,10 @@
                         });
                     }
                     
+                    if (frm === 'formula') {
+                        
+                    }
+                    
                     if (frm === 'curvas') {
                         oDatos.forEach(function(l){
                             if (l.nomListaCheck !== "") {
@@ -68,6 +72,8 @@
                 var option2;
 
                 if (tipo === 'q') {//Carga de los quimicos o colorantes.
+                    oElement[0].empty();
+                    oElement[1].empty();
                     oDatos.forEach(function(quimico) {
                         if (quimico.auxEsp !== true) {
                             option1 = document.createElement('option');
@@ -109,6 +115,8 @@
                         $(oElement[1]).append(option2);
                     });
                 } else if (tipo === 'auxEsp') {//Carga de los quimicos para Auxiliareas especiales.
+                    oElement[0].empty();
+                    oElement[1].empty();
                     oDatos.forEach(function(quimico) {
                         if (quimico.auxEsp === true) {
                             option1 = document.createElement('option');
@@ -170,18 +178,19 @@
                         oDatos[i].btnView = '<button id="btnView" title="Ver/Editar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
                                                 '<i class="glyphicon glyphicon-eye-open"></i>' +
                                             '</button>';
+                        oDatos[i].fechaUso = (oDatos[i].fechaUso === 'null') ? oDatos[i].fechaUso = '' : oDatos[i].fechaUso;
                     }
                 }
             
-                if (tipo === 'prep') {
+                if (tipo === 'prep' || tipo === 'aux' || tipo === 'pp') {
                     
                     $(tabla).dataTable({
                         data: oDatos,
                         columns: [
-                            {data: 'idNomPreparacion', className: 'center'},
-                            {data: 'nomPreparacion', className: 'left'},
-                            {data: 'idFibra.codFibra', className: 'center'},
-                            {data: 'costoPreparacion', className: 'right'},
+                            {data: 'idMaestro', className: 'center'},
+                            {data: 'nombMaestro', className: 'left'},
+                            {data: 'codFibra', className: 'center'},
+                            {data: 'costo', className: 'right'},
                             {data: 'fechaUso', className: 'center'},
                             {data: 'btnView', className: 'center'}
                         ],
@@ -190,7 +199,7 @@
                     });
                 }
                 
-                if (tipo === 'aux') {
+                /*if (tipo === 'aux') {
                     
                     $(tabla).dataTable({
                         data: oDatos,
@@ -221,7 +230,7 @@
                         sPaginationType: 'full_numbers',
                         dAutoWidth: false
                     });
-                }
+                }*/
                 
                 if (tipo === 'f') { //Maestro Fibras
                     $(tabla).dataTable({
@@ -729,7 +738,7 @@
                 if (d.tipo === "+") {
                     if (d.maestro !== 'aux') {
                         for (var i = 0; i < oQuimicos.length; i++) {
-                            if (oQuimicos[i].codQ === d.codQ) {
+                            if (oQuimicos[i].codQuimico === d.codQuimico) {
                                 existe = true;
                                 break;
                             }
@@ -738,7 +747,7 @@
                     
                     if (d.maestro === 'aux') {
                         for (var i = 0; i < oQuimicos.length; i++) {
-                            if ((oQuimicos[i].codQ === d.codQ) && (oQuimicos[i].codQ !== d.codQpermitido)) {
+                            if ((oQuimicos[i].codQuimico === d.codQuimico) && (oQuimicos[i].codQuimico !== d.codQpermitido)) {
                                 existe = true;
                                 break;
                             }
@@ -758,18 +767,49 @@
                 return {existe: existe, oQuim: oQuim};
             },
             
-            guardarRegistro: function(d, servlet) {
+            guardarParaAprobar: function(d, oQuim, form){
+                var datos = new Object();
+                
+                //var idMaestro = null;
+                datos.nombMaestro = d.nombre;
+                //var fechaUso = null;
+                datos.idFibra = d.idFib;
+                //var codFibra;
+                //var nomFibra;
+                //var composFibra;
+                //var costo;
+                datos.quimicos = new Array();
+                
+                for (var i = 0; i < oQuim.length; i++) {
+                    datos.quimicos.push(oQuim[i]);
+                }
+                
+                consultas.guardarParaAprobar(datos, form);
+            },
+            
+            guardarRegistro: function(d, oQuim, form) {
+                var usuario = JSON.parse(sessionStorage.user);
                 var self = this;
                 var datos = new Object();
                 
-                if (d.form === ''){
-                    datos.nombre = d.nombre;
-                    datos.idFib = d.idFib;
+                if (d.form === 'fibra'){
+                    /*datos.nombMaestro = d.nombre;
+                    datos.idFibra = d.idFib;
                     datos.codQuimico = null;
                     datos.cantGr = null;
                     datos.cantPtj = null;
-                    datos.compos = d.compos;
-
+                    datos.compos = d.compos;*/
+                    
+                    //var idMaestro = null;
+                    datos.nombMaestro = null;
+                    datos.fechaUso = null;
+                    datos.idFibra = null;
+                    datos.codFibra = d.idFib;
+                    datos.nomFibra = d.nombre;
+                    datos.composFibra = d.compos;
+                    datos.costo = null;
+                    datos.quimicos = new Array();
+                    
                     datos = self.obtenerDatosTabla(d.tabla, datos, {frm: d.form, tipo: 'nuevo'});
                     
                 } else if (d.form === 'proceso') {
@@ -796,8 +836,12 @@
                     
                     datos = self.obtenerDatosTabla(d.tabla, datos, {frm: d.form, tipo: 'nuevo'});
                 }
-
-                consultas.guardarNuevoMaestro(datos, servlet);
+                
+                if (form === 'preparacion' || form === '' || form === '') {
+                    consultas.guardarParaAprobar(datos, form);
+                } else {
+                    consultas.guardarNuevoMaestro(datos, form);
+                }
             },
             
             obtenerDatosTabla: function(tabla, oArr, t) {
@@ -949,28 +993,28 @@
                 if (oDatos.frm === 'prep'){
                     
                     for (var i = 0; i < oDatos.registros.length; i++) {
-                        if (oDatos.registros[i].idNomPreparacion === oDatos.idReg) {
+                        if (oDatos.registros[i].idMaestro === oDatos.idReg) {
                             
                             oDatos.eNombre.val(self.separarNombreDeFibra({
-                                nombre: oDatos.registros[i].nomPreparacion,  
-                                fibra: oDatos.registros[i].idFibra.nomFibra
+                                nombre: oDatos.registros[i].nombMaestro,  
+                                fibra: oDatos.registros[i].nomFibra
                             }));
                             
-                            oDatos.eNombreFib.val(oDatos.registros[i].idFibra.nomFibra);
+                            oDatos.eNombreFib.val(oDatos.registros[i].nomFibra);
 
-                            for (var j = 0; j < oDatos.registros[i].preparacionCollection.length; j++) {
+                            for (var j = 0; j < oDatos.registros[i].quimicos.length; j++) {
                                 for (var k = 0; k < oDatos.quimicos.length; k++) {
 
-                                    if (oDatos.registros[i].preparacionCollection[j].codQuimico === oDatos.quimicos[k].codProduct) {                                        
+                                    if (oDatos.registros[i].quimicos[j].codQuimico === oDatos.quimicos[k].codProduct) {                                        
                                         resp.push({
-                                            codQ: oDatos.registros[i].preparacionCollection[j].codQuimico,
-                                            cant1: parseFloat(oDatos.registros[i].preparacionCollection[j].cantGr),
-                                            cant2: parseFloat(oDatos.registros[i].preparacionCollection[j].cantPtj)
+                                            codQuimico: oDatos.registros[i].quimicos[j].codQuimico,
+                                            cantGr: parseFloat(oDatos.registros[i].quimicos[j].cantGr),
+                                            cantPtj: parseFloat(oDatos.registros[i].quimicos[j].cantPtj)
                                         });
                                         var newTr = trTemplate
-                                            .replace(':codQuim:', oDatos.registros[i].preparacionCollection[j].codQuimico)
-                                            .replace(':cantGrLt:', oDatos.registros[i].preparacionCollection[j].cantGr)
-                                            .replace(':cantPctj:', oDatos.registros[i].preparacionCollection[j].cantPtj)
+                                            .replace(':codQuim:', oDatos.registros[i].quimicos[j].codQuimico)
+                                            .replace(':cantGrLt:', oDatos.registros[i].quimicos[j].cantGr)
+                                            .replace(':cantPctj:', oDatos.registros[i].quimicos[j].cantPtj)
                                             .replace(':nomQuim:', oDatos.quimicos[k].nomProducto);
                                         break;
                                     }
@@ -1110,12 +1154,50 @@
                 return oArr;
             },
             
-            SolicitarModificarRegistro: function(oBas, oQmod, oQnue, btnCerrar, servlet) {
+            solicitarModificarRegistro: function(oBas, oQmod, oQnue, btnCerrar, form) {
                 var self = this;
                 var usuario = JSON.parse(sessionStorage.user);
                 var datos = new Object();
                 
-                if (servlet === 'ServletCurvas'){
+                if (form === 'preparacion' || form === '' || form === '') {
+                    datos.idReg = oBas.idMaestro;
+                    datos.nombreReg = oBas.nombre;
+                    datos.nombreRegNue = oBas.nombreNue;
+                    datos.idFibra = oBas.idFib;
+                    datos.idFibraNue = oBas.idFibNue;
+                    datos.idSolicitante = usuario.idUsuario.idPersonal;
+                    datos.comentario = oBas.coment;
+                    datos.quimicoMod = new Array();
+                    datos.quimicoNue = new Array();
+                    datos.compos = oBas.compos;
+                    datos.composNue = oBas.composNue;
+
+                    for (var i = 0; i < oQmod.length; i++) {
+                        if (oQmod[i].tipo !== '') {
+                            datos.quimicoMod.push(oQmod[i]);
+                        }
+                    }
+
+                    for (var i = 0; i < oQnue.length; i++) {
+                        datos.quimicoNue.push(oQnue[i]);
+                    }
+
+                    if (datos.nombreRegNue !== '' || datos.idFibraNue !== '' || datos.quimicoMod.length > 0 || datos.quimicoNue.length > 0) {
+
+                        consultas.solicitarModificarMaestro(datos, btnCerrar, form);
+
+                    } else {
+                        $.gritter.add({
+                            title: "Modificar Registro",
+                            text: "¡No hay datos a modificar.!",
+                            class_name: "growl-warning",
+                            sticky: false,
+                            time: ""
+                        });
+                    }
+                }
+                
+                /*if (servlet === 'ServletCurvas'){
                     var lista = 0;
                     var listaNue = 0;
                     
@@ -1294,7 +1376,7 @@
                             time: ""
                         });
                     }
-                }
+                }*/
             },
             
             verificarSolicitudes: function(codigo, oElement, arrSolicitudes, arrB) {

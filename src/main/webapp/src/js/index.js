@@ -1,6 +1,7 @@
 (function (document, window, $, undefined){
     (function (){
         return index = {
+            UrlUsuario: 'http://localhost:8084/ERPTenimosBackend/rest/usuario/',
             $txtUser: $("#UserSignIn"),
             $txtPass: $("#PassSignIn"),
             $btnIngresar: $("#ingresar"),
@@ -27,12 +28,17 @@
                 self.$btnIngresar.on("click", function(e) {
                     e.preventDefault();
 
-                    $.post("ServletUsuario", {UserSignIn: self.$txtUser.val(), PassSignIn: self.$txtPass.val()}, function(response) {
-
-                        if (!$.isEmptyObject(response)) {
-                            var json = JSON.parse(response);
-                            sessionStorage.user = JSON.stringify(json);
-                            window.location = json.url;
+                    $.ajax(self.UrlUsuario + 'login', {
+                        type: 'POST',
+                        data: 'codUser=' + self.$txtUser.val() + '&passUser=' + self.$txtPass.val()
+                        
+                    }).done(function(user){
+                        if (!$.isEmptyObject(user)) {
+                            sessionStorage.user = JSON.stringify(user);
+                            
+                            $.get(self.UrlUsuario + 'menu', function(url) {
+                                window.location = url;
+                            });                            
                         } else {
                             try {
                                 self.$tituloMensaje.text("Identificación de usuario");
@@ -46,6 +52,16 @@
                                 self.$txtUser.val("");
                                 self.$txtPass.val("");
                             }
+                        }
+                    }).fail(function(err){
+                        try {
+                            self.$tituloMensaje.text("Conexión con el servidor");
+                            self.$cuerpoMensaje.text("Ha ocurrido un problema con el servidor, favor intentar más tarde.");
+                            self.$modalMensaje.modal("show");
+                            self.$txtUser.val("");
+                            self.$txtPass.val("");
+                        } catch (e) {
+                            alert("Ha ocurrido un problema con el servidor, favor intentar más tarde.");
                         }
                     });
                 });

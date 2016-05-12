@@ -26,10 +26,10 @@
                                 campos[i].closest('.form-group').removeClass('has-error has-success');
                                 vacios--;
                             } else if ($(campos[i][0]).val() !== "" && $(campos[i][0]).val() !== "Seleccione una...") {
-                                campos[i].closest('.form-group').removeClass('has-error').addClass('has-success');
+                                campos[i].closest('.form-group').removeClass('has-error');
                                 vacios--;
                             } else {
-                                campos[i].closest('.form-group').removeClass('has-success').addClass('has-error');
+                                campos[i].closest('.form-group').addClass('has-error');
                             }
                         }
 
@@ -105,14 +105,18 @@
                 
                 if (tipo === '') {
                     
+                    //for (var i = 0; i < oDatos.length; i++) {
+                    //    oDatos[i] = oDatos[i].toFixed(decimales);
+                    //}
+                    
                     for (var i = 0; i < oDatos.length; i++) {
-                        oDatos[i] = oDatos[i].toFixed(decimales);
+                        oDatos[i].costo = oDatos[i].costo.toFixed(decimales);
                     }
                     
-                } else if (tipo === 'preparacion') {
+                } /*else if (tipo === 'preparacion') {
                     
                     for (var i = 0; i < oDatos.length; i++) {
-                        oDatos[i].costoPreparacion = oDatos[i].costoPreparacion.toFixed(decimales);
+                        oDatos[i].costo = oDatos[i].costo.toFixed(decimales);
                     }
                     
                 } else if (tipo === 'auxiliar'){
@@ -126,7 +130,7 @@
                     for (var i = 0; i < oDatos.length; i++) {
                         oDatos[i].costoProcPost = oDatos[i].costoProcPost.toFixed(decimales);
                     }
-                }
+                }*/
                 
                 return oDatos;
             }

@@ -1,0 +1,108 @@
+
+<div class="row" id="rowMaestrosPendientes">
+    <div class=" col-md-offset-0 col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-btns" id="tblMaestroPend">
+                    <!--<a href="#" class="panel-close">&times;</a>-->
+                    <a href="#" class="minimize">&minus;</a>
+                </div>
+                <h4 class="panel-title">Listado de Maestros Pendientes por Aprobación</h4>
+                <p>Para ver los maestros pendientes despliegue este panel.</p>
+            </div>
+            <div class="panel-body">
+                <div class="row mb20">
+                    <div class="table-responsive col-md-6">
+                        <table class="table table-bordered" id="pendPreparacion">
+                            <caption><h4><strong>Preparaciones</strong></h4></caption>
+                            <thead>
+                                <tr>
+                                    <th class="col-md-4" style="text-align: center">Nombre del Maestro</th>
+                                    <th class="col-md-1" style="text-align: center">Fibra</th>
+                                    <th class="col-md-1" style="text-align: center">Costo $</th>
+                                    <th class="col-md-1" style="text-align: center">Ver</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div><!-- table-responsive -->
+
+                    <div class="table-responsive col-md-6">
+                        <table class="table table-bordered" id="pendAuxiliar">
+                            <caption><h4><strong>Auxiliares</strong></h4></caption>
+                            <thead>
+                                <tr>
+                                    <th class="col-md-4" style="text-align: center">Nombre del Maestro</th>
+                                    <th class="col-md-1" style="text-align: center">Fibra</th>
+                                    <th class="col-md-1" style="text-align: center">Costo $</th>
+                                    <th class="col-md-1" style="text-align: center">Ver</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div><!-- table-responsive -->
+                </div>
+                
+                <div class="row">
+                    <div class="table-responsive col-md-6">
+                        <table class="table table-bordered" id="pendProcPost">
+                            <caption><h4><strong>Procesos Posteriores</strong></h4></caption>
+                            <thead>
+                                <tr>
+                                    <th class="col-md-4" style="text-align: center">Nombre del Maestro</th>
+                                    <th class="col-md-1" style="text-align: center">Fibra</th>
+                                    <th class="col-md-1" style="text-align: center">Costo $</th>
+                                    <th class="col-md-1" style="text-align: center">Ver</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div><!-- table-responsive -->
+
+                    <div class="table-responsive col-md-6">
+                        <table class="table table-bordered" id="pendFormula">
+                            <caption><h4><strong>Formulas</strong></h4></caption>
+                            <thead>
+                                <tr>
+                                    <th class="col-md-4" style="text-align: center">Nombre del Maestro</th>
+                                    <th class="col-md-1" style="text-align: center">Fibra</th>
+                                    <th class="col-md-1" style="text-align: center">Costo $</th>
+                                    <th class="col-md-1" style="text-align: center">Ver</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div><!-- table-responsive -->
+                </div>
+            </div><!-- panel-body -->
+        </div><!-- panel -->
+    </div><!-- col-md-10 -->                        
+</div><!--row -->
+
+<!-- Modal -->
+<div class="modal" id="modalVerPendientes" tabindex="-1" role="dia" aria-hidden="true">
+    <div class="mb10"></div>
+    <div class="modal-lg col-lg-offset-3">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Maestros Pendientes por Aprobar</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="table-responsive col-lg-12">
+                        <table class="table" id="tablaMaestroPend">
+                            
+                        </table>
+                    </div><!-- table-responsive -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-lg-1 col-lg-offset-0">
+                        <button class="btn btn-success" type="button" id="btnAprobar">Aprobar</button>
+                    </div>
+                    <div class="col-lg-11 col-lg-offset-0">
+                        <button type="reset" class="btn btn-default" data-dismiss="modal" id="btnCerrarModal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div><!-- modal -->
