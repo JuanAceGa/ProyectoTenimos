@@ -118,26 +118,6 @@
                     um.renderDataTables(self.$dataTablePreparacion, self.oPreparaciones, 'prep');
                     self.pintarCamposObligatorios();
                 }
-
-                /*if (opc === 'npr') {
-                    if (dato !== null) {
-                        self.oPreparaciones = "";
-                        self.oPreparaciones = u.cantidadDecimales(dato, 1, '');
-                        um.destruirDataTable(self.$dataTablePreparacion.dataTable(), '1');
-                        self.limpiarFormulario();
-                        um.renderDataTables(self.$dataTablePreparacion, self.oPreparaciones, 'prep');
-                        self.pintarCamposObligatorios();
-                    }
-                }
-                
-                if (opc === 'solic') {
-                    if (!$.isEmptyObject(dato)) {
-                        self.solicitudesEnviadas = dato;
-                        self.solcNombre = false;
-                        self.solcFibra = false;
-                        self.verificarSolicitudes();
-                    }
-                }*/
             },
             
             inhabilitarCampos: function() {
@@ -828,15 +808,6 @@
                     e.stopPropagation();
                 });
             },
-            
-            /*verificarSolicitudes: function() {
-                var self = this;
-                var elementos = [self.$eNomPrep, self.$eCbxfibraPrep];
-                var estado = um.verificarSolicitudes('', elementos, self.solicitudesEnviadas, {solcNombre: self.solcNombre, solcFibra: self.solcFibra});
-                
-                self.solcNombre = estado.solcNombre;
-                self.solcFibra = estado.solcFibra;
-            },*/
             
             modificarQuimicoPreparacion: function() {
                 var self = this;
