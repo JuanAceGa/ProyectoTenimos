@@ -149,9 +149,6 @@
                     
                     um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
                     
-                    elementos.push(self.$eBtnAddLineaPrep);
-                    um.verificarSolicitudes(self.$eCodQuimPrep.val(), elementos, self.solicitudesEnviadas, {});
-                    
                 });
 
                 $(self.$eNomQuimPrep).on('keyup keypress change', function() {
@@ -161,8 +158,6 @@
                     
                     um.cargarCoincidenciaProductoQuimico('nom', elementos, self.oQuimicos);
                     
-                    elementos.push(self.$eBtnAddLineaPrep);
-                    um.verificarSolicitudes(self.$eCodQuimPrep.val(), elementos, self.solicitudesEnviadas, {});
                 });
             },
             formatoInput: function() {
@@ -320,12 +315,12 @@
                 var elementos = [self.$nomPrep, self.$codQuimPrep, self.$nomQuimPrep, self.$cantGrLtPrep, self.$cantPctjPrep];
                 u.limpiarCampos(elementos);
 
-                $('#dataTableNewQPreparacion tr:gt(1)').remove();
                 self.quimicosPorPrep = [];
                 self.eNuevosQuimicos = [];
                 self.eQuimicosModif = [];
                 self.pintarCamposObligatorios();
                 self.inhabilitarCampos();
+                $('#dataTableNewQPreparacion tr:gt(1)').remove();
             },
             
             pintarCamposObligatorios: function() {
@@ -628,77 +623,60 @@
                 self.$eBtnModificar.on("click", function(e) {
                     e.preventDefault();
                     
-                    if (!self.$eNomPrep.attr('disabled') && !self.$eCbxfibraPrep.attr('disabled')) {
-                    
-                        var campObligPrep = false;
-                        var campos = [self.$eNomPrep, self.$eCbxfibraPrep, self.$eTextArea];
+                    var campObligPrep = false;
+                    var campos = [self.$eNomPrep, self.$eCbxfibraPrep, self.$eTextArea];
 
-                        campObligPrep = u.camposObligatorios(campos, '2');
+                    campObligPrep = u.camposObligatorios(campos, '2');
 
-                        var b = true;
+                    var b = true;
 
-                        if (um.cantidadDeQuimico({val: self.$eCantGrLtPrep.val(), input: 'grlt'})) {
-                            b = false;
-                        } else if (um.cantidadDeQuimico({val: self.$eCantPctjPrep.val(), input: 'pctj'})) {
-                            b = false;
-                        }
-
-                        if (b && campObligPrep) {
-                            var n = self.$eNomPrep.val().trim();
-                            var nombre = n.toUpperCase();
-                            var fibra = self.$eCbxfibraPrep.val();
-                            
-                            for (var i = 0; i < self.oPreparaciones.length; i++) {
-                                if (self.idPreparacion === self.oPreparaciones[i].idMaestro) {
-                                    var nombreOrg = um.separarNombreDeFibra({nombre: self.oPreparaciones[i].nombMaestro, fibra: self.oPreparaciones[i].nomFibra});
-                                    
-                                    self.consultarNombresPreparaciones('editar', self.idPreparacion, (nombre !== nombreOrg || fibra !== self.oPreparaciones[i].nomFibra) ? nombre + ' (' + fibra + ')' : '');
-                                    
-                                    break;
-                                }
-                            }
-                        }
-                    } else {                        
-                        var n = self.$eNomPrep.val().trim();
-                        
-                        for (var i = 0; i < self.solicitudesEnviadas.length; i++) {                            
-                            var nombre = (self.solicitudesEnviadas[i].nombreNue !== null) ? self.solicitudesEnviadas[i].nombreNue : n.toUpperCase();
-
-                            if (self.solicitudesEnviadas[i].idFibraNue !== null) {
-                                for (var j = 0; j < self.oFibras.length; j++) {
-                                    var fibra = (self.solicitudesEnviadas[i].idFibraNue === self.oFibras[i].idFibra) ? self.oFibras[i].nomFibra : self.$eCbxfibraPrep.val();
-                                    break;
-                                }
-                            }
-                        }
-                        self.consultarNombresPreparaciones('editar', self.idPreparacion, nombre + ' (' + fibra + ')');
+                    if (um.cantidadDeQuimico({val: self.$eCantGrLtPrep.val(), input: 'grlt'})) {
+                        b = false;
+                    } else if (um.cantidadDeQuimico({val: self.$eCantPctjPrep.val(), input: 'pctj'})) {
+                        b = false;
                     }
+
+                    if (b && campObligPrep) {
+                        var n = self.$eNomPrep.val().trim();
+                        var nombre = n.toUpperCase();
+                        var fibra = self.$eCbxfibraPrep.val();
+
+                        for (var i = 0; i < self.oPreparaciones.length; i++) {
+                            if (self.idPreparacion === self.oPreparaciones[i].idMaestro) {
+                                var nombreOrg = um.separarNombreDeFibra({nombre: self.oPreparaciones[i].nombMaestro, fibra: self.oPreparaciones[i].nomFibra});
+
+                                self.consultarNombresPreparaciones('editar', self.idPreparacion, (nombre !== nombreOrg || fibra !== self.oPreparaciones[i].nomFibra) ? nombre + ' (' + fibra + ')' : '');
+
+                                break;
+                            }
+                        }
+                    }                     
                 });
             },
             
-            consultarNombresPreparaciones: function(t, i, n) {
-                var self = this;
-                
-                $.get(self.UrlPreparacion + 'buscarNombre', {
-                    tipo: t,
-                    idMaestro: i,
-                    nombre: n
-                }, function(res) {
-                    if (t === 'nuevo') {
-                        self.agregarPreparacion(res);
-                    } else {
-                        self.solicitarModificarPreparacion(res);
-                    }
+                consultarNombresPreparaciones: function(t, i, n) {
+                    var self = this;
 
-                }).fail(function(res, status, er) {
-                    self.mensajeModalAndGritter({
-                        tipo: 'gritter',
-                        titulo: 'Problema con la Aplicación',
-                        mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
-                        clase: 'growl-danger'
+                    $.get(self.UrlPreparacion + 'buscarNombre', {
+                        tipo: t,
+                        idMaestro: i,
+                        nombre: n
+                    }, function(res) {
+                        if (t === 'nuevo') {
+                            self.agregarPreparacion(res);
+                        } else {
+                            self.solicitarModificarPreparacion(res);
+                        }
+
+                    }).fail(function(res, status, er) {
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
+                            titulo: 'Problema con la Aplicación',
+                            mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
+                            clase: 'growl-danger'
+                        });
                     });
-                });
-            },
+                },
             
             agregarPreparacion: function(res) {
                 var self = this;

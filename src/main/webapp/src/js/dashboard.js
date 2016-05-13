@@ -182,6 +182,9 @@
                             break;
                         
                         case "Maestro Auxiliares":
+                            
+                            frmAuxiliar.consultas();
+                            
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Auxiliares";
                             self.ocultarFormularios();
@@ -197,6 +200,9 @@
                             break;
                             
                         case "Maestro Procesos Posteriores":
+                            
+                            frmProcPos.consultas();
+                            
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Procesos Posteriores";
                             self.ocultarFormularios();
