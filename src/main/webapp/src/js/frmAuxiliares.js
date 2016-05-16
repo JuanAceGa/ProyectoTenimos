@@ -138,26 +138,6 @@
                     um.renderDataTables(self.$dataTableAuxiliar, self.oAuxiliares, 'aux');
                     self.pintarCamposObligatorios();                    
                 }
-
-                /*if (opc === 'nau') {
-                    if (data !== null) {
-                        self.oAuxiliares = "";
-                        self.oAuxiliares = u.cantidadDecimales(data, 1, 'auxiliar');
-                        um.destruirDataTable(self.$dataTableAuxiliar.dataTable(), '2');
-                        self.limpiarFormulario();
-                        um.renderDataTables(self.$dataTableAuxiliar, self.oAuxiliares, 'aux');
-                        self.pintarCamposObligatorios();
-                    }
-                }
-                
-                if (opc === 'solic') {
-                    if (data !== null) {
-                        self.solicitudesEnviadas = data;
-                        self.solcNombre = false;
-                        self.solcFibra = false;
-                        self.verificarSolicitudes();
-                    }
-                }*/
             },
             inhabilitarCampos: function() {
                 var self = this;
@@ -613,44 +593,41 @@
                     var fila = $(this).closest('tr');
                     var rowIndex = fila[0].rowIndex;
                     var codigo = fila[0].cells[0].textContent;
-                    var r = um.verificarSolicitudes(codigo, [], self.solicitudesEnviadas, {});
                     
-                    if (!r.estado) {
-                        var posN = ((rowIndex - 2) - (self.quimicosPorAux.length - self.eNuevosQuimicos.length));
-                        
-                        d = um.noRepetirQuimicos({
-                            tipo: '-',
-                            codQ: fila[0].cells[0].textContent,
-                            cant1: parseFloat(fila[0].cells[2].textContent),
-                            cant2: parseFloat(fila[0].cells[3].textContent),
-                            maestro: 'aux',
-                            codQpermitido: '1550',
-                            pos: (rowIndex - 2)},
-                        self.quimicosPorAux);
-                        
-                        self.quimicosPorAux = d.oQuim;
-                        
-                        d = um.noRepetirQuimicos({
-                            tipo: '-',
-                            codQ: fila[0].cells[0].textContent,
-                            cant1: parseFloat(fila[0].cells[2].textContent),
-                            cant2: parseFloat(fila[0].cells[3].textContent),
-                            maestro: 'aux',
-                            codQpermitido: '',
-                            pos: posN},
-                        self.eNuevosQuimicos);
+                    var posN = ((rowIndex - 2) - (self.quimicosPorAux.length - self.eNuevosQuimicos.length));
 
-                        self.eNuevosQuimicos = d.oQuim;
-                        
-                        for (var i = 0; i < self.eQuimicosModif.length; i++) {
-                            if (self.eQuimicosModif[i].codQ === fila[0].cells[0].textContent) {
-                                self.eQuimicosModif[i].tipo = 'eli';
-                                break;
-                            }
+                    d = um.noRepetirQuimicos({
+                        tipo: '-',
+                        codQ: codigo,
+                        cant1: parseFloat(fila[0].cells[2].textContent),
+                        cant2: parseFloat(fila[0].cells[3].textContent),
+                        maestro: 'aux',
+                        codQpermitido: '1550',
+                        pos: (rowIndex - 2)},
+                    self.quimicosPorAux);
+
+                    self.quimicosPorAux = d.oQuim;
+
+                    d = um.noRepetirQuimicos({
+                        tipo: '-',
+                        codQ: codigo,
+                        cant1: parseFloat(fila[0].cells[2].textContent),
+                        cant2: parseFloat(fila[0].cells[3].textContent),
+                        maestro: 'aux',
+                        codQpermitido: '',
+                        pos: posN},
+                    self.eNuevosQuimicos);
+
+                    self.eNuevosQuimicos = d.oQuim;
+
+                    for (var i = 0; i < self.eQuimicosModif.length; i++) {
+                        if (self.eQuimicosModif[i].codQ === fila[0].cells[0].textContent) {
+                            self.eQuimicosModif[i].tipo = 'eli';
+                            break;
                         }
-                        
-                        fila.remove();
                     }
+
+                    fila.remove();
                     
                     e.stopPropagation();
                 });
@@ -739,16 +716,14 @@
             
             agregarAuxiliar: function(res) {
                 var self = this;
-
-                var self = this;
                 var dAux = new Object();
                 var usuario = JSON.parse(sessionStorage.user);
                 
                 if (res) {
                     self.mensajeModalAndGritter({
                         tipo: 'modal',
-                        titulo: 'Nombre de Preparación Existente.',
-                        mensaje: 'Ya hay un nombre de preparación para la fibra seleccionada, por favor intente nuevamente.'
+                        titulo: 'Nombre de Auxiliar Existente.',
+                        mensaje: 'Ya hay un nombre de auxiliar para la fibra seleccionada, por favor intente nuevamente.'
                     });
 
                 } else if (!res) {
@@ -821,7 +796,7 @@
                         eNombreFib: self.$eCbxfibraAux,
                         eTabla: self.$tBodyEditAux,
                         eModal: self.$modalEditAux
-                    }
+                    };
                     
                     $("#tableEditAux tr:gt(1)").remove();
                     u.limpiarCampos(elementos);
@@ -834,9 +809,9 @@
                     
                     for (var i = 0; i < self.quimicosPorAux.length; i++) {
                         var q = {
-                            codQ: self.quimicosPorAux[i].codQ,
-                            cantGrLt: self.quimicosPorAux[i].cant1,
-                            cantPctj: self.quimicosPorAux[i].cant2,
+                            codQ: self.quimicosPorAux[i].codQuimico,
+                            cantGrLt: self.quimicosPorAux[i].cantGr,
+                            cantPctj: self.quimicosPorAux[i].cantPtj,
                             cantGrLtNue: -1,
                             cantPctjNue: -1,
                             tipo: ''
@@ -909,7 +884,7 @@
                             nombre = um.separarNombreDeFibra({nombre: self.oAuxiliares[i].nombMaestro, fibra: self.oAuxiliares[i].nomFibra});
                             idFib = self.oAuxiliares[i].idFibra;
                             compos = self.oAuxiliares[i].composFibra;
-                            var n = self.$eNomAux.val();
+                            var n = self.$eNomAux.val().trim();
                             
                             if (nombre !== n.toUpperCase()) {
                                 nombreNue = n.toUpperCase() + ' (' + self.$eCbxfibraAux.val() + ')';

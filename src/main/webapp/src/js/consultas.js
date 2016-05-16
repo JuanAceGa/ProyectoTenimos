@@ -22,7 +22,7 @@
                     success: function(response) {
                         //frmPreparacion.cargarDatos(response, 'f');
                         //frmAuxiliar.cargarDatos(response, 'f');
-                        frmProcPos.cargarDatos(response, 'f');
+                        //frmProcPos.cargarDatos(response, 'f');
                         frmFibra.cargarDatos(response, 'f');
                         frmFormula.cargarDatos(response, 'f');
                     },
@@ -38,7 +38,7 @@
                 $.get('../../../ServletProdFormulacion', {accion: 'quimicos'}, function(response) {
                     //frmPreparacion.cargarDatos(response, 'q');
                     //frmAuxiliar.cargarDatos(response, 'q');
-                    frmProcPos.cargarDatos(response, 'q');
+                    //frmProcPos.cargarDatos(response, 'q');
                     frmFormula.cargarDatos(response, 'q');
                 });
             },
@@ -64,7 +64,7 @@
                     });
 
                     $.get('../../../ServletProcesosPost', {accion: 'buscar'}, function(response) {
-                        frmProcPos.cargarDatos(response, 'pp');
+                        //frmProcPos.cargarDatos(response, 'pp');
                         frmFormula.cargarDatos(response, 'pp');
                     });
                     

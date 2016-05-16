@@ -1,9 +1,6 @@
 (function (document, window, $, undefined){
     (function (){
         return dashboard = {
-            UrlFibras: 'http://localhost:8084/ERPTenimosBackend/rest/fibras/',
-            UrlProdQuimicos: 'http://localhost:8084/ERPTenimosBackend/rest/productformulacion/',
-            UrlPreparacion: 'http://localhost:8084/ERPTenimosBackend/rest/preparacion/',
             user: "",
             ubicacionActual: $("#ubicacionActual"),
             nav: $("#nav"),

@@ -1,6 +1,9 @@
 (function(document, window, $, undefined) {
     (function() {
         return frmProcPos = {
+            UrlFibras: 'http://localhost:8084/ERPTenimosBackend/rest/fibras/',
+            UrlProdQuimicos: 'http://localhost:8084/ERPTenimosBackend/rest/productformulacion/',
+            UrlProcPos: 'http://localhost:8084/ERPTenimosBackend/rest/procesopost/',
             oFibras: {},
             oQuimicos: {},
             oProcPos: {},
@@ -63,16 +66,52 @@
                 this.verProcPos();
                 this.modificarQuimicoProcPos();
                 this.cerrarModalEdicion();
-            },
-            cargarDatos: function(dato, opc) {
+            },            
+            consultas: function() {
                 var self = this;
-                var data = JSON.parse(dato);
+                
+                $.get(self.UrlFibras + 'listadoFibras', function(data) {
+                    self.cargarDatos(data, 'f');
+                    
+                }).fail(function(res, status, er){
+                    self.mensajeModalAndGritter({
+                       tipo: 'gritter',
+                       titulo: 'Servicio',
+                       mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
+                       clase: 'growl-danger'
+                    });                    
+                });
+                
+                $.get(self.UrlProdQuimicos + 'noColorantes', function(data) {
+                    self.cargarDatos(data, 'q');
+                    
+                }).fail(function(res, status, er){
+                    self.mensajeModalAndGritter({
+                       tipo: 'gritter',
+                       titulo: 'Servicio',
+                       mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
+                       clase: 'growl-danger'
+                    });                    
+                });
+                
+                $.get(self.UrlProcPos + 'maestros', function(data) {
+                    self.cargarDatos(data, 'pp');
+                        
+                }).fail(function(res, status, er){
+                    self.mensajeModalAndGritter({
+                       tipo: 'gritter',
+                       titulo: 'Servicio',
+                       mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
+                       clase: 'growl-danger'
+                    });                    
+                });
+            },
+            cargarDatos: function(data, opc) {
+                var self = this;
                 var elementos = [];
                 
                 if (opc === 'f') {
-                    if ($.type(data) !== 'array') {
-                        self.oFibras = JSON.parse(data);
-                    }
+                    self.oFibras = data;
                     
                     elementos.push(self.$cbxfibraProcPos);
                     elementos.push(self.$eCbxfibraProcPos);
@@ -92,28 +131,12 @@
                 }
 
                 if (opc === 'pp') {
-                    self.oProcPos = u.cantidadDecimales(data, 1, 'proPosterior');
+                    self.oProcPos = "";
+                    self.oProcPos = u.cantidadDecimales(data, 1, '');
+                    um.destruirDataTable(self.$dataTableProcPos.dataTable(), '');
+                    self.limpiarFormulario();
                     um.renderDataTables(self.$dataTableProcPos, self.oProcPos, 'pp');
-                }
-
-                if (opc === 'npp') {
-                    if (data !== null) {
-                        self.oProcPos = "";
-                        self.oProcPos = u.cantidadDecimales(data, 1, 'proPosterior');
-                        um.destruirDataTable(self.$dataTableProcPos.dataTable(), '3');
-                        self.limpiarFormulario();
-                        um.renderDataTables(self.$dataTableProcPos, self.oProcPos, 'pp');
-                        self.pintarCamposObligatorios();
-                    }
-                }
-                
-                if (opc === 'solic') {
-                    if (data !== null) {
-                        self.solicitudesEnviadas = data;
-                        self.solcNombre = false;
-                        self.solcFibra = false;
-                        self.verificarSolicitudes();
-                    }
+                    self.pintarCamposObligatorios();    
                 }
             },
             inhabilitarCampos: function() {
@@ -123,19 +146,29 @@
             },
             coincidenciaQuimico: function() {
                 var self = this;                
-
+                
                 $(self.$codQuimProcPos).on("keyup keypress change", function() {
                     self.$nomQuimProcPos.val("");
                     var elementos = [self.$codQuimProcPos, self.$nomQuimProcPos, self.$cantGrLtProcPos, self.$cantPctjProcPos];
-
-                    um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
+                    
+                    for (var i = 0; i < self.oQuimicos.length; i++){
+                        if ((self.$codQuimProcPos.val() === self.oQuimicos[i].codProduct) && (self.oQuimicos[i].auxEsp !== true)) {
+                            um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
+                            break;
+                        }
+                    }
                 });
-
+                
                 $(self.$nomQuimProcPos).on('keyup keypress change', function() {
                     self.$codQuimProcPos.val("");
                     var elementos = [self.$nomQuimProcPos, self.$codQuimProcPos, self.$cantGrLtProcPos, self.$cantPctjProcPos];
                     
-                    um.cargarCoincidenciaProductoQuimico('nom', elementos, self.oQuimicos);
+                    for (var i = 0; i < self.oQuimicos.length; i++){
+                        if ((self.$nomQuimProcPos.val() === self.oQuimicos[i].nomProducto) && (self.oQuimicos[i].auxEsp !== true)) {
+                            um.cargarCoincidenciaProductoQuimico('nom', elementos, self.oQuimicos);
+                            break;
+                        }
+                    }
                 });
 
                 $(self.$eCodQuimProcPos).on('keyup keypress change', function() {
@@ -143,22 +176,25 @@
                     self.tipoEdicion = 'nuevo';
                     var elementos = [self.$eCodQuimProcPos, self.$eNomQuimProcPos, self.$eCantGrLtProcPos, self.$eCantPctjProcPos];
                     
-                    um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
-                    
-                    elementos.push(self.$eBtnAddLineaProcPos);
-                    um.verificarSolicitudes(self.$eCodQuimProcPos.val(), elementos, self.solicitudesEnviadas, {});
-                    
+                    for (var i = 0; i < self.oQuimicos.length; i++){
+                        if ((self.$eCodQuimProcPos.val() === self.oQuimicos[i].codProduct) && (self.oQuimicos[i].auxEsp !== true)) {
+                            um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
+                            break;
+                        }
+                    }
                 });
-
+                
                 $(self.$eNomQuimProcPos).on('keyup keypress change', function() {
                     self.$eCodQuimProcPos.val("");
                     self.tipoEdicion = 'nuevo';
                     var elementos = [self.$eNomQuimProcPos, self.$eCodQuimProcPos, self.$eCantGrLtProcPos, self.$eCantPctjProcPos];
                     
-                    um.cargarCoincidenciaProductoQuimico('nom', elementos, self.oQuimicos);
-                    
-                    elementos.push(self.$eBtnAddLineaProcPos);
-                    um.verificarSolicitudes(self.$eCodQuimProcPos.val(), elementos, self.solicitudesEnviadas, {});
+                    for (var i = 0; i < self.oQuimicos.length; i++){
+                        if ((self.$eNomQuimProcPos.val() === self.oQuimicos[i].nomProducto) && (self.oQuimicos[i].auxEsp !== true)) {
+                            um.cargarCoincidenciaProductoQuimico('nom', elementos, self.oQuimicos);
+                            break;
+                        }
+                    }
                 });
             },
             formatoInput: function() {
@@ -167,7 +203,7 @@
                 self.$cantGrLtProcPos.inputNumber({
                     allowDecimals: true,
                     allowNegative: false,
-                    allowLeadingZero: false,
+                    allowLeadingZero: true,
                     thousandSep: ',',
                     decimalSep: '.',
                     maxDecimalDigits: 4
@@ -176,7 +212,7 @@
                 self.$cantPctjProcPos.inputNumber({
                     allowDecimals: true,
                     allowNegative: false,
-                    allowLeadingZero: false,
+                    allowLeadingZero: true,
                     thousandSep: ',',
                     decimalSep: '.',
                     maxDecimalDigits: 5
@@ -185,7 +221,7 @@
                 self.$eCantGrLtProcPos.inputNumber({
                     allowDecimals: true,
                     allowNegative: false,
-                    allowLeadingZero: false,
+                    allowLeadingZero: true,
                     thousandSep: ',',
                     decimalSep: '.',
                     maxDecimalDigits: 4
@@ -194,7 +230,7 @@
                 self.$eCantPctjProcPos.inputNumber({
                     allowDecimals: true,
                     allowNegative: false,
-                    allowLeadingZero: false,
+                    allowLeadingZero: true,
                     thousandSep: ',',
                     decimalSep: '.',
                     maxDecimalDigits: 5
@@ -247,6 +283,112 @@
                    u.camposObligatorios(elementos, '3');
                    self.tipoEdicion = 'nuevo';
                 });
+                
+                
+                self.$nomProcPos.focusin(function() {
+                    self.$nomProcPos.css('text-transform', 'uppercase');
+                });
+                
+                self.$nomProcPos.focusout(function() {
+                    u.camposObligatorios([self.$nomProcPos], '4');
+                    
+                    (self.$nomProcPos.val() === '') ? self.$nomProcPos.css('text-transform', '') : '';
+                });
+                
+                self.$cbxfibraProcPos.focusout(function () {
+                    u.camposObligatorios([self.$cbxfibraProcPos], '4');
+                });
+                
+                self.$codQuimProcPos.focusout(function () {
+                    u.camposObligatorios([self.$codQuimProcPos, self.$nomQuimProcPos], '4');
+                });
+                
+                self.$nomQuimProcPos.focusin(function() {
+                    self.$nomQuimProcPos.css('text-transform', 'uppercase');
+                });
+                
+                self.$nomQuimProcPos.focusout(function() {
+                    u.camposObligatorios([self.$nomQuimProcPos, self.$codQuimProcPos], '4');
+                    
+                    (self.$nomQuimProcPos.val() === '') ? self.$nomQuimProcPos.css('text-transform', '') : '';
+                });
+                
+                self.$cantGrLtProcPos.focusout(function () {
+                    u.camposObligatorios([self.$cantGrLtProcPos, self.$cantPctjProcPos], '4');
+                });
+                
+                self.$cantPctjProcPos.focusout(function () {
+                    u.camposObligatorios([self.$cantGrLtProcPos, self.$cantPctjProcPos], '4');
+                });
+                
+                self.$eNomProcPos.focusin(function() {
+                    self.$eNomProcPos.css('text-transform', 'uppercase');
+                });
+                
+                self.$eNomProcPos.focusout(function() {
+                    u.camposObligatorios([self.$eNomProcPos], '4');
+                    
+                    (self.$eNomProcPos.val() === '') ? self.$eNomProcPos.css('text-transform', '') : '';
+                });
+                
+                self.$eCbxfibraProcPos.focusout(function() {
+                    u.camposObligatorios([self.$eCbxfibraProcPos], '4');
+                });
+                
+                self.$eCodQuimProcPos.focusout(function() {
+                    u.camposObligatorios([self.$eCodQuimProcPos, self.$eNomQuimProcPos], '4');
+                });
+                
+                self.$eNomQuimProcPos.focusin(function() {
+                    self.$eNomQuimProcPos.css('text-transform', 'uppercase');
+                });
+                
+                self.$eNomQuimProcPos.focusout(function() {
+                    u.camposObligatorios([self.$eNomQuimProcPos, self.$eCodQuimProcPos], '4');
+                    
+                    (self.$eNomQuimProcPos.val() === '') ? self.$eNomQuimProcPos.css('text-transform', '') : '';
+                });
+                
+                self.$eCantGrLtProcPos.focusout(function() {
+                    u.camposObligatorios([self.$eCantGrLtProcPos, self.$eCantPctjProcPos], '4');
+                });
+                
+                self.$eCantPctjProcPos.focusout(function() {
+                    u.camposObligatorios([self.$eCantGrLtProcPos, self.$eCantPctjProcPos], '4');
+                });
+                
+                self.$codQuimProcPos.on('keypress', function(eve) {
+                    if (eve.keyCode < 48 || eve.keyCode > 57) {
+                        eve.preventDefault();
+                    }
+                });
+                
+                self.$eTextArea.focusout(function(e) {
+                    u.camposObligatorios([self.$eTextArea], '4');
+                });
+                
+                self.$eCodQuimProcPos.on('keypress', function(eve) {
+                    if (eve.keyCode < 48 || eve.keyCode > 57) {
+                        eve.preventDefault();
+                    }
+                });
+                
+                self.$btnCleanProcPos.on('click', function(e) {
+                    e.preventDefault();
+
+                    self.limpiarFormulario();
+                });
+                
+                self.$eBtnRestProcPos.on('click', function(e) {
+                   e.preventDefault();
+                   
+                   var elementos = [self.$eCodQuimProcPos, self.$eNomQuimProcPos, self.$eCantGrLtProcPos, self.$eCantPctjProcPos];
+                   u.limpiarCampos(elementos);
+                   elementos.push(self.$eBtnAddLineaProcPos);
+                   u.habilitarDeshabilitarCampos(elementos, "hab");
+                   u.camposObligatorios(elementos, '3');
+                   self.tipoEdicion = 'nuevo';
+                });
 
             },
             limpiarFormulario: function() {
@@ -256,12 +398,12 @@
                 var elementos = [self.$nomProcPos, self.$codQuimProcPos, self.$nomQuimProcPos, self.$cantGrLtProcPos, self.$cantPctjProcPos];
                 u.limpiarCampos(elementos);
 
-                $('#dataTableNewQProcPos tr:gt(1)').remove();
                 self.quimicosPorProcPos = [];
                 self.eNuevosQuimicos = [];
                 self.eQuimicosModif = [];
                 self.pintarCamposObligatorios();
                 self.inhabilitarCampos();
+                $('#dataTableNewQProcPos tr:gt(1)').remove();
             },
             
             pintarCamposObligatorios: function() {
@@ -271,16 +413,38 @@
               u.camposObligatorios(campos, '1');
             },
             
-            mensajeObligatoriedad: function(mensaje) {
+            mensajeModalAndGritter: function(m) {
                 var self = this;
-
-                try {
-                    self.$tituloMensaje.text(mensaje.titulo);
-                    self.$cuerpoMensaje.text(mensaje.cuerpoMensaje);
-                    self.$modalMensaje.modal("show");
-                } catch (e) {
-                    alert(mensaje.cuerpoMensaje);
-                }
+                
+                if (m.tipo === 'modal') {
+                
+                    try {
+                        self.$tituloMensaje.text(m.titulo);
+                        self.$cuerpoMensaje.text(m.mensaje);
+                        self.$modalMensaje.modal("show");
+                    } catch (e) {
+                        alert(m.mensaje);
+                    }
+                    
+                } else if (m.tipo === 'gritter') {
+                
+                    if (m.clase === '') {
+                        $.gritter.add({
+                            title: m.titulo,
+                            text: m.mensaje,
+                            sticky: false,
+                            time: ''
+                        });
+                    } else {
+                        $.gritter.add({
+                            title: m.titulo,
+                            text: m.mensaje,
+                            class_name: m.clase,
+                            sticky: false,
+                            time: ''
+                        });
+                    }
+                }                
             },
             
             agregarLineaProcPos: function() {
@@ -297,29 +461,35 @@
 
                     if (um.cantidadDeQuimico({val: self.$cantGrLtProcPos.val(), input: 'grlt'})) {
                         b = false;
-                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Gramos por Litro',
-                            cuerpoMensaje: 'La cantidad debe ser superior a 0.'});
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
+                            titulo: 'Unidad de Medida Gramos por Litro',
+                            mensaje: 'La cantidad debe ser superior a 0.'
+                        });
 
                     } else if (um.cantidadDeQuimico({val: self.$cantPctjProcPos.val(), input: 'pctj'})) {
                         b = false;
-                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Porcentaje por Kilo',
-                            cuerpoMensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'});
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
+                            titulo: 'Unidad de Medida Porcentaje por Kilo',
+                            mensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'
+                        });
                     }
 
                     if (b && campObligQuim) {
                         
                         var d = um.noRepetirQuimicos({
                             tipo: '+', 
-                            codQ: self.$codQuimProcPos.val(),
-                            cant1: parseFloat(self.$cantGrLtProcPos.val()),
-                            cant2: parseFloat(self.$cantPctjProcPos.val()),
+                            codQuimico: self.$codQuimProcPos.val(),
+                            cantGr: parseFloat(self.$cantGrLtProcPos.val()),
+                            cantPtj: parseFloat(self.$cantPctjProcPos.val()),
                             maestro: 'pp', 
                             codQpermitido: '1550'},
                             self.quimicosPorProcPos);
                             
                         if (!d.existe) {
                             
-                            self.quimicosPorProcPos.push({codQ: self.$codQuimProcPos.val(), cant1: parseFloat(self.$cantGrLtProcPos.val()), cant2: parseFloat(self.$cantPctjProcPos.val())});
+                            self.quimicosPorProcPos.push({codQuimico: self.$codQuimProcPos.val(), cantGr: parseFloat(self.$cantGrLtProcPos.val()), cantPtj: parseFloat(self.$cantPctjProcPos.val())});
                             
                             um.agregarLinea(
                                     self.$tBodyNewQProcPos,
@@ -329,12 +499,16 @@
                                     cantGrLt: self.$cantGrLtProcPos.val(),
                                     cantPctj: self.$cantPctjProcPos.val()});
                             
-                            u.limpiarCampos([self.$codQuimProcPos, self.$nomQuimProcPos, self.$cantGrLtProcPos, self.$cantPctjProcPos]);
+                            u.limpiarCampos(elementos);
+                            u.camposObligatorios(elementos, '4');
 
                             self.$btnSaveProcPos.attr('disabled', false);
                         } else {
-                            self.mensajeObligatoriedad({titulo: 'Registro de Químicos',
-                            cuerpoMensaje: 'No puede agregar más de una vez un mismo químico.'});
+                            self.mensajeModalAndGritter({
+                                tipo: 'modal',
+                                titulo: 'Registro de Químicos',
+                                mensaje: 'No puede agregar más de una vez un mismo químico.'
+                            });
                         }
                     }
                 });
@@ -350,13 +524,19 @@
                     
                     if (um.cantidadDeQuimico({val: self.$eCantGrLtProcPos.val(), input: 'grlt'})) {
                         b = false;
-                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Gramos por Litro', 
-                            cuerpoMensaje: 'Los gramos debe ser superior a 0.'});
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
+                            titulo: 'Unidad de Medida Gramos por Litro', 
+                            mensaje: 'Los gramos debe ser superior a 0.'
+                        });
 
                     } else if (um.cantidadDeQuimico({val: self.$eCantPctjProcPos.val(), input: 'pctj'})) {
                         b = false;
-                        self.mensajeObligatoriedad({titulo: 'Unidad de Medida Porcentaje por Kilo',
-                            cuerpoMensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'});
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
+                            titulo: 'Unidad de Medida Porcentaje por Kilo',
+                            mensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'
+                        });
                     }
                     
                     if (b && campObligQuim) {
@@ -416,8 +596,11 @@
                             self.filaEditar = null;
                             
                        } else {
-                            self.mensajeObligatoriedad({titulo: 'Registro de Químicos',
-                            cuerpoMensaje: 'No puede agregar más de una vez un mismo químico.'});
+                            self.mensajeModalAndGritter({
+                                tipo: 'modal',
+                                titulo: 'Registro de Químicos',
+                                mensaje: 'No puede agregar más de una vez un mismo químico.'
+                            });
                         }
                     }
                 });
@@ -443,7 +626,7 @@
                     
                     fila.remove();
                     
-                    if ($('#dataTableNewQProcPos tbody tr').length - 1 == 0) {
+                    if ($('#dataTableNewQProcPos tbody tr').length - 1 === 0) {
                         self.$btnSaveProcPos.attr('disabled', true);
                     }
 
@@ -455,44 +638,41 @@
                     var fila = $(this).closest('tr');
                     var rowIndex = fila[0].rowIndex;
                     var codigo = fila[0].cells[0].textContent;
-                    var r = um.verificarSolicitudes(codigo, [], self.solicitudesEnviadas, {});
                     
-                    if (!r.estado) {
-                        var posN = ((rowIndex - 2) - (self.quimicosPorProcPos.length - self.eNuevosQuimicos.length));
-                        
-                        d = um.noRepetirQuimicos({
-                            tipo: '-',
-                            codQ: fila[0].cells[0].textContent,
-                            cant1: parseFloat(fila[0].cells[2].textContent),
-                            cant2: parseFloat(fila[0].cells[3].textContent),
-                            maestro: 'pp',
-                            codQpermitido: '1550',
-                            pos: (rowIndex - 2)},
-                        self.quimicosPorProcPos);
-                        
-                        self.quimicosPorProcPos = d.oQuim;
-                        
-                        d = um.noRepetirQuimicos({
-                            tipo: '-',
-                            codQ: fila[0].cells[0].textContent,
-                            cant1: parseFloat(fila[0].cells[2].textContent),
-                            cant2: parseFloat(fila[0].cells[3].textContent),
-                            maestro: 'pp',
-                            codQpermitido: '',
-                            pos: posN},
-                        self.eNuevosQuimicos);
+                    var posN = ((rowIndex - 2) - (self.quimicosPorProcPos.length - self.eNuevosQuimicos.length));
 
-                        self.eNuevosQuimicos = d.oQuim;
-                        
-                        for (var i = 0; i < self.eQuimicosModif.length; i++) {
-                            if (self.eQuimicosModif[i].codQ === fila[0].cells[0].textContent) {
-                                self.eQuimicosModif[i].tipo = 'eli';
-                                break;
-                            }
+                    d = um.noRepetirQuimicos({
+                        tipo: '-',
+                        codQ: codigo,
+                        cant1: parseFloat(fila[0].cells[2].textContent),
+                        cant2: parseFloat(fila[0].cells[3].textContent),
+                        maestro: 'pp',
+                        codQpermitido: '1550',
+                        pos: (rowIndex - 2)},
+                    self.quimicosPorProcPos);
+
+                    self.quimicosPorProcPos = d.oQuim;
+
+                    d = um.noRepetirQuimicos({
+                        tipo: '-',
+                        codQ: codigo,
+                        cant1: parseFloat(fila[0].cells[2].textContent),
+                        cant2: parseFloat(fila[0].cells[3].textContent),
+                        maestro: 'pp',
+                        codQpermitido: '',
+                        pos: posN},
+                    self.eNuevosQuimicos);
+
+                    self.eNuevosQuimicos = d.oQuim;
+
+                    for (var i = 0; i < self.eQuimicosModif.length; i++) {
+                        if (self.eQuimicosModif[i].codQ === fila[0].cells[0].textContent) {
+                            self.eQuimicosModif[i].tipo = 'eli';
+                            break;
                         }
-                        
-                        fila.remove();
                     }
+
+                    fila.remove();
                     
                     e.stopPropagation();
                 });
@@ -516,57 +696,131 @@
                         b = false;
                     }
 
-                    if (b && campOblig) {                        
-                        consultas.consultarNombreMaestros(self.$nomProcPos.val() + " (" + self.$cbxfibraProcPos.val() + ")", 'nuevo', 0, 'ServletProcesosPost');
+                    if (b && campOblig) {
+                        var n = self.$nomProcPos.val().trim();
+                        self.consultarNombresProcPos('nuevo', 0, n.toUpperCase() + " (" + self.$cbxfibraProcPos.val() + ")");
                     }
                 });
                 
                 self.$eBtnModificar.on("click", function(e) {
                     e.preventDefault();
                     
-                    if (!self.$eNomProcPos.attr('disabled') || !self.$eCbxfibraProcPos.attr('disabled')) {
-                        var campOblig = false;
-                        var campos = [self.$eNomProcPos, self.$eCbxfibraProcPos, self.$eTextArea];
+                    var campObligProcPos = false;
+                    var campos = [self.$eNomProcPos, self.$eCbxfibraProcPos, self.$eTextArea];
 
-                        campOblig = u.camposObligatorios(campos, '2');
+                    campObligProcPos = u.camposObligatorios(campos, '2');
 
-                        var b = true;
+                    var b = true;
 
-                        if (um.cantidadDeQuimico({val: self.$eCantGrLtProcPos.val(), input: 'grlt'})) {
-                            b = false;
-                        } else if (um.cantidadDeQuimico({val: self.$eCantPctjProcPos.val(), input: 'pctj'})) {
-                            b = false;
+                    if (um.cantidadDeQuimico({val: self.$eCantGrLtProcPos.val(), input: 'grlt'})) {
+                        b = false;
+                    } else if (um.cantidadDeQuimico({val: self.$eCantPctjProcPos.val(), input: 'pctj'})) {
+                        b = false;
+                    }
+
+                    if (b && campObligProcPos) {
+                        var n = self.$eNomProcPos.val().trim();
+                        var nombre = n.toUpperCase();
+                        var fibra = self.$eCbxfibraProcPos.val();
+                        
+                        for (var i = 0; i < self.oProcPos.length; i++) {
+                            if (self.idProcPos === self.oProcPos[i].idMaestro){
+                                var nombreOrg = um.separarNombreDeFibra({nombre: self.oProcPos[i].nombMaestro, fibra: self.oProcPos[i].nomFibra});
+
+                                self.consultarNombresProcPos('editar', self.idProcPos, (nombre !== nombreOrg || fibra !== self.oProcPos[i].nomFibra) ? nombre + ' (' + fibra + ')' : '');
+                                break;
+                            }
                         }
-
-                        if (b && campOblig) {
-                            consultas.consultarNombreMaestros(self.$eNomProcPos.val() + " (" + self.$eCbxfibraProcPos.val() + ")", 'editar', self.idProcPos, 'ServletProcesosPost');
-                        }
-                    } else {
-                        consultas.consultarNombreMaestros('', 'editar', self.idProcPos, 'ServletProcesosPost');
                     }
                 });
             },
             
-            agregarProcPos: function(response) {
+            consultarNombresProcPos: function(t, i, n) {
                 var self = this;
 
-                if (response === 'true') {
-                    self.mensajeObligatoriedad({
-                        titulo: 'Nombre de Proceso Posterior Existente.',
-                        cuerpoMensaje: 'Ya hay un nombre de proceso posterior para la fibra seleccionada, por favor intente nuevamente.'
+                $.get(self.UrlProcPos + 'buscarNombre', {
+                    tipo: t,
+                    idMaestro: i,
+                    nombre: n
+                }, function(res) {
+                    if (t === 'nuevo') {
+                        self.agregarProcPos(res);
+                    } else {
+                        self.solicitarModificarProcPos(res);
+                    }
+
+                }).fail(function(res, status, er) {
+                    self.mensajeModalAndGritter({
+                        tipo: 'gritter',
+                        titulo: 'Problema con la Aplicación',
+                        mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
+                        clase: 'growl-danger'
                     });
-                
-                } else if (response === 'false') {
-                    var nombre = self.$nomProcPos.val() + " (" + self.$cbxfibraProcPos.val() + ")";
-                    
+                });
+            },
+            
+            agregarProcPos: function(res) {
+                var self = this;                
+                var dProcP = new Object();
+                var usuario = JSON.parse(sessionStorage.user);
+
+                if (res) {
+                    self.mensajeModalAndGritter({
+                        tipo: 'modal',
+                        titulo: 'Nombre de Proceso Posterior Existente.',
+                        mensaje: 'Ya hay un nombre de proceso posterior para la fibra seleccionada, por favor intente nuevamente.'
+                    });
+
+                } else if (!res) {
+                    var n = self.$nomProcPos.val();
+                    var nombre = n.toUpperCase() + " (" + self.$cbxfibraProcPos.val() + ")";
+
                     for (var i = 0; self.oFibras.length; i++) {
                         if (self.oFibras[i].nomFibra === self.$cbxfibraProcPos.val()) {
                             var idFib = "" + self.oFibras[i].idFibra;
                             break;
                         }
                     }
-                    
-                    um.guardarRegistro({form: '', tabla: self.$dataTableNewQProcPos, nombre: nombre, idFib: idFib, compos: ''}, 'ServletProcesosPost');
+
+                    dProcP.nombMaestro = nombre;
+                    dProcP.idFibra = idFib;
+                    dProcP.quimicos = new Array();
+
+                    for (var i = 0; i < self.quimicosPorProcPos.length; i++) {
+                        dProcP.quimicos.push(self.quimicosPorProcPos[i]);
+                    }
+
+                    $.get(self.UrlProcPos + 'guardarParaAprobacion', {
+                        datos: JSON.stringify(dProcP),
+                        idUsuario: usuario.numUsuario
+
+                    }, function(res) {
+                        if (res) {
+                            self.mensajeModalAndGritter({
+                                tipo: 'gritter',
+                                titulo: 'Aprobación de Maestro',
+                                mensaje: "¡Se ha enviado la solicitud!",
+                                clase: ''
+                            });
+
+                            self.limpiarFormulario();
+
+                        } else if (!res) {
+                            self.mensajeModalAndGritter({
+                                tipo: 'gritter',
+                                titulo: 'Aprobación de Maestro',
+                                mensaje: "¡No se entrego la solicitud!",
+                                clase: "growl-danger"
+                            });
+                        }
+                    }).fail(function(res, status, er) {
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
+                            titulo: 'Problema con la Aplicación',
+                            mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
+                            clase: "growl-danger"
+                        });
+                    });
                 }
             },
             verProcPos: function() {
@@ -577,7 +831,7 @@
                     var fila = $(this).closest('tr');
                     self.idProcPos = parseInt(fila[0].cells[0].textContent);
                     var elementos = [self.$eNomProcPos, self.$eCodQuimProcPos, self.$eNomQuimProcPos, self.$eCantGrLtProcPos, self.$eCantPctjProcPos];
-                    consultas.verificarEstadoModificacion(fila[0].cells[0].textContent, 'ServletProcesosPost');
+                    
                     var datos = {
                         frm: 'pp',
                         idReg: parseInt(fila[0].cells[0].textContent),
@@ -587,7 +841,7 @@
                         eNombreFib: self.$eCbxfibraProcPos,
                         eTabla: self.$tBodyEditProcPos,
                         eModal: self.$modalEditProcPos
-                    }
+                    };
                     
                     $("#tableEditProcPos tr:gt(1)").remove();
                     u.limpiarCampos(elementos);
@@ -600,9 +854,9 @@
                     
                     for (var i = 0; i < self.quimicosPorProcPos.length; i++) {
                         var q = {
-                            codQ: self.quimicosPorProcPos[i].codQ,
-                            cantGrLt: self.quimicosPorProcPos[i].cant1,
-                            cantPctj: self.quimicosPorProcPos[i].cant2,
+                            codQ: self.quimicosPorProcPos[i].codQuimico,
+                            cantGrLt: self.quimicosPorProcPos[i].cantGr,
+                            cantPctj: self.quimicosPorProcPos[i].cantPtj,
                             cantGrLtNue: -1,
                             cantPctjNue: -1,
                             tipo: ''
@@ -615,15 +869,6 @@
                     
             },
             
-            verificarSolicitudes: function() {
-                var self = this;
-                var elementos = [self.$eNomProcPos, self.$eCbxfibraProcPos];
-                var estado = um.verificarSolicitudes('', elementos, self.solicitudesEnviadas, {solcNombre: self.solcNombre, solcFibra: self.solcFibra});
-                
-                self.solcNombre = estado.solcNombre;
-                self.solcFibra = estado.solcFibra;
-            },
-            
             modificarQuimicoProcPos: function() {
                 var self = this;
                 
@@ -631,68 +876,140 @@
                     var fila = $(this).closest('tr');
                     self.tipoEdicion = 'editar';
                     self.filaEditar = fila;
-                    var r = um.verificarSolicitudes(fila[0].cells[0].textContent, [], self.solicitudesEnviadas, {});
                     
-                    if (!r.estado) {
-                        self.$eCodQuimProcPos.val(parseInt(fila[0].cells[0].textContent));
-                        self.$eNomQuimProcPos.val(fila[0].cells[1].textContent);
-                        self.$eCantGrLtProcPos.val(fila[0].cells[2].textContent);
-                        self.$eCantPctjProcPos.val(fila[0].cells[3].textContent);
+                    self.$eCodQuimProcPos.val(fila[0].cells[0].textContent);
+                    self.$eNomQuimProcPos.val(fila[0].cells[1].textContent);
+                    self.$eCantGrLtProcPos.val(fila[0].cells[2].textContent);
+                    self.$eCantPctjProcPos.val(fila[0].cells[3].textContent);
 
-                        var elementos = [self.$eCodQuimProcPos, self.$eNomQuimProcPos, self.$eCantGrLtProcPos, self.$eCantPctjProcPos];
-                        um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
-                        self.$eCodQuimProcPos.attr('disabled', true);
-                        self.$eNomQuimProcPos.attr('disabled', true);
+                    var elementos = [self.$eCodQuimProcPos, self.$eNomQuimProcPos, self.$eCantGrLtProcPos, self.$eCantPctjProcPos];
+                    um.cargarCoincidenciaProductoQuimico('cod', elementos, self.oQuimicos);
+                    self.$eCodQuimProcPos.attr('disabled', true);
+                    self.$eNomQuimProcPos.attr('disabled', true);
 
-                        u.camposObligatorios(elementos, '2');
-                    }
+                    u.camposObligatorios(elementos, '2');
                                    
                     e.stopPropagation();
                 });
 
             },
             
-            solicitarModificarProcPos: function(response) {
+            solicitarModificarProcPos: function(res) {
                 var self = this;
                 
-                if (response === 'true') {
-                    self.mensajeObligatoriedad({
-                        titulo: 'Nombre de Procesos Posteriores Existente.',
-                        cuerpoMensaje: 'Ya hay un nombre de proceso posterior para la fibra seleccionada, por favor intente nuevamente.'
+                if (res) {
+                    self.mensajeModalAndGritter({
+                        tipo: 'modal',
+                        titulo: 'Nombre de Proceso Posterior Existente.',
+                        mensaje: 'Ya hay un nombre de Proceso Posterior para la fibra seleccionada, por favor intente nuevamente.'
                     });
                 
-                } else if (response === 'false') {
+                } else if (!res) {
+                    var usuario = JSON.parse(sessionStorage.user);
+                    var dModProcP = new Object();
                     var nombre = '';
                     var nombreNue = '';
                     var idFib = '';
                     var idFibNue = '';
-                    
+                    var compos = '';
+                    var composNue = '';
+
                     var coment = self.$eTextArea.val();
-                    
+
                     for (var i = 0; self.oFibras.length; i++) {
                         if (self.oFibras[i].nomFibra === self.$eCbxfibraProcPos.val()) {
-                            var idFibNue = self.oFibras[i].idFibra;
+                            idFibNue = self.oFibras[i].idFibra;
+                            composNue = self.oFibras[i].composicion;
                             break;
                         }
                     }
-                    
+
                     for (var i = 0; i < self.oProcPos.length; i++) {
-                        if (self.idProcPos === self.oProcPos[i].idNomProcPost) {
-                            nombre = um.separarNombreDeFibra({nombre: self.oProcPos[i].nomProcPost, fibra: self.oProcPos[i].idFibra.nomFibra});
-                            idFib = self.oProcPos[i].idFibra.idFibra;
+                        if (self.idProcPos === self.oProcPos[i].idMaestro) {
+                            nombre = um.separarNombreDeFibra({nombre: self.oProcPos[i].nombMaestro, fibra: self.oProcPos[i].nomFibra});
+                            idFib = self.oProcPos[i].idFibra;
+                            compos = self.oProcPos[i].composFibra;
+                            var n = self.$eNomProcPos.val().trim();
                             
-                            if (nombre !== self.$eNomProcPos.val()) {
-                                nombreNue = self.$eNomProcPos.val();
+                            if (nombre !== n.toUpperCase()) {
+                                nombreNue = n.toUpperCase() + ' (' + self.$eCbxfibraProcPos.val() + ')';
                             }
-                            
+
                             if (idFib === idFibNue) {
                                 idFibNue = '';
+                                composNue = '';
+                            }
+
+                            dModProcP.idReg = self.idProcPos;
+                            dModProcP.nombreReg = self.oProcPos[i].nombMaestro;
+                            dModProcP.nombreRegNue = nombreNue;
+                            dModProcP.idFibra = idFib;
+                            dModProcP.idFibraNue = idFibNue;
+                            dModProcP.idSolicitante = usuario.idUsuario.idPersonal;
+                            dModProcP.comentario = coment;
+                            dModProcP.quimicoMod = new Array();
+                            dModProcP.quimicoNue = new Array();
+                            dModProcP.compos = compos;
+                            dModProcP.composNue = composNue;
+
+                            for (var i = 0; i < self.eQuimicosModif.length; i++) {
+                                if (self.eQuimicosModif[i].tipo !== '') {
+                                    dModProcP.quimicoMod.push(self.eQuimicosModif[i]);
+                                }
+                            }
+
+                            for (var i = 0; i < self.eNuevosQuimicos.length; i++) {
+                                dModProcP.quimicoNue.push(self.eNuevosQuimicos[i]);
+                            }
+
+                            if (dModProcP.nombreRegNue !== '' || dModProcP.idFibraNue !== '' || dModProcP.quimicoMod.length > 0 || dModProcP.quimicoNue.length > 0) {
+
+                                $.get(self.UrlProcPos + 'editar', {
+                                    datos: JSON.stringify(dModProcP)
+                                }, function(res) {
+
+                                    if (res) {
+                                        self.mensajeModalAndGritter({
+                                            tipo: 'gritter',
+                                            titulo: 'Modificar Registro',
+                                            mensaje: '¡El maestro ha sido modificado.!',
+                                            clase: ''
+                                        });
+
+                                        self.$eBtnCerrar.click();
+
+                                        $.get(self.UrlProcPos + 'maestros', function(data) {
+                                            self.cargarDatos(data, 'pp');
+                                        });
+
+                                    } else {
+                                        self.mensajeModalAndGritter({
+                                            tipo: 'gritter',
+                                            titulo: 'Modificar Registro',
+                                            mensaje: '¡El maestro no se modifico.!',
+                                            clase: 'growl-warning'
+                                        });
+                                    }
+                                }).fail(function(response, status, er) {
+                                    self.mensajeModalAndGritter({
+                                        tipo: 'gritter',
+                                        titulo: 'Problema con la Aplicación',
+                                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
+                                        clase: "growl-danger",
+                                    });
+                                });
+
+                            } else {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: "Modificar Registro",
+                                    mensaje: "¡No hay datos a modificar.!",
+                                    clase: "growl-warning",
+                                });
                             }
                             break;
                         }
                     }
-                    
-                    um.SolicitarModificarRegistro({tabla: self.$tableEditProcPos, nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, idMaestro: self.idProcPos, coment: coment}, self.eQuimicosModif, self.eNuevosQuimicos, self.$eBtnCerrar, 'ServletProcesosPost');
                 }
             },
             

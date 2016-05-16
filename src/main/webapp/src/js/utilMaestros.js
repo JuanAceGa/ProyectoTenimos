@@ -990,7 +990,7 @@
                                     '</td>' +
                                  '</tr>';
 
-                if (oDatos.frm === 'prep' || oDatos.frm === 'aux'){
+                if (oDatos.frm === 'prep' || oDatos.frm === 'aux' || oDatos.frm === 'pp'){
                     
                     for (var i = 0; i < oDatos.registros.length; i++) {
                         if (oDatos.registros[i].idMaestro === oDatos.idReg) {
@@ -1063,7 +1063,7 @@
                         }
                     }
                     oDatos.eModal.modal('show', 'slow');
-                }*/
+                }
                 
                 if (oDatos.frm === 'pp'){
                     
@@ -1100,7 +1100,7 @@
                         }
                     }
                     oDatos.eModal.modal('show', 'slow');
-                }
+                }*/
                 
                 if (oDatos.frm === 'f'){//Maestro Fibras
                     
