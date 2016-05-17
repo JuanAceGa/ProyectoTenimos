@@ -137,7 +137,8 @@
                 var t = tabla.dataTable();
                 t.fnDestroy();
                 
-                $(tabla).find('tr:gt(0)').remove();
+                $(tabla).find('tbody').remove();
+                $(tabla).append('<tbody></tbody>');
                 
                 /*
                 if (t === '1') {
@@ -198,39 +199,6 @@
                         bAutoWidth: false
                     });
                 }
-                
-                /*if (tipo === 'aux') {
-                    
-                    $(tabla).dataTable({
-                        data: oDatos,
-                        columns: [
-                            {data: 'idNomAuxiliar', className: 'center'},
-                            {data: 'nomAuxiliar', className: 'left'},
-                            {data: 'idFibra.codFibra', className: 'center'},
-                            {data: 'costoAuxiliar', className: 'right'},
-                            {data: 'fechaUso', className: 'center'},
-                            {data: 'btnView', className: 'center'}
-                        ],
-                        sPaginationType: 'full_numbers',
-                        bAutoWidth: false
-                    });
-                }
-                
-                if (tipo === 'pp') {
-                    $(tabla).dataTable({
-                        data: oDatos,
-                        columns: [
-                            {data: 'idNomProcPost', className: 'center'},
-                            {data: 'nomProcPost', className: 'center'},
-                            {data: 'idFibra.codFibra', className: 'center'},
-                            {data: 'costoProcPost', className: 'center'},
-                            {data: 'fechaUso', className: 'center'},
-                            {data: 'btnView', className: 'center'}
-                        ],
-                        sPaginationType: 'full_numbers',
-                        dAutoWidth: false
-                    });
-                }*/
                 
                 if (tipo === 'f') { //Maestro Fibras
                     $(tabla).dataTable({

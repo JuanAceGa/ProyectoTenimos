@@ -57,7 +57,6 @@
             ocultarFormularios: function() {
                 var self = this;
                 
-                
                 self.rowMaestrosPendientes.hide();
                 self.rowPreparacion.hide();
                 self.rowAuxiliares.hide();
@@ -128,7 +127,7 @@
                         
                         case "Maestros Pendientes por Aprobar":
                             
-                            consultas.consultarPendientes();
+                            pa.consultarPendientes();
                             
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestros Pendientes por Aprobar";
@@ -145,7 +144,7 @@
                         
                         case "Solicitudes Enviadas":
                             
-                            consultas.consultarPendientesParaEditar();
+                            pa.consultarPendientesParaEditar();
                             
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Solicitudes Enviadas para Aprobación";
@@ -162,7 +161,7 @@
                         
                         case "Maestro Preparación":
                             
-                            frmPreparacion.consultas();
+                            frmPreparacion.consultasPreparacion();
                             
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Preparación";
@@ -180,7 +179,7 @@
                         
                         case "Maestro Auxiliares":
                             
-                            frmAuxiliar.consultas();
+                            frmAuxiliar.consultasAuxiliares();
                             
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Auxiliares";
@@ -198,7 +197,7 @@
                             
                         case "Maestro Procesos Posteriores":
                             
-                            frmProcPos.consultas();
+                            frmProcPos.consultasProcPos();
                             
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Procesos Posteriores";
@@ -215,6 +214,9 @@
                             break;
                             
                         case "Maestro Fibras":
+                            
+                            frmFibra.consultasFibras();
+                            
                             this.children[2].className = "nav-parent active";
                             self.ubicacionActual[0].innerHTML = "<i class='fa fa-edit'></i>Laboratorio / Maestro Fibras";
                             self.ocultarFormularios();

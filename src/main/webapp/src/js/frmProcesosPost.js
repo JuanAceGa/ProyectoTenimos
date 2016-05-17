@@ -67,7 +67,7 @@
                 this.modificarQuimicoProcPos();
                 this.cerrarModalEdicion();
             },            
-            consultas: function() {
+            consultasProcPos: function() {
                 var self = this;
                 
                 $.get(self.UrlFibras + 'listadoFibras', function(data) {
@@ -136,7 +136,7 @@
                     um.destruirDataTable(self.$dataTableProcPos.dataTable(), '');
                     self.limpiarFormulario();
                     um.renderDataTables(self.$dataTableProcPos, self.oProcPos, 'pp');
-                    self.pintarCamposObligatorios();    
+                    self.pintarCamposObligatorios();
                 }
             },
             inhabilitarCampos: function() {
@@ -239,52 +239,6 @@
             metodosUtiles: function() {
                 var self = this;
 
-                self.$nomProcPos.on('keyup keypress', function() {
-                    self.$nomProcPos.val(self.$nomProcPos.val().toUpperCase());
-                });
-
-                self.$nomQuimProcPos.on('keyup keypress', function() {
-                    self.$nomQuimProcPos.val(self.$nomQuimProcPos.val().toUpperCase());
-                });
-
-                self.$eNomProcPos.on('keyup keypress', function() {
-                    self.$eNomProcPos.val(self.$eNomProcPos.val().toUpperCase());
-                });
-
-                self.$eNomQuimProcPos.on('keyup keypress', function() {
-                    self.$eNomQuimProcPos.val(self.$eNomQuimProcPos.val().toUpperCase());
-                });
-
-                self.$codQuimProcPos.on('keypress', function(eve) {
-                    if (eve.keyCode < 48 || eve.keyCode > 57) {
-                        eve.preventDefault();
-                    }
-                });
-
-                self.$eCodQuimProcPos.on('keypress', function(eve) {
-                    if (eve.keyCode < 48 || eve.keyCode > 57) {
-                        eve.preventDefault();
-                    }
-                });
-
-                self.$btnCleanProcPos.on('click', function(e) {
-                    e.preventDefault();
-
-                    self.limpiarFormulario();
-                });
-                
-                self.$eBtnRestProcPos.on('click', function(e) {
-                   e.preventDefault();
-                   
-                   var elementos = [self.$eCodQuimProcPos, self.$eNomQuimProcPos, self.$eCantGrLtProcPos, self.$eCantPctjProcPos];
-                   u.limpiarCampos(elementos);
-                   elementos.push(self.$eBtnAddLineaProcPos);
-                   u.habilitarDeshabilitarCampos(elementos, "hab");
-                   u.camposObligatorios(elementos, '3');
-                   self.tipoEdicion = 'nuevo';
-                });
-                
-                
                 self.$nomProcPos.focusin(function() {
                     self.$nomProcPos.css('text-transform', 'uppercase');
                 });

@@ -33,7 +33,7 @@
                                     <th class="col-md-4" style="text-align: center">Nombre del Maestro</th>
                                     <th class="col-md-1" style="text-align: center">Fibra</th>
                                     <th class="col-md-1" style="text-align: center">Costo $</th>
-                                    <th class="col-md-1" style="text-align: center">Ver</th>
+                                    <th class="col-md-1" style="text-align: center">Editar/Eliminar</th>
                                 </tr>
                             </thead>
                         </table>
@@ -49,13 +49,13 @@
                                     <th class="col-md-4" style="text-align: center">Nombre del Maestro</th>
                                     <th class="col-md-1" style="text-align: center">Fibra</th>
                                     <th class="col-md-1" style="text-align: center">Costo $</th>
-                                    <th class="col-md-1" style="text-align: center">Ver</th>
+                                    <th class="col-md-1" style="text-align: center">Editar/Eliminar</th>
                                 </tr>
                             </thead>
                         </table>
                     </div><!-- table-responsive -->
 
-                    <div class="table-responsive col-md-6">
+                    <!--<div class="table-responsive col-md-6">
                         <table class="table table-bordered" id="editFormula">
                             <caption><h4><strong>Formulas</strong></h4></caption>
                             <thead>
@@ -63,7 +63,7 @@
                                     <th class="col-md-4" style="text-align: center">Nombre del Maestro</th>
                                     <th class="col-md-1" style="text-align: center">Fibra</th>
                                     <th class="col-md-1" style="text-align: center">Costo $</th>
-                                    <th class="col-md-1" style="text-align: center">Ver</th>
+                                    <th class="col-md-1" style="text-align: center">Editar/Eliminar</th>
                                 </tr>
                             </thead>
                         </table>

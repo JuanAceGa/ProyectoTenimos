@@ -56,7 +56,7 @@
                         </table>
                     </div><!-- table-responsive -->
 
-                    <div class="table-responsive col-md-6">
+                    <!--<div class="table-responsive col-md-6">
                         <table class="table table-bordered" id="pendFormula">
                             <caption><h4><strong>Formulas</strong></h4></caption>
                             <thead>

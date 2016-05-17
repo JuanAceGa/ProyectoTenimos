@@ -1,9 +1,11 @@
 (function(document, window, $, undefined) {
     (function() {
         return pa = {
+            UrlFibras: 'http://localhost:8084/ERPTenimosBackend/rest/fibras/',
+            UrlProdQuimicos: 'http://localhost:8084/ERPTenimosBackend/rest/productformulacion/',
             UrlPreparacion: 'http://localhost:8084/ERPTenimosBackend/rest/preparacion/',
-            UrlAuxiliar: '',
-            UrlProPost: '',
+            UrlAuxiliar: 'http://localhost:8084/ERPTenimosBackend/rest/auxiliar/',
+            UrlProcPos: 'http://localhost:8084/ERPTenimosBackend/rest/procesopost/',
             oQuimicos: {},
             oFibras: {},
             oPpreparacion: {},
@@ -85,6 +87,152 @@
                 this.metodosUtiles();
             },
             
+            consultarPendientes: function() {
+                var self = this;
+                var usuario = JSON.parse(sessionStorage.user);
+                
+                $.get(self.UrlFibras + 'listadoFibras', function(data) {
+                    self.cargarDatos(data, 'f');
+                });
+                
+                $.get(self.UrlProdQuimicos + 'noColorantes', function(data) {
+                    self.cargarDatos(data, 'q');
+                });
+                
+                $.get(self.UrlPreparacion + 'pendientesPorAprobar', {
+                    idUser: usuario.numUsuario
+                }, function(data) {
+                    if (!$.isEmptyObject(data)) {
+                        self.cargarDatos(data, 'preparacion', 'nuevo');
+                    } else {
+                        self.mensajeGritter({
+                            titulo: 'Maestros Pendientes',
+                            mensaje: 'No hay preparaciones pendientes para aprobar.',
+                            clase: ''
+                        });
+                    }
+                }).fail(function(response, status, er) {
+                    self.mensajeGritter({
+                        titulo: 'Problema con la Aplicación',
+                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
+                        clase: "growl-warning"
+                    });
+                });
+                
+                $.get(self.UrlAuxiliar + 'pendientesPorAprobar', {
+                    idUser: usuario.numUsuario
+                }, function(data) {
+                    if (!$.isEmptyObject(data)) {
+                        self.cargarDatos(data, 'auxiliar', 'nuevo');
+                    } else {
+                        self.mensajeGritter({
+                            titulo: 'Maestros Pendientes',
+                            mensaje: 'No hay preparaciones pendientes para aprobar.',
+                            clase: ''
+                        });
+                    }
+                }).fail(function(response, status, er) {
+                    self.mensajeGritter({
+                        titulo: 'Problema con la Aplicación',
+                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
+                        clase: "growl-warning"
+                    });
+                });
+                
+                $.get(self.UrlProcPos + 'pendientesPorAprobar', {
+                    idUser: usuario.numUsuario
+                }, function(data) {
+                    if (!$.isEmptyObject(data)) {
+                        self.cargarDatos(data, 'procPost', 'nuevo');
+                    } else {
+                        self.mensajeGritter({
+                            titulo: 'Maestros Pendientes',
+                            mensaje: 'No hay preparaciones pendientes para aprobar.',
+                            clase: ''
+                        });
+                    }
+                }).fail(function(response, status, er) {
+                    self.mensajeGritter({
+                        titulo: 'Problema con la Aplicación',
+                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
+                        clase: "growl-warning"
+                    });
+                });
+            },
+            
+            consultarPendientesParaEditar: function() {
+                var self = this;
+                var usuario = JSON.parse(sessionStorage.user);
+                
+                $.get(self.UrlFibras + 'listadoFibras', function(data) {
+                    self.cargarDatos(data, 'f');
+                });
+                
+                $.get(self.UrlProdQuimicos + 'noColorantes', function(data) {
+                    self.cargarDatos(data, 'q');
+                });
+                
+                $.get(self.UrlPreparacion + 'pendientesPorAprobarYeditar', {
+                    idUser: usuario.numUsuario
+                }, function(data) {
+                    if (!$.isEmptyObject(data)) {                            
+                        self.cargarDatos(data, 'preparacion', 'editar');
+                    } else {
+                        self.mensajeGritter({
+                            titulo: 'Maestros Pendientes',
+                            mensaje: 'No hay preparaciones pendientes para aprobar.',
+                            clase: ''
+                        });
+                    }
+                }).fail(function(response, status, er) {
+                    self.mensajeGritter({
+                        titulo: 'Problema con la Aplicación',
+                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
+                        clase: 'growl-warning'
+                    });
+                });
+                
+                $.get(self.UrlAuxiliar + 'pendientesPorAprobarYeditar', {
+                    idUser: usuario.numUsuario
+                }, function(data) {
+                    if (!$.isEmptyObject(data)) {
+                        self.cargarDatos(data, 'auxiliar', 'editar');
+                    } else {
+                        self.mensajeGritter({
+                            titulo: 'Maestros Pendientes',
+                            mensaje: 'No hay preparaciones pendientes para aprobar.',
+                            clase: ''
+                        });
+                    }
+                }).fail(function(response, status, er) {
+                    self.mensajeGritter({
+                        titulo: 'Problema con la Aplicación',
+                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
+                        clase: "growl-warning"
+                    });
+                });
+                
+                $.get(self.UrlProcPos + 'pendientesPorAprobarYeditar', {
+                    idUser: usuario.numUsuario
+                }, function(data) {
+                    if (!$.isEmptyObject(data)) {
+                        self.cargarDatos(data, 'procPost', 'editar');
+                    } else {
+                        self.mensajeGritter({
+                            titulo: 'Maestros Pendientes',
+                            mensaje: 'No hay preparaciones pendientes para aprobar.',
+                            clase: ''
+                        });
+                    }
+                }).fail(function(response, status, er) {
+                    self.mensajeGritter({
+                        titulo: 'Problema con la Aplicación',
+                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
+                        clase: "growl-warning"
+                    });
+                });
+            },
+            
             cargarDatos: function(oArr, tipo, estado) {
                 var self = this;
                 
@@ -110,13 +258,27 @@
                 }
                 
                 if (tipo === 'auxiliar') {
-                    self.oPauxiliar = oArr;
-                    self.renderTabla(2);
+                    if (estado === 'nuevo') {
+                        self.oPauxiliar = oArr;
+                    }
+                    
+                    if (estado === 'editar') {
+                        self.oPauxiliarEdit = oArr;
+                    }
+                    
+                    self.renderTabla(2, estado);
                 }
                 
                 if (tipo === 'procPost') {
-                    self.oPprocPost = oArr;
-                    self.renderTabla(3);
+                    if (estado === 'nuevo') {
+                        self.oPprocPost = oArr;
+                    }
+                    
+                    if (estado === 'editar') {
+                        self.oPprocPostEdit = oArr;
+                    }
+                    
+                    self.renderTabla(3, estado);
                 }
                 
                 if (tipo === 'formula') {
@@ -149,7 +311,7 @@
                 self.$cantGrLtPend.inputNumber({
                     allowDecimals: true,
                     allowNegative: false,
-                    allowLeadingZero: false,
+                    allowLeadingZero: true,
                     thousandSep: ',',
                     decimalSep: '.',
                     maxDecimalDigits: 4
@@ -158,7 +320,7 @@
                 self.$cantPctjPend.inputNumber({
                     allowDecimals: true,
                     allowNegative: false,
-                    allowLeadingZero: false,
+                    allowLeadingZero: true,
                     thousandSep: ',',
                     decimalSep: '.',
                     maxDecimalDigits: 5
@@ -217,17 +379,12 @@
                 var arr = [];
                 var boton;
                 
-                if (t === 1 && estado === 'nuevo') {
-                    tabla = self.$pendPreparacion;
-                    arr = self.oPpreparacion;
+                if (estado === 'nuevo') {
                     boton = '<button id="btnVer" title="Ver" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
                                 '<i class="glyphicon glyphicon-eye-open"></i>' +
                             '</button>';
                     
-                } else if (t === 1 && estado === 'editar') {
-                    tabla = self.$editPreparacion;
-                    arr = self.oPpreparacionEdit;
-                    
+                } else if (estado === 'editar') {
                     boton = '<button id="btnEdit" title="Editar" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button">' +
                                 '<i class="glyphicon glyphicon-edit"></i>' +
                             '</button>' +
@@ -235,13 +392,32 @@
                                 '<i class="fa fa-trash-o"></i>' +
                             '</button>';
                 }
-
-                if (t === 2) {
-
+                
+                if (t === 1 && estado === 'nuevo') {
+                    tabla = self.$pendPreparacion;
+                    arr = self.oPpreparacion;
+                    
+                } else if (t === 1 && estado === 'editar') {
+                    tabla = self.$editPreparacion;
+                    arr = self.oPpreparacionEdit;
                 }
 
-                if (t === 3) {
-
+                if (t === 2 && estado === 'nuevo') {
+                    tabla = self.$pendAuxiliar;
+                    arr = self.oPauxiliar;
+                    
+                } else if (t === 2 && estado === 'editar') {
+                    tabla = self.$editAuxiliar;
+                    arr = self.oPauxiliarEdit;
+                }
+                
+                if (t === 3 && estado === 'nuevo') {
+                    tabla = self.$pendProcPost;
+                    arr = self.oPprocPost;
+                    
+                } else if (t === 3 && estado === 'editar') {
+                    tabla = self.$editProcPost;
+                    arr = self.oPprocPostEdit;
                 }
 
                 if (t === 4) {
@@ -253,16 +429,18 @@
 
                 for (var i = 0; i < arr.length; i++) {
                     var tempTrMaestro = self.$tempTrMaestro;
+                    try {
+                        var tempTr = tempTrMaestro
+                                .replace(':nombre:', arr[i].nombMaestro)
+                                .replace(':fibra:', arr[i].codFibra)
+                                .replace(':costo:', arr[i].costo.toFixed(2))
+                                .replace(':boton:', boton);
 
-                    var tempTr = tempTrMaestro
-                            .replace(':nombre:', arr[i].nombMaestro)
-                            .replace(':fibra:', arr[i].codFibra)
-                            .replace(':costo:', arr[i].costo.toFixed(2))
-                            .replace(':boton:', boton);
-
-                    $(tabla).find('tbody').append(tempTr);
+                        $(tabla).find('tbody').append(tempTr);
+                    } catch (e) {
+                        console.log('renderTabla::[pendientesAprobacion.js] --> Problema renderizando registro... ' + e);
+                    }
                 }
-
             },
             
             verPendientes: function() {
@@ -375,27 +553,67 @@
                 self.$btnAprobar.on('click', function(e) {
                     e.preventDefault();
                     var oArr;
+                    var url;
                     
                     if (self.tPend === 1) {
                         oArr = self.oPpreparacion;
+                        url = self.UrlPreparacion;
                         
                     } else if (self.tPend === 2) {
                         oArr = self.oPauxiliar;
+                        url = self.UrlAuxiliar;
                         
                     } else if (self.tPend === 3) {
                         oArr = self.oPprocPost;
+                        url = self.UrlProcPos;
                         
                     } else if (self.tPend === 4) {
                         oArr = self.oPformula;
+                        url = '';
                     }
                     
                     for (var i = 0; i < oArr.length; i++) {
-                        if (oArr[i].nombMaestro === self.nombreMaestro) {
-                            
-                            consultas.guardarNuevoMaestro(oArr[i], 'preparacion', self.$btnCerrarModal, self.$fila);
+                        if (oArr[i].nombMaestro === self.nombreMaestro) {                            
+                            self.guardarNuevoMaestro(oArr[i], url);
                             break;
                         }
                     }
+                });
+            },
+            
+            guardarNuevoMaestro: function(datos, url) {
+                var self = this;
+                var usuario = JSON.parse(sessionStorage.user);
+                datos.idUsuario = usuario.numUsuario;
+                
+                $.get(url + 'guardar', {
+                    datos: JSON.stringify(datos)
+                }, function(res) {
+                    if (res) {
+                        self.mensajeGritter({
+                            titulo: 'Registro Guardado',
+                            mensaje: '¡Se ha guardado satisfactoriamente!',
+                            clase: 'growl-success'
+                        });
+
+                        self.$btnCerrarModal.click();
+                        self.$fila.remove();
+
+                        self.consultarPendientes();
+
+                    } else if (!res) {
+                        self.mensajeGritter({
+                            titulo: 'Registro No Guardado',
+                            mensaje: '¡No se ha guardado el registro!',
+                            clase: 'growl-danger'
+                        });
+                    }
+                }).fail(function(res, status, er) {
+                    self.mensajeGritter({
+                        titulo: 'Problema con la Aplicación',
+                        mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
+                        clase: 'growl-danger'
+                    });
                 });
             },
             
@@ -415,7 +633,7 @@
                         self.banderaModal = 1;
                         self.tPendEdit = 1;
                         
-                        self.renderPendieteAeditar(self.oPpreparacionEdit);
+                        self.renderPendienteAeditar(self.oPpreparacionEdit);
                         
                     } else if ($(this).is('#btnBorrar')) {
                         self.tPendEdit = 1;
@@ -430,32 +648,57 @@
                     e.stopPropagation();
                 });
                 
-                self.$editAuxiliar.on('click', '#btnEdit', function (e) {
-                    self.quimicosPorMaestroPend = [];
-                    self.quimicosModifPend = [];
-                    self.quimicosNuevosPend = [];
-                    
-                    self.banderaModal = 1;
-                    self.tPendEdit = 2;
+                self.$editAuxiliar.on('click', '#btnEdit, #btnBorrar', function (e) {
                     fila = $(this).closest('tr');
                     self.nombreMaestroEdit = fila[0].cells[0].textContent;
                     
-                    self.renderPendieteAeditar(self.oPauxiliarEdit);
+                    if ($(this).is('#btnEdit')) {
+                        self.quimicosPorMaestroPend = [];
+                        self.quimicosModifPend = [];
+                        self.quimicosNuevosPend = [];
+
+                        self.banderaModal = 1;
+                        self.tPendEdit = 2;
+                        
+                        self.renderPendienteAeditar(self.oPauxiliarEdit);
+                        
+                    } else if ($(this).is('#btnBorrar')) {
+                        self.tPendEdit = 2;
+                        self.mensajeModal({
+                            tipo: 'alerta',
+                            titulo: 'Eliminar Maestro Pendiente de Auxiliar',
+                            cuerpoMensaje: 'Esta seguro que desea eliminar el maestro ' + self.nombreMaestroEdit,
+                            fila: fila
+                        });
+                    }
                     
                     e.stopPropagation();
                 });
                 
-                self.$editProcPost.on('click', '#btnEdit', function (e) {
-                    self.quimicosPorMaestroPend = [];
-                    self.quimicosModifPend = [];
-                    self.quimicosNuevosPend = [];
+                self.$editProcPost.on('click', '#btnEdit, #btnBorrar', function (e) {
                     
-                    self.banderaModal = 1;
-                    self.tPendEdit = 3;
                     fila = $(this).closest('tr');
                     self.nombreMaestroEdit = fila[0].cells[0].textContent;
                     
-                    self.renderPendieteAeditar(self.oPprocPostEdit);
+                    if ($(this).is('#btnEdit')) {
+                        self.quimicosPorMaestroPend = [];
+                        self.quimicosModifPend = [];
+                        self.quimicosNuevosPend = [];
+
+                        self.banderaModal = 1;
+                        self.tPendEdit = 3;
+                        
+                        self.renderPendienteAeditar(self.oPprocPostEdit);
+                        
+                    } else if ($(this).is('#btnBorrar')) {
+                        self.tPendEdit = 3;
+                        self.mensajeModal({
+                            tipo: 'alerta',
+                            titulo: 'Eliminar Maestro Pendiente de Procesos Posteriores',
+                            cuerpoMensaje: 'Esta seguro que desea eliminar el maestro ' + self.nombreMaestroEdit,
+                            fila: fila
+                        });
+                    }
                     
                     e.stopPropagation();
                 });
@@ -469,7 +712,7 @@
                         self.eliminarMaestroPendiente(self.oPauxiliarEdit, self.UrlAuxiliar, fila);
                         
                     } else if (self.tPendEdit === 3) {
-                        self.eliminarMaestroPendiente(self.oPpreparacionEdit, self.UrlProPost, fila);
+                        self.eliminarMaestroPendiente(self.oPprocPostEdit, self.UrlProcPos, fila);
                         
                     }
                     
@@ -501,7 +744,7 @@
                             clase: ''
                         });
 
-                        consultas.consultarPendientesParaEditar();
+                        self.consultarPendientesParaEditar();
                         fila.remove();
 
                     } else {
@@ -510,13 +753,13 @@
                             mensaje: '¡El maestro no ha sido eliminado.!',
                             clase: 'growl-warning'
                         });
-                        consultas.consultarPendientesParaEditar();
+                        self.consultarPendientesParaEditar();
                     }
                 });
                 
             },
                     
-            renderPendieteAeditar: function(oArr) {
+            renderPendienteAeditar: function(oArr) {
                 var self = this;
                 var trTemplate = '<tr>' +
                                     '<td style="text-align: center">:codQuim:</td>' +
@@ -784,7 +1027,7 @@
                             
                         } else if (self.tPendEdit === 3) {
                             arrPend = self.oPprocPostEdit;
-                            url = self.UrlProPost;
+                            url = self.UrlProcPos;
                         }
 
                         for (var i = 0; i < arrPend.length; i++) {
@@ -885,43 +1128,71 @@
                         }
                     }
                     
-                    $.ajax({
-                        url: url + 'editarPendiente',
-                        type: 'GET',
-                        dataType: 'json',
-                        data: {
-                            datos: JSON.stringify(datos)
-                        },
-                        contentType: 'application/json',
-                        mimeType: 'application/json',
-                        success: function(res) {
-                            if (res) {
-                                self.mensajeGritter({
-                                    titulo: 'Modificar Registro',
-                                    mensaje: '¡El maestro ha sido modificado.!',
-                                    clase: ''
-                                });
-
-                                consultas.consultarPendientesParaEditar();
-                                self.$btnCancelEditPend.click();
-                                //self.$modalVerPendientes.modal('hide', 'slow');
-
-                            } else {
-                                self.mensajeGritter({
-                                    titulo: 'Modificar Registro',
-                                    mensaje: '¡El maestro no ha sido modificado.!',
-                                    clase: 'growl-warning'
-                                });
-                            }
-                        },
-                        error: function() {
+                    $.get(url + 'editarPendiente', {
+                        datos: JSON.stringify(datos)
+                    }, function(res) {
+                        if (res) {
                             self.mensajeGritter({
-                                titulo: 'Problema con la Aplicación',
-                                mensaje: '¡Ah ocurrido un problema, favor intenta otra vez!',
-                                clase: 'growl-danger'
+                                titulo: 'Modificar Registro',
+                                mensaje: '¡El maestro ha sido modificado.!',
+                                clase: ''
+                            });
+
+                            self.consultarPendientesParaEditar();
+                            self.$btnCancelEditPend.click();
+
+                        } else {
+                            self.mensajeGritter({
+                                titulo: 'Modificar Registro',
+                                mensaje: '¡El maestro no ha sido modificado.!',
+                                clase: 'growl-warning'
                             });
                         }
+                    }).fail(function() {
+                        self.mensajeGritter({
+                            titulo: 'Problema con la Aplicación',
+                            mensaje: '¡Ah ocurrido un problema, favor intenta otra vez!',
+                            clase: 'growl-danger'
+                        });
                     });
+                    
+//                    $.ajax({
+//                        url: url + 'editarPendiente',
+//                        type: 'GET',
+//                        dataType: 'json',
+//                        data: {
+//                            datos: JSON.stringify(datos)
+//                        },
+//                        contentType: 'application/json',
+//                        mimeType: 'application/json',
+//                        success: function(res) {
+//                            if (res) {
+//                                self.mensajeGritter({
+//                                    titulo: 'Modificar Registro',
+//                                    mensaje: '¡El maestro ha sido modificado.!',
+//                                    clase: ''
+//                                });
+//
+//                                consultas.consultarPendientesParaEditar();
+//                                self.$btnCancelEditPend.click();
+//                                //self.$modalVerPendientes.modal('hide', 'slow');
+//
+//                            } else {
+//                                self.mensajeGritter({
+//                                    titulo: 'Modificar Registro',
+//                                    mensaje: '¡El maestro no ha sido modificado.!',
+//                                    clase: 'growl-warning'
+//                                });
+//                            }
+//                        },
+//                        error: function() {
+//                            self.mensajeGritter({
+//                                titulo: 'Problema con la Aplicación',
+//                                mensaje: '¡Ah ocurrido un problema, favor intenta otra vez!',
+//                                clase: 'growl-danger'
+//                            });
+//                        }
+//                    });
                 }
             },
             

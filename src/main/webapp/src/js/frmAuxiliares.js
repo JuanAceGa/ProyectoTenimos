@@ -68,7 +68,7 @@
                 this.cerrarModalEdicion();
             },
             
-            consultas: function() {
+            consultasAuxiliares: function() {
                 var self = this;
                 
                 $.get(self.UrlFibras + 'listadoFibras', function(data) {

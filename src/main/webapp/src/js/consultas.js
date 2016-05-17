@@ -23,7 +23,7 @@
                         //frmPreparacion.cargarDatos(response, 'f');
                         //frmAuxiliar.cargarDatos(response, 'f');
                         //frmProcPos.cargarDatos(response, 'f');
-                        frmFibra.cargarDatos(response, 'f');
+                        //frmFibra.cargarDatos(response, 'f');
                         frmFormula.cargarDatos(response, 'f');
                     },
                     error: function(response, status, er) {

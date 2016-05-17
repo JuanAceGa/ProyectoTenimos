@@ -1,6 +1,7 @@
 (function(document, window, $, undefined) {
     (function() {
         return frmFibra = {
+            UrlFibras: 'http://localhost:8084/ERPTenimosBackend/rest/fibras/',
             oFibras: {},
             $frmFibra: $('#frmFibra'),
             $dataTableFibra: $('#dataTableFibra'),
@@ -38,57 +39,67 @@
                 this.verFibra();
                 this.cerrarModalEdicion();
             },
-            cargarDatos: function(dato, opc) {
+            
+            consultasFibras: function() {
                 var self = this;
-                var data = JSON.parse(dato);
+                
+                $.get(self.UrlFibras + 'listadoFibras', function(data) {
+                    self.cargarDatos(data, 'f');
+                    
+                }).fail(function(res, status, er){
+                    self.mensajeModalAndGritter({
+                       tipo: 'gritter',
+                       titulo: 'Servicio',
+                       mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
+                       clase: 'growl-danger'
+                    });                    
+                });
+            },
+            
+            cargarDatos: function(data, opc) {
+                var self = this;
                 
                 if (opc === 'f') {
-                    if ($.type(data) !== 'array') {
-                        self.oFibras = JSON.parse(data);
-                    }
+                    self.oFibras = data;
                     
+                    um.destruirDataTable(self.$dataTableFibra.dataTable(), '4');
+                    self.limpiarFormulario();
                     um.renderDataTables(self.$dataTableFibra, self.oFibras, 'f');
-                }
-
-                if (opc === 'nf') {
-                    if (data !== null) {
-                        self.oFibras = {};
-                        self.oFibras = data;
-                        
-                        frmPreparacion.cargarDatos(dato, 'f');
-                        frmAuxiliar.cargarDatos(dato, 'f');
-                        frmProcPos.cargarDatos(dato, 'f');
-                        self.cargarDatos(dato, 'f');
-                        
-                        um.destruirDataTable(self.$dataTableFibra.dataTable(), '4');
-                        self.limpiarFormulario();
-                        um.renderDataTables(self.$dataTableFibra, self.oFibras, 'f');
-                        self.pintarCamposObligatorios();
-                    }
-                }
-                
-                if (opc === 'solic') {
-                    if (data !== null) {
-                        self.solicitudesEnviadas = data;
-                        self.solcNombre = false;
-                        self.solcFibra = false;
-                        self.solcCompos = false;
-                        self.verificarSolicitudes();
-                    }
+                    self.pintarCamposObligatorios();
                 }
             },
             
             metodosUtiles: function() {
                 var self = this;
-
-                self.$nomFibra.on('keyup keypress', function() {
-                    self.$nomFibra.val(self.$nomFibra.val().toUpperCase());
+                
+                self.$nomFibra.focusin(function() {
+                    self.$nomFibra.css('text-transform', 'uppercase');
                 });
-
-                self.$eNomFibra.on('keyup keypress', function() {
-                    self.$eNomFibra.val(self.$eNomFibra.val().toUpperCase());
+                
+                self.$nomFibra.focusout(function() {
+                    u.camposObligatorios([self.$nomFibra], '4');
+                    
+                    (self.$nomFibra.val() === '') ? self.$nomFibra.css('text-transform', '') : '';
                 });
-
+                
+                self.$eNomFibra.focusin(function() {
+                    self.$eNomFibra.css('text-transform', 'uppercase');
+                });
+                
+                self.$eNomFibra.focusout(function() {
+                    u.camposObligatorios([self.$eNomFibra], '4');
+                    
+                    (self.$eNomFibra.val() === '') ? self.$eNomFibra.css('text-transform', '') : '';
+                });
+                
+                self.$codFibra.focusout(function () {
+                    u.camposObligatorios([self.$codFibra], '4');
+                });
+                
+                self.$eCodFibra.focusout(function () {
+                    u.camposObligatorios([self.$eCodFibra], '4');
+                });
+                
                 self.$codFibra.on('keypress', function(eve) {
                     if (eve.keyCode < 48 || eve.keyCode > 57) {
                         eve.preventDefault();
@@ -135,16 +146,38 @@
               u.camposObligatorios(elementos, '1');
             },
             
-            mensajeObligatoriedad: function(mensaje) {
+            mensajeModalAndGritter: function(m) {
                 var self = this;
-
-                try {
-                    self.$tituloMensaje.text(mensaje.titulo);
-                    self.$cuerpoMensaje.text(mensaje.cuerpoMensaje);
-                    self.$modalMensaje.modal("show");
-                } catch (e) {
-                    alert(mensaje.cuerpoMensaje);
-                }
+                
+                if (m.tipo === 'modal') {
+                
+                    try {
+                        self.$tituloMensaje.text(m.titulo);
+                        self.$cuerpoMensaje.text(m.mensaje);
+                        self.$modalMensaje.modal("show");
+                    } catch (e) {
+                        alert(m.mensaje);
+                    }
+                    
+                } else if (m.tipo === 'gritter') {
+                
+                    if (m.clase === '') {
+                        $.gritter.add({
+                            title: m.titulo,
+                            text: m.mensaje,
+                            sticky: false,
+                            time: ''
+                        });
+                    } else {
+                        $.gritter.add({
+                            title: m.titulo,
+                            text: m.mensaje,
+                            class_name: m.clase,
+                            sticky: false,
+                            time: ''
+                        });
+                    }
+                }                
             },
             
             consultaNombreFibra: function(){
@@ -152,40 +185,119 @@
 
                 self.$btnSaveFibra.on("click", function(e) {
                     e.preventDefault();
-                    var campOblig = u.camposObligatorios([self.$codFibra, self.$nomFibra, self.$cbxComposicion], '2');
-
+                    var elementos = [self.$codFibra, self.$nomFibra, self.$cbxComposicion];
+                    var campOblig = u.camposObligatorios(elementos, '2');
+                    var n = self.$nomFibra.val().trim();
+                    var nombre = n.toUpperCase();
+                    
                     if (campOblig) {
-                        consultas.consultarNombreMaestros(self.$nomFibra.val(), 'nuevo', self.$codFibra.val(), 'ServletFibras');
+                        self.consultarNombresFibras('nuevo', 0, nombre);
                     }
                 });
                 
                 self.$eBtnModificar.on("click", function(e) {
                     e.preventDefault();
+                    var elementos = [self.$eCodFibra, self.$eNomFibra, self.$eCbxComposicion, self.$eTextArea];
+                    var campOblig = u.camposObligatorios(elementos, '2');
                     
-                    if (!self.$eCodFibra.attr('disabled') || !self.$eNomFibra.attr('disabled')) {
-                        var campOblig = u.camposObligatorios([self.$eCodFibra, self.$eNomFibra, self.$eCbxComposicion, self.$eTextArea], '2');
-
-                        if (campOblig) {
-                            consultas.consultarNombreMaestros(self.$eCodFibra.val() + ";" + self.$eNomFibra.val(), 'editar', self.idFibra, 'ServletFibras');
+                    var codFib = self.$eCodFibra.val().trim();
+                    var n = self.$eNomFibra.val().trim();
+                    var nombre = n.toUpperCase();
+                    
+                    if (campOblig) {
+                        for (var i = 0; i < self.oFibras.length; i++){
+                            if (self.oFibras[i].idFibra === self.idFibra) {
+                                
+                                self.consultarNombresFibras('editar', self.idFibra,(self.oFibras[i].codFibra !== codFib || self.oFibras[i].nomFibra !== nombre) ? codFib + ';' + nombre : '')
+                                break;
+                            }
                         }
-                    } else {
-                        consultas.consultarNombreMaestros('', 'editar', self.idFibra, 'ServletFibras');
                     }
                 });
             },
             
-            agregarFibra: function(response) {
+            consultarNombresFibras: function(t, i, n) {
                 var self = this;
 
-                if (response === 'true') {
-                    self.mensajeObligatoriedad({
+                $.get(self.UrlFibras + 'buscarNombre', {
+                    tipo: t,
+                    idMaestro: i,
+                    nombre: n
+                }, function(res) {
+                    if (t === 'nuevo') {
+                        self.agregarFibra(res);
+                    } else {
+                        self.solicitarModificarFibra(res);
+                    }
+
+                }).fail(function(res, status, er) {
+                    self.mensajeModalAndGritter({
+                        tipo: 'gritter',
+                        titulo: 'Problema con la Aplicación',
+                        mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
+                        clase: 'growl-danger'
+                    });
+                });
+            },
+            
+            agregarFibra: function(res) {
+                var self = this;
+                var usuario = JSON.parse(sessionStorage.user);
+                var datos = new Object();
+                
+                if (res) {
+                    self.mensajeModalAndGritter({
+                        tipo: 'modal',
                         titulo: 'Nombre de Fibra Existente.',
-                        cuerpoMensaje: 'Ya hay una fibra con ese nombre, por favor intente nuevamente.'
+                        mensaje: 'Ya hay una fibra con ese nombre, por favor intente nuevamente.'
                     });
                 
-                } else if (response === 'false') {
-
+                } else if (!res) {
+                    
+                    var n = self.$nomFibra.val().trim();
+                    
                     um.guardarRegistro({form: '', tabla: '', nombre: self.$nomFibra.val(), idFib: self.$codFibra.val(), compos: self.$cbxComposicion.val()}, 'ServletFibras');
+                    
+                    datos.nombMaestro = null;
+                    datos.fechaUso = null;
+                    datos.idFibra = null;
+                    datos.codFibra = self.$codFibra.val().trim();
+                    datos.nomFibra = n.toUpperCase();
+                    datos.composFibra = self.$cbxComposicion.val();
+                    datos.costo = null;
+                    datos.quimicos = null;
+                    datos.idUsuario = usuario.numUsuario;
+                    
+                    $.get(self.UrlFibras + 'guardar', {
+                        datos: JSON.stringify(datos)
+                    }, function(res) {
+                        if (res) {
+                            self.mensajeModalAndGritter({
+                                tipo: 'gritter',
+                                titulo: 'Registro Guardado',
+                                mensaje: '¡Se ha guardado satisfactoriamente!',
+                                clase: 'growl-success'
+                            });
+                            
+                            self.limpiarFormulario();
+                            self.consultasFibras();
+
+                        } else if (!res) {
+                            self.mensajeModalAndGritter({
+                                tipo: 'gritter',
+                                titulo: 'Registro No Guardado',
+                                mensaje: '¡No se ha guardado el registro!',
+                                clase: "growl-danger"
+                            });
+                        }
+                    }).fail(function(res, status, er) {
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
+                            titulo: 'Problema con la Aplicación',
+                            mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
+                            clase: 'growl-danger'
+                        });
+                    });
                 }
             },
             verFibra: function() {
@@ -228,38 +340,42 @@
                 self.solcFibra = estado.solcFibra;
             },
             
-            solicitarModificarFibra: function(response) {
+            solicitarModificarFibra: function(res) {
                 var self = this;
                 
-                if (response === 'true') {
-                    self.mensajeObligatoriedad({
+                if (res) {
+                    self.mensajeModalAndGritter({
+                        tipo: 'modal',
                         titulo: 'Nombre de Fibra Existente.',
-                        cuerpoMensaje: 'Ya hay una fibra con este nombre, por favor intente nuevamente.'
+                        mensaje: 'Ya hay una fibra con este nombre, por favor intente nuevamente.'
                     });
                 
-                } else if (response === 'false') {
-                    var nombre = '';
-                    var nombreNue = '';
+                } else if (!res) {
+                    var usuario = JSON.parse(sessionStorage.user);
+                    var dModFibra = new Object();
+                    var nomFibra = '';
+                    var nomFibraNue = '';
                     var idFib = '';
                     var idFibNue = '';
                     var compos = '';
                     var composNue = '';
-                    
+
                     var coment = self.$eTextArea.val();
-                    
+
                     for (var i = 0; self.oFibras.length; i++) {
                         if (self.oFibras[i].idFibra === self.idFibra) {
-                            
+
                             if (self.oFibras[i].nomFibra !== self.$eNomFibra.val()) {
-                                nombre = self.oFibras[i].nomFibra;
-                                nombreNue = self.$eNomFibra.val();
+                                nomFibra = self.oFibras[i].nomFibra;
+                                var n = self.$eNomFibra.val().trim();
+                                nomFibraNue = n.toUpperCase();
                             }
-                            
+
                             if (self.oFibras[i].codFibra !== self.$eCodFibra.val()) {
                                 idFib = self.oFibras[i].codFibra;
                                 idFibNue = self.$eCodFibra.val()
                             }
-                            
+
                             if (self.oFibras[i].composicion !== self.$eCbxComposicion.val()) {
                                 compos = self.oFibras[i].composicion;
                                 composNue = self.$eCbxComposicion.val();
@@ -267,8 +383,64 @@
                             break;
                         }
                     }
+
+                    dModFibra.idReg = self.idFibra;
+                    dModFibra.nombreReg = null;
+                    dModFibra.nombreRegNue = null;
+                    dModFibra.idFibra = idFib;
+                    dModFibra.idFibraNue = idFibNue;
+                    dModFibra.nomFibra = nomFibra;
+                    dModFibra.nomFibraNue = nomFibraNue;
+                    dModFibra.idSolicitante = usuario.idUsuario.idPersonal;
+                    dModFibra.comentario = coment;
+                    dModFibra.quimicoMod = null;
+                    dModFibra.quimicoNue = null;
+                    dModFibra.compos = compos;
+                    dModFibra.composNue = composNue;
                     
-                    um.SolicitarModificarRegistro({tabla: '', nombre: nombre, nombreNue: nombreNue, idFib: idFib, idFibNue: idFibNue, compos: compos, composNue: composNue, idMaestro: self.idFibra, coment: coment}, [], [], self.$eBtnCerrar, 'ServletFibras');
+                    if (dModFibra.idFibraNue !== '' || dModFibra.nomFibraNue !== '' || dModFibra.composNue !== '') {
+
+                        $.get(self.UrlFibras + 'editar', {
+                            datos: JSON.stringify(dModFibra)
+                        }, function(res) {
+
+                            if (res) {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: 'Modificar Registro',
+                                    mensaje: '¡El maestro ha sido modificado.!',
+                                    clase: ''
+                                });
+
+                                self.$eBtnCerrar.click();
+                                
+                                self.consultasFibras();
+
+                            } else {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: 'Modificar Registro',
+                                    mensaje: '¡El maestro no se modifico.!',
+                                    clase: 'growl-warning'
+                                });
+                            }
+                        }).fail(function(response, status, er) {
+                            self.mensajeModalAndGritter({
+                                tipo: 'gritter',
+                                titulo: 'Problema con la Aplicación',
+                                mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
+                                clase: "growl-danger",
+                            });
+                        });
+
+                    } else {
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
+                            titulo: "Modificar Registro",
+                            mensaje: "¡No hay datos a modificar.!",
+                            clase: "growl-warning",
+                        });
+                    }
                 }
             },
             
