@@ -47,12 +47,7 @@
                     self.cargarDatos(data, 'f');
                     
                 }).fail(function(res, status, er){
-                    self.mensajeModalAndGritter({
-                       tipo: 'gritter',
-                       titulo: 'Servicio',
-                       mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
-                       clase: 'growl-danger'
-                    });                    
+                    self.errorDeConexion(res, status, er, 'fibras/listadoFibras');
                 });
             },
             
@@ -203,6 +198,7 @@
                     var codFib = self.$eCodFibra.val().trim();
                     var n = self.$eNomFibra.val().trim();
                     var nombre = n.toUpperCase();
+                    var compos = self.$eCbxComposicion.val();
                     
                     if (campOblig) {
                         for (var i = 0; i < self.oFibras.length; i++){
@@ -230,13 +226,8 @@
                         self.solicitarModificarFibra(res);
                     }
 
-                }).fail(function(res, status, er) {
-                    self.mensajeModalAndGritter({
-                        tipo: 'gritter',
-                        titulo: 'Problema con la Aplicación',
-                        mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
-                        clase: 'growl-danger'
-                    });
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'fibras/buscarNombre');
                 });
             },
             
@@ -256,7 +247,7 @@
                     
                     var n = self.$nomFibra.val().trim();
                     
-                    um.guardarRegistro({form: '', tabla: '', nombre: self.$nomFibra.val(), idFib: self.$codFibra.val(), compos: self.$cbxComposicion.val()}, 'ServletFibras');
+                    //um.guardarRegistro({form: '', tabla: '', nombre: self.$nomFibra.val(), idFib: self.$codFibra.val(), compos: self.$cbxComposicion.val()}, 'ServletFibras');
                     
                     datos.nombMaestro = null;
                     datos.fechaUso = null;
@@ -274,8 +265,8 @@
                         if (res) {
                             self.mensajeModalAndGritter({
                                 tipo: 'gritter',
-                                titulo: 'Registro Guardado',
-                                mensaje: '¡Se ha guardado satisfactoriamente!',
+                                titulo: 'fibras/guardar',
+                                mensaje: '¡Se guardó la fibra.!',
                                 clase: 'growl-success'
                             });
                             
@@ -285,19 +276,14 @@
                         } else if (!res) {
                             self.mensajeModalAndGritter({
                                 tipo: 'gritter',
-                                titulo: 'Registro No Guardado',
-                                mensaje: '¡No se ha guardado el registro!',
+                                titulo: 'fibras/guardar',
+                                mensaje: '¡No se guardó la fibra.!',
                                 clase: "growl-danger"
                             });
                         }
-                    }).fail(function(res, status, er) {
-                        self.mensajeModalAndGritter({
-                            tipo: 'gritter',
-                            titulo: 'Problema con la Aplicación',
-                            mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
-                            clase: 'growl-danger'
-                        });
-                    });
+                    }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'fibras/guardar');
+                });
                 }
             },
             verFibra: function() {
@@ -308,7 +294,7 @@
                     var fila = $(this).closest('tr');
                     self.idFibra = parseInt(fila[0].cells[0].textContent);
                     var elementos = [self.$eCodFibra, self.$eNomFibra, self.$eCbxComposicion];
-                    consultas.verificarEstadoModificacion(fila[0].cells[0].textContent, 'ServletFibras');
+                    //consultas.verificarEstadoModificacion(fila[0].cells[0].textContent, 'ServletFibras');
                     var datos = {
                         frm: 'f',
                         idReg: parseInt(fila[0].cells[0].textContent),
@@ -407,8 +393,8 @@
                             if (res) {
                                 self.mensajeModalAndGritter({
                                     tipo: 'gritter',
-                                    titulo: 'Modificar Registro',
-                                    mensaje: '¡El maestro ha sido modificado.!',
+                                    titulo: 'fibras/editar',
+                                    mensaje: '¡Se modificó la fibra.!',
                                     clase: ''
                                 });
 
@@ -419,24 +405,19 @@
                             } else {
                                 self.mensajeModalAndGritter({
                                     tipo: 'gritter',
-                                    titulo: 'Modificar Registro',
-                                    mensaje: '¡El maestro no se modifico.!',
+                                    titulo: 'fibras/editar',
+                                    mensaje: '¡No se modificó la fibra.!',
                                     clase: 'growl-warning'
                                 });
                             }
-                        }).fail(function(response, status, er) {
-                            self.mensajeModalAndGritter({
-                                tipo: 'gritter',
-                                titulo: 'Problema con la Aplicación',
-                                mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
-                                clase: "growl-danger",
-                            });
+                        }).fail(function(res, status, er){
+                            self.errorDeConexion(res, status, er, 'fibras/editar');
                         });
 
                     } else {
                         self.mensajeModalAndGritter({
                             tipo: 'gritter',
-                            titulo: "Modificar Registro",
+                            titulo: "fibras/editar",
                             mensaje: "¡No hay datos a modificar.!",
                             clase: "growl-warning",
                         });
@@ -477,6 +458,16 @@
                     self.banderaModal = 0;
                     self.tipoEdicion = 'nuevo';
                     self.$eTextArea.val('');
+                });
+            },
+            
+            errorDeConexion: function(res, status, er, serv) {
+                var self = this;
+                self.mensajeModalAndGritter({
+                    tipo: 'gritter',
+                    titulo: 'Servicio: ' + serv,
+                    mensaje: 'status: ' + status + ' er: ' + er,
+                    clase: 'growl-danger'
                 });
             }
         };

@@ -74,14 +74,20 @@
                 
                 $.get(self.UrlFibras + 'listadoFibras', function(data) {
                     self.cargarDatos(data, 'f');
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'fibras/listadoFibras');
                 });
 
                 $.get(self.UrlProdQuimicos + 'noColorantes', function(data) {
                     self.cargarDatos(data, 'q');
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'productosQuimicos/noColorantes');
                 });
 
                 $.get(self.UrlPreparacion + 'maestros', function(data) {
                     self.cargarDatos(data, 'pr');
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'preparacion/maestros');
                 });
             },
             
@@ -668,13 +674,8 @@
                             self.solicitarModificarPreparacion(res);
                         }
 
-                    }).fail(function(res, status, er) {
-                        self.mensajeModalAndGritter({
-                            tipo: 'gritter',
-                            titulo: 'Problema con la Aplicación',
-                            mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
-                            clase: 'growl-danger'
-                        });
+                    }).fail(function(res, status, er){
+                        self.errorDeConexion(res, status, er, 'preparacion/buscarNombre');
                     });
                 },
             
@@ -717,7 +718,7 @@
                         if (res) {
                             self.mensajeModalAndGritter({
                                 tipo: 'gritter',
-                                titulo: 'Aprobación de Maestro',
+                                titulo: 'preparacion/guardarParaAprobacion',
                                 mensaje: "¡Se ha enviado la solicitud!",
                                 clase: ''
                             });
@@ -727,18 +728,13 @@
                         } else if (!res) {
                             self.mensajeModalAndGritter({
                                 tipo: 'gritter',
-                                titulo: 'Aprobación de Maestro',
+                                titulo: 'preparacion/guardarParaAprobacion',
                                 mensaje: "¡No se entrego la solicitud!",
                                 clase: "growl-danger"
                             });
                         }
-                    }).fail(function(res, status, er) {
-                        self.mensajeModalAndGritter({
-                            tipo: 'gritter',
-                            titulo: 'Problema con la Aplicación',
-                            mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
-                            clase: "growl-danger"
-                        });
+                    }).fail(function(res, status, er){
+                        self.errorDeConexion(res, status, er, 'preparacion/guardarParaAprobacion');
                     });
                 }
             },
@@ -889,8 +885,8 @@
                                     if (res) {
                                         self.mensajeModalAndGritter({
                                             tipo: 'gritter',
-                                            titulo: 'Modificar Registro',
-                                            mensaje: '¡El maestro ha sido modificado.!',
+                                            titulo: 'preparacion/editar',
+                                            mensaje: '¡Se modificó la preparación.!',
                                             clase: ''
                                         });
 
@@ -903,24 +899,19 @@
                                     } else {
                                         self.mensajeModalAndGritter({
                                             tipo: 'gritter',
-                                            titulo: 'Modificar Registro',
-                                            mensaje: '¡El maestro no se modifico.!',
+                                            titulo: 'preparacion/editar',
+                                            mensaje: '¡No se modificó la preparación.!',
                                             clase: 'growl-warning'
                                         });
                                     }
-                                }).fail(function(response, status, er) {
-                                    self.mensajeModalAndGritter({
-                                        tipo: 'gritter',
-                                        titulo: 'Problema con la Aplicación',
-                                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
-                                        clase: "growl-danger",
-                                    });
+                                }).fail(function(res, status, er){
+                                    self.errorDeConexion(res, status, er, 'preparacion/editar');
                                 });
 
                             } else {
                                 self.mensajeModalAndGritter({
                                     tipo: 'gritter',
-                                    titulo: "Modificar Registro",
+                                    titulo: "preparacion/editar",
                                     mensaje: "¡No hay datos a modificar.!",
                                     clase: "growl-warning",
                                 });
@@ -976,6 +967,16 @@
                     self.$eTextArea.val('');
                     self.eNuevosQuimicos = [];
                     self.eQuimicosModif = [];
+                });
+            },
+            
+            errorDeConexion: function(res, status, er, serv) {
+                var self = this;
+                self.mensajeModalAndGritter({
+                    tipo: 'gritter',
+                    titulo: 'Servicio: ' + serv,
+                    mensaje: 'status: ' + status + ' er: ' + er,
+                    clase: 'growl-danger'
                 });
             }
         };

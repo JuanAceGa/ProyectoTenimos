@@ -1,0 +1,205 @@
+<div class="row" id="rowPendFormular">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-btns">
+                    <a href="#" class="minimize">&minus;</a>
+                </div>
+                <h4 class="panel-title">Consulta de Lotes por Sección</h4>
+                <p>Lotes en la Sección Tintorería --> <span class="asterisk">*</span> Pendiente por formular solo en esta sección.</p>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <table class="table mb30" id="tableLotesPendForm" style="font-size: 0.85em">
+                        <thead>
+                            <tr>
+                                <th class="center">Check</th>
+                                <th class="center">Lote</th>
+                                <th class="center col-md-1">Código - Compos</th>
+                                <th class="center">Ver</th>
+                                <th class="center">Referencia</th>
+                                <th class="center col-md-3">Cliente</th>
+                                <th class="center">Color</th>
+                                <th class="center">Rollos</th>
+                                <th class="center">Kilos</th>
+                                <th class="center">Ancho</th>
+                                <th class="center">Días de <br>codificado</th>
+                                <th class="center">Horas en <br> sección</th>
+                                <th class="center">Compromiso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!--<tr class="center">
+                                <td>
+                                    <a href="#" id="addLote"><i class="fa fa-check-circle"></i></a>
+                                    <a href="#" id="delLote" style="display: none"><i class="fa fa-times-circle"></i></a>
+                                </td>
+                                <td>6009</td>
+                                <td>01082025 65/35</td>
+                                <td class="table-action">
+                                    <a href="#">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </td>
+                                <td>TUB BODY</td>
+                                <td>ARITEX DE COLOMBIA S.A.S</td>
+                                <td style="background-color: brown"></td>
+                                <td>56.8</td>
+                                <td>0.50</td>
+                                <td>10</td>
+                                <td>47.7</td>
+                                <td>+3</td>
+                            </tr> -->
+                        </tbody>
+                    </table>                    
+                </div> <!-- row -->
+                <div id="divLoaderPendForm">
+                </div>
+            </div><!-- panel-body -->
+            <div class="panel-footer">
+                <!-- <div class="row">
+                    <div class="col-md-9 col-sm-offset-5">
+                        <button class="btn btn-success" type="button" id="btnCargar">Cargar en Maquina</button>
+                    </div>
+                </div> -->
+            </div>
+        </div><!-- panel -->
+    </div><!-- col-md-12 -->
+</div><!--row -->
+
+<div class="modal" id="modalFormulaLotesPend" tabindex="-1" role="dia" aria-hidden="true">
+    <div class="mb10"></div>
+    <div class="modal-lg col-lg-offset-3">
+        <div class="modal-content">
+            <div class="modal-header mb15">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="tituloMFLP"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row mb20">
+                    <div class="col-sm-10 col-sm-offset-1">
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <div class="col-md-2 mb5">
+                                    <label class="col-sm-12 control-label">Imprimir</label>
+                                    <button id="btnImprimirFormula" title="Imprimir" data-placement="right" data-toggle="tooltip" class="btn tooltips col-md-offset-2" type="button"><i class="fa fa-print"></i></button>
+                                </div>
+                                <div class="col-md-2 mb5">
+                                    <label class="col-sm-12 control-label">Cortar Lote</label>
+                                    <button id="btnDividirLote" title="Dividir Lote" data-placement="right" data-toggle="tooltip" class="btn tooltips col-md-offset-3" type="button"><i class="fa fa-cut"></i></button>
+                                </div>
+                                <div class="col-md-3 mb5">
+                                    <label class="col-sm-12 control-label">Nuevo Proceso</label>
+                                    <button id="btnNewProceso" title="Nuevo Proceso" data-placement="right" data-toggle="tooltip" class="btn tooltips col-md-offset-1" type="button">Proceso</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label class="col-sm-12 control-label center">Maquina<span class="asterisk">*</span></label>
+                                <div class="col-sm-12">
+                                    <input type="text" id="pendFormMaquina" class="form-control input-sm" placeholder="Maquina" list="dlNomMaqPFM" required />
+                                    <datalist id="dlNomMaqPFM"></datalist>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="col-sm-12 control-label center">Relación de baño<span class="asterisk">*</span></label>
+                                <div class="col-sm-6 col-md-offset-3">
+                                    <input type="text" id="pendFormRelaBaño" class="form-control input-sm center" placeholder="Litros" maxlength="3" required />
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="col-sm-12 control-label center">% Absorción<span class="asterisk">*</span></label>
+                                <div class="col-sm-6 col-md-offset-3">
+                                    <input type="text" id="pendFormAbsor" class="form-control input-sm center" placeholder="Absorción Fibra" value="250" maxlength="3" required />
+                                </div>
+                            </div>
+                        </div> <!-- row -->
+                        <!-- <div class="row">
+                            <div class="form-group col-md-2">
+                                <button id="btnDividirLote" title="Dividir Lote" data-placement="right" data-toggle="tooltip" class="btn tooltips" type="button"><i class="fa fa-cut"></i></button>
+                            </div>
+                        </div> -->
+                        <div class="row">
+                            <div class="form-group col-md-3" id="pfR1">
+                                <label class="col-sm-12 center control-label">Rollos P1</label>
+                                <div class="col-sm-6  col-sm-offset-3">
+                                    <input type="text" id="pendFormRollos1" class="form-control input-sm center" placeholder="Rollos P1" required />
+                                </div>
+                            </div>
+                            <div class="form-group col-md-3" id="pfK1">
+                                <label class="col-sm-12 center control-label">Kilos P1</label>
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <input type="text" id="pendFormKilos1" class="form-control input-sm center" placeholder="Kilos P1" required />
+                                </div>
+                            </div>
+                            <div class="form-group col-md-3" id="pfR2">
+                                <label class="col-sm-12 center control-label">Rollos P2</label>
+                                <div class="col-sm-6  col-sm-offset-3">
+                                    <input type="text" id="pendFormRollos2" class="form-control input-sm center" placeholder="Rollos P2" required />
+                                </div>
+                            </div>
+                            <div class="form-group col-md-3" id="pfK2">
+                                <label class="col-sm-12 center control-label">Kilos P2</label>
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <input type="text" id="pendFormKilos2" class="form-control input-sm center" placeholder="Kilos P2" required />
+                                </div>
+                            </div>
+                        </div> <!-- row -->
+                        <!--<div class="row">
+                            <div class="form-group col-md-2">
+                                <button id="btnNewProceso" title="Nuevo Proceso" data-placement="right" data-toggle="tooltip" class="btn tooltips col-md-12" type="button">Proceso</button>
+                            </div>
+                        </div> -->
+                        <div class="row">
+                            <div class="form-group col-md-3" id="pfCNP">
+                                <label class="col-md-12 center control-label"> Código Proceso </label>
+                                <div class="col-md-6 col-sm-offset-3">
+                                    <input type="text" id="newCodProceso" class="form-control input-sm center" placeholder="Código del proceso" required />
+                                </div>
+                            </div>
+                            <div class="form-group col-md-9" id="pfNNP">
+                                <label class="col-md-12 center control-label"> Nombre Proceso </label>
+                                <div class="col-md-12">
+                                    <input type="text" id="newNomProceso" class="form-control input-sm" placeholder="Nombre del proceso" list="dlNomProceso" required />
+                                    <datalist id="dlNomProceso"></datalist>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table-bordered col-sm-12" id="tFormulaLotesPend">
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div> <!-- row -->
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-lg-11">
+                        <button type="reset" class="btn btn-default" data-dismiss="modal" id="btnCerrarModalFormulaLotesPend">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div><!-- modal -->
+
+<div class="modal fade" id="confirmarLoteDividido" tabindex="-1" role="dialog" aria-labelledby="confirmarLDTitulo" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="confirmarLDTitulo"> ... </h4>
+            </div>
+            <div class="modal-body">
+                <p id="confirmarLDPregunta">One fine body?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnNoConf">No</button>
+                <button type="button" class="btn btn-primary" id="btnSiConf">Si</button>
+            </div>
+        </div><!-- modal-content -->
+    </div><!-- modal-dialog -->
+</div><!-- modal -->

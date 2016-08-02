@@ -1,6 +1,8 @@
 (function(document, window, $, undefined) {
     (function() {
         return frmProceso = {
+            UrlProcesos: 'http://localhost:8084/ERPTenimosBackend/rest/procesos/',
+            UrlCurvas: 'http://localhost:8084/ERPTenimosBackend/rest/curvas/',
             //oFibras: {},
             oCurvas: {},
             oProcesos: {},
@@ -38,6 +40,7 @@
             banderaModal: 0,
             tipoEdicion: 'nuevo',
             filaEditar: null,
+            idCurvas: '',
             
             init: function() {
                 this.inhabilitarCampos();
@@ -51,21 +54,34 @@
                 this.verProceso();
                 this.cerrarModalEdicion();
             },
-            cargarDatos: function(dato, opc) {
+            
+            consultasProcesos: function() {
                 var self = this;
-                var data = JSON.parse(dato);
-                var elementos = [];
+
+                $.get(self.UrlProcesos + 'listaProcesos', function(res) {
+                    self.cargarDatos(res, 'pr');
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'procesos/listaProcesos');
+                });
+
+                $.get(self.UrlCurvas + 'listadoCurvas', function(res) {
+                    self.cargarDatos(res, 'c');
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'curvas/listaCurvas');
+                });
+            },
+            
+            cargarDatos: function(data, opc) {
+                var self = this;
+                var elementos;
                 
                 if (opc === 'c') {
                     self.oCurvas = '';
                     self.oCurvas = data;
-                    elementos.push(self.$dlCodCurva);
-                    elementos.push(self.$dlNomCurva);
+                    elementos = [self.$dlCodCurva, self.$dlNomCurva];
                     um.cargarDataList(elementos, self.oCurvas, 'c');
                     
-                    elementos = [];
-                    elementos.push(self.$eDlCodCurva);
-                    elementos.push(self.$eDlNomCurva);
+                    elementos = [self.$eDlCodCurva, self.$eDlNomCurva];
                     um.cargarDataList(elementos, self.oCurvas, 'c');
                 }
 
@@ -73,10 +89,12 @@
                     self.oProcesos = '';
                     self.oProcesos = data;
                     um.destruirDataTable(self.$dataTableProceso.dataTable(), '5');
+                    self.limpiarFormulario();
                     um.renderDataTables(self.$dataTableProceso, self.oProcesos, 'proc');
+                    self.pintarCamposObligatorios();
                 }
 
-                if (opc === 'npr') {
+                /*if (opc === 'npr') {
                     if (data !== null) {
                         self.oProcesos = "";
                         self.oProcesos = data;
@@ -85,7 +103,7 @@
                         um.renderDataTables(self.$dataTableProceso, self.oProcesos, 'proc');
                         self.pintarCamposObligatorios();
                     }
-                }
+                }*/
             },
             
             inhabilitarCampos: function() {
@@ -98,71 +116,91 @@
             coincidenciaCurvas: function() {
                 var self = this;
 
-                $(self.$codCurva).on("keyup change", function() {
+                $(self.$codCurva).on("keyup keypress change", function() {
                     var fila = $(this).closest('tr');
                     
                     self.$nomCurva.val("");
-                    var elementos = [self.$codCurva, self.$nomCurva, fila];
-
-                    um.cargarCoincidenciaCurvas('cod', elementos, self.oCurvas);
+                    
+                    um.cargarCoincidenciaCurvas('cod', [self.$codCurva, self.$nomCurva, fila], self.oCurvas);
                 });
 
-                $(self.$nomCurva).on('keyup change', function() {
+                $(self.$nomCurva).on('keyup keypress change', function() {
                     var fila = $(this).closest('tr');
                     
                     self.$codCurva.val("");
-                    var elementos = [self.$nomCurva, self.$codCurva, fila];
                     
-                    um.cargarCoincidenciaCurvas('nom', elementos, self.oCurvas);
+                    um.cargarCoincidenciaCurvas('nom', [self.$nomCurva, self.$codCurva, fila], self.oCurvas);
                 });
 
-                $(self.$eCodCurva).on("keyup change", function() {
+                $(self.$eCodCurva).on("keyup keypress change", function() {
                     var fila = $(this).closest('tr');
                     
                     self.$eNomCurva.val("");
-                    var elementos = [self.$eCodCurva, self.$eNomCurva, fila];
-
-                    um.cargarCoincidenciaCurvas('cod', elementos, self.oCurvas);
+                    
+                    um.cargarCoincidenciaCurvas('cod', [self.$eCodCurva, self.$eNomCurva, fila], self.oCurvas);
                 });
 
-                $(self.$eNomCurva).on('keyup change', function() {
+                $(self.$eNomCurva).on('keyup keypress change', function() {
                     var fila = $(this).closest('tr');
                     
                     self.$eCodCurva.val("");
-                    var elementos = [self.$eNomCurva, self.$eCodCurva, fila];
                     
-                    um.cargarCoincidenciaCurvas('nom', elementos, self.oCurvas);
+                    um.cargarCoincidenciaCurvas('nom', [self.$eNomCurva, self.$eCodCurva, fila], self.oCurvas);
                 });
             },
             
             metodosUtiles: function() {
                 var self = this;
 
-                self.$nomProceso.on('keyup keypress', function() {
-                    self.$nomProceso.val(self.$nomProceso.val().toUpperCase());
+                self.$nomProceso.on('focusin', function() {
+                    self.$nomProceso.css('text-transform', 'uppercase');
+                });
+                
+                self.$nomProceso.on('focusout', function() {
+                    u.camposObligatorios([self.$nomProceso], '4');
+                    
+                    (self.$nomProceso.val() === '') ? self.$nomProceso.css('text-transform', '') : '';
                 });
 
-                self.$nomCurva.on('keyup keypress', function() {
-                    self.$nomCurva.val(self.$nomCurva.val().toUpperCase());
+                self.$nomCurva.on('focusin', function() {
+                    self.$nomCurva.css('text-transform', 'uppercase');
+                });
+                
+                self.$nomCurva.on('focusout', function(){
+                    u.camposObligatorios([self.$nomCurva], '4');
+                    
+                    (self.$nomCurva.val() === '') ? self.$nomCurva.css('text-transform', '') : '';
                 });
 
-                self.$eNomProceso.on('keyup keypress', function() {
-                    self.$eNomProceso.val(self.$eNomProceso.val().toUpperCase());
+                self.$eNomProceso.on('focusin', function() {
+                    self.$eNomProceso.css('text-transform', 'uppercase');
+                });
+                
+                self.$eNomProceso.on('focusout', function(){
+                    u.camposObligatorios([self.$eNomProceso], '4');
+                    
+                    (self.$eNomProceso.val() === '') ? self.$eNomProceso.css('text-transform', '') : '';
                 });
 
-                self.$eNomCurva.on('keyup keypress', function() {
-                    self.$eNomCurva.val(self.$eNomCurva.val().toUpperCase());
+                self.$eNomCurva.on('focusout', function() {
+                    self.$eNomCurva.css('text-transform', 'uppercase');
+                });
+                
+                self.$eNomCurva.on('focusout', function() {
+                    u.camposObligatorios([self.$eNomCurva], '4');
+                    
+                    (self.$eNomCurva.val() === '') ? self.$eNomCurva.css('text-transform', '') : '';
                 });
 
-                self.$codCurva.on('keypress', function(eve) {
-                    if (eve.keyCode < 48 || eve.keyCode > 57) {
-                        eve.preventDefault();
+                self.$codCurva.on('keypress', function(e) {
+                    if (e.keyCode < 48 || e.keyCode > 57) {
+                        e.preventDefault();
                     }
                 });
 
-                self.$eCodCurva.on('keypress', function(eve) {
-                    if (eve.keyCode < 48 || eve.keyCode > 57) {
-                        eve.preventDefault();
+                self.$eCodCurva.on('keypress', function(e) {
+                    if (e.keyCode < 48 || e.keyCode > 57) {
+                        e.preventDefault();
                     }
                 });
 
@@ -189,14 +227,14 @@
                 });
 
             },
+            
             limpiarFormulario: function() {
                 var self = this;
-                
-                var elementos = [self.$nomProceso, self.$codCurva, self.$nomCurva];
-                u.limpiarCampos(elementos);
+               
+                u.limpiarCampos([self.$nomProceso, self.$codCurva, self.$nomCurva]);
 
-                $('#dataTableNewCurva tr:gt(1)').remove();
-                var fila = $('#dataTableNewCurva tr:gt(0)');
+                self.$dataTableNewCurva.find('tbody tr:gt(1)').remove();
+                var fila = self.$dataTableNewCurva.find('tr:gt(0)');
                 fila[0].cells[2].textContent = '';
                 fila[0].cells[3].textContent = '';
                 fila[0].cells[4].textContent = '';
@@ -208,20 +246,43 @@
             
             pintarCamposObligatorios: function() {
               var self = this;
-              var elementos = [self.$nomProceso, self.$codCurva, self.$nomCurva];
               
-              u.camposObligatorios(elementos, '1');
+              u.camposObligatorios([self.$nomProceso, self.$codCurva, self.$nomCurva], '1');
             },
             
-            mensajeObligatoriedad: function(mensaje) {
+            mensajeModalAndGritter: function(m) {
                 var self = this;
 
-                try {
-                    self.$tituloMensaje.text(mensaje.titulo);
-                    self.$cuerpoMensaje.text(mensaje.cuerpoMensaje);
-                    self.$modalMensaje.modal("show");
-                } catch (e) {
-                    alert(mensaje.cuerpoMensaje);
+                if (m.tipo === 'modal') {
+                    try {
+                        self.$tituloMensaje.text(m.titulo);
+                        self.$cuerpoMensaje.text(m.mensaje);
+                        self.$modalMensaje.modal("show");
+                    } catch (e) {
+                        alert(m.mensaje);
+                    }
+                } else if (m.tipo === 'gritter') {
+                    try {
+                        
+                        if (m.clase === '') {
+                            $.gritter.add({
+                                title: m.titulo,
+                                text: m.mensaje,
+                                sticky: false,
+                                time: ''
+                            });
+                        } else {
+                            $.gritter.add({
+                                title: m.titulo,
+                                text: m.mensaje,
+                                class_name: m.clase,
+                                sticky: false,
+                                time: ''
+                            });
+                        }
+                    } catch (e) {
+                        alert(m.mensaje);
+                    }
                 }
             },
             
@@ -248,9 +309,8 @@
                     var fila = $(this).closest('tr');
                     var t = parseInt(fila[0].cells[2].textContent);
                     var campOblig = false;
-                    var elementos = [self.$codCurva, self.$nomCurva];
                     
-                    campOblig = u.camposObligatorios(elementos, '2');
+                    campOblig = u.camposObligatorios([self.$codCurva, self.$nomCurva], '2');
 
                     if (campOblig) {
                         
@@ -278,10 +338,9 @@
                     e.preventDefault();
                     var fila = $(this).closest('tr');
                     var campOblig = false;
-                    var campos = [self.$eCodCurva, self.$eNomCurva];
                     var t = parseInt(fila[0].cells[2].textContent);
 
-                    campOblig = u.camposObligatorios(campos, '2');
+                    campOblig = u.camposObligatorios([self.$eCodCurva, self.$eNomCurva], '2');
 
                     if (campOblig) {
                                   
@@ -306,6 +365,7 @@
                     }
                 });
             },
+            
             borrarLineaCurva: function() {
                 var self = this;
                 
@@ -317,7 +377,7 @@
                     
                     fila.remove();
                     
-                    if ($('#dataTableNewCurva tbody tr').length - 1 === 0) {
+                    if (self.$dataTableNewCurva.find('tbody tr').length - 1 === 0) {
                         self.$btnSaveProceso.attr('disabled', true);
                     }
 
@@ -341,56 +401,126 @@
 
                 self.$btnSaveProceso.on("click", function(e) {
                     e.preventDefault();
-                    var campObligPrep = false;
-                    var elementos = [self.$nomProceso];
+                    var campObligPrep = u.camposObligatorios([self.$nomProceso], '2');
 
-                    campObligPrep = u.camposObligatorios(elementos, '2');
-
-                    if (campObligPrep) {                        
-                        consultas.consultarNombreMaestros(self.$nomProceso.val(), 'nuevo', 0, 'ServletProcesos');
+                    if (campObligPrep) {
+                        var n = self.$nomProceso.val().trim();
+                        self.consultarNombresProceso(n.toUpperCase(), 'nuevo', 0);
                     }
                 });
                 
                 self.$eBtnModificarCur.on("click", function(e) {
                     e.preventDefault();
                     
-                    var nombre = '';
-                    var campOblig = false;
-                    var elementos = [self.$eNomProceso, self.$eTiempoProceso];
-
-                    campOblig = u.camposObligatorios(elementos, '2');
+                    var campOblig = u.camposObligatorios([self.$eNomProceso, self.$eTiempoProceso], '2');
 
                     if (campOblig) {
-                        for (var i = 0; i < self.oProcesos.length; i++) {
+                        var n = self.$eNomProceso.val().trim();
+                        
+                        /*for (var i = 0; i < self.oProcesos.length; i++) {
                             if (self.oProcesos[i].idProceso === parseInt(self.idProceso)) {
                                 if (self.oProcesos[i].nomProceso !== self.$eNomProceso.val()) {
-                                    nombre = self.$eNomProceso.val();
+                                    n = self.$eNomProceso.val();
                                 }
                                 break;
                             }
-                        }
-                        
-                        consultas.consultarNombreMaestros(nombre, 'editar', self.idProceso, 'ServletProcesos'); 
+                        }*/
+                        self.consultarNombresProceso(n.toUpperCase(), 'editar', self.idProceso);
                     }
                 });
             },
             
-            agregarProceso: function(response) {
+            consultarNombresProceso: function(n, t, i) {
                 var self = this;
+                
+                $.get(self.UrlProcesos + 'buscarNombre', {
+                    nombre: n,
+                    tipo: t,
+                    idMaestro: i
+                }, function(res) {
+                    if (t === 'nuevo') {
+                        self.agregarProceso(res);
+                    } else {
+                        self.solicitarModificarProceso(res);
+                    }
 
-                if (response === 'true') {
+                }).fail(function(res, status, er) {
+                    self.errorDeConexion(res, status, er, 'procesos/buscarNombre');
+                });
+            },
+            
+            agregarProceso: function(res) {
+                var self = this;
+                
+                if (res) {
                     self.mensajeObligatoriedad({
+                        tipo: 'modal',
                         titulo: 'Nombre de Proceso Existente.',
-                        cuerpoMensaje: 'Ya hay proceso con ese nombre, por favor intente nuevamente.'
+                        mensaje: 'Ya hay proceso con ese nombre, por favor intente nuevamente.'
                     });
                 
-                } else if (response === 'false') {
+                } else if (!res) {
+                    var usuario = JSON.parse(sessionStorage.user);
                     var nombre = self.$nomProceso.val();
+                    self.obtenerDatosDeTabla(self.$dataTableNewCurva);
                     
-                    um.guardarRegistro({form: 'proceso', tabla: self.$dataTableNewCurva, nombre: nombre}, 'ServletProcesos');
+                    var datos = {};
+                    datos.nomProceso = nombre.trim();
+                    datos.idCurvas = self.idCurvas;
+                    datos.idUsuario = usuario.idUsuario.idPersonal;
                     
+                    $.get(self.UrlProcesos + 'guardar', {
+                        datos: JSON.stringify(datos)
+                    }, function(res){
+                        if (res) {
+                            self.mensajeModalAndGritter({
+                                tipo: 'gritter',
+                                titulo: 'Registro Guardado',
+                                mensaje: '¡Se ha guardado satisfactoriamente!',
+                                clase: "growl-success",
+                            });
+                            
+                            $.get(self.UrlProcesos + 'listaProcesos', function(res) {
+                                self.cargarDatos(res, 'pr');
+                            }).fail(function(res, status, er){
+                                self.errorDeConexion(res, status, er, 'procesos/listaProcesos');
+                            });
+                            
+                        } else if (!res) {
+                            self.mensajeModalAndGritter({
+                                tipo: 'gritter',
+                                titulo: 'Registro No Guardado',
+                                mensaje: '¡No se ha guardado el registro!',
+                                clase: 'growl-danger'
+                            });
+                        }
+                        
+                    }).fail(function(res, status, er) {
+                        self.errorDeConexion(res, status, er, 'procesos/guardar');
+                    });
                 }
             },
+            
+            obtenerDatosDeTabla: function(tabla) {
+                var self = this;
+                
+                $(tabla).find('tbody tr').each(function(index) {
+                    if (index > 0) {
+                        $(this).children('td').each(function(index2) {
+                            switch (index2) {
+                                case 0: //Id Curva
+                                    if (self.idCurvas === '') {
+                                        self.idCurvas = $(this).text();
+                                    } else {
+                                        self.idCurvas += "-" + $(this).text();
+                                    }
+                                    break;
+                            }
+                        });
+                    }
+                });
+            },
+            
             verProceso: function() {
                 var self = this;
 
@@ -430,19 +560,20 @@
                     for (var c = 0; c < curvas.length; c++) {
                         for (var i = 0; i < self.oCurvas.length; i++) {
                             if (parseInt(curvas[c]) === self.oCurvas[i].idCurva) {
-                                var newTr = trTemplate.replace(':codCurva:', self.oCurvas[i].idCurva)
+                                var newTr = trTemplate;
+                                var tr = newTr.replace(':codCurva:', self.oCurvas[i].idCurva)
                                                       .replace(':nomCurva:', self.oCurvas[i].nomCurva)
                                                       .replace(':tiempo:', self.oCurvas[i].tiempoCurva)
                                                       .replace(':llenado:', self.oCurvas[i].llenadoCurva)
                                                       .replace(':rinse:', self.oCurvas[i].rinseCurva);
                     
-                                self.$eTableEditTbody.append(newTr);
+                                self.$eTableEditTbody.append(tr);
                                 break;
                             }
                         }
                     }                    
                     
-                    self.$modalEditProceso.modal('show', 'slow');                    
+                    self.$modalEditProceso.modal('show', 'slow');
                     u.camposObligatorios(elementos, '3');
                     
                     e.stopPropagation();
@@ -450,16 +581,18 @@
                     
             },
             
-            solicitarModificarProceso: function(response) {
+            solicitarModificarProceso: function(res) {
                 var self = this;
                 
-                if (response === 'true') {
-                    self.mensajeObligatoriedad({
+                if (res) {
+                    self.mensajeModalAndGritter({
+                        tipo: 'modal',
                         titulo: 'Nombre de Proceso Existente.',
-                        cuerpoMensaje: 'Ya hay proceso con ese nombre, por favor intente nuevamente.'
+                        mensaje: 'Ya hay proceso con ese nombre, por favor intente nuevamente.'
                     });
                 
-                } else if (response === 'false') {
+                } else if (!res) {
+                    self.idCurvas = '';
                     var nombre = '';
                     var j = 0;
                     
@@ -469,7 +602,7 @@
                         if (self.oProcesos[i].idProceso === parseInt(self.idProceso)) {
                             j = i;
                             if (self.oProcesos[i].nomProceso !== self.$eNomProceso.val()) {
-                                nombre = self.$eNomProceso.val();
+                                nombre = self.$eNomProceso.val().trim();
                             } else {
                                 nombre = self.oProcesos[i].nomProceso;
                             }
@@ -479,6 +612,60 @@
                     }
                     
                     um.SolicitarModificarRegistro({tabla: self.$eTableEditCurva, nombre: nombre, idMaestro: self.idProceso, coment: coment, org: self.oProcesos[j]}, [], [], self.$eBtnCerrarModalEditCur, 'ServletProcesos');
+                    
+                    self.obtenerDatosDeTabla(self.$eTableEditCurva);
+                    
+                    var idCurvas = self.oProcesos[j].idCurvas.split('-');
+                    var idCurvasN = self.idCurvas.split('-');
+                    var c = 0;
+                    
+                    for (var i = 0; i < idCurvas.length; i++) {
+                        for (var x = 0; x < idCurvasN.length; x++) {
+                            if (idCurvasN[x] === idCurvas[i]) {
+                                c++;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (c > 0) {
+                        var usuario = JSON.parse(sessionStorage.user);
+                        var datos = {};
+                        datos.idProceso = self.idProceso;
+                        datos.nomProceso = nombre;
+                        datos.idCurvas = self.idCurvas;
+                        datos.idUsuario = usuario.idUsuario.idPersonal;
+                        
+                        $.get(self.UrlProcesos + 'editar', {
+                            datos: JSON.stringify(datos)
+                        }, function(res) {
+                            if (res) {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: 'Modificar Registro',
+                                    mensaje: '¡Solicitud enviada con éxito.!'
+                                });
+                                
+                                $.get(self.UrlProcesos + 'listaProcesos', function(res) {
+                                    self.cargarDatos(res, 'pr');
+                                }).fail(function(res, status, er){
+                                    self.errorDeConexion(res, status, er, 'procesos/listaProcesos');
+                                });
+                                
+                                self.$eBtnCerrarModalEditCur.click();
+
+                            } else {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: 'Modificar Registro',
+                                    mensaje: '¡No se entregó la solicitud de modificación.!',
+                                    clase: 'growl-danger'
+                                });
+                            }
+                        }).fail(function(res, status, er) {
+                            self.errorDeConexion(res, status, er, 'procesos/guardar');
+                        });
+                    }
                 }
             },
             
@@ -516,6 +703,16 @@
                     self.tipoEdicion = 'nuevo';
                     self.$eTextArea.val('');
                 });
+            },
+            
+            errorDeConexion: function(res, status, er, serv){
+                var self = this;
+                self.mensajeModalAndGritter({
+                       tipo: 'gritter',
+                       titulo: 'Servicio: ' + serv,
+                       mensaje: 'status: ' + status + ' er: ' + er,
+                       clase: 'growl-danger'
+                    });
             }
         };
     })();

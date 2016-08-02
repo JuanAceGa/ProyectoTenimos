@@ -37,8 +37,11 @@
 
                                     <div class="form-group col-sm-5">
                                         <label class="col-sm-3">Código Formula:</label>
-                                        <div class="col-sm-9">
+                                        <div class="col-sm-5">
                                             <input type="text" id="codFormula" class="form-control" disabled="true" placeholder="Código de la formula"/>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="consecFormula" class="form-control" placeholder="Consecutivo"/>
                                         </div>
                                     </div>
                                 </div>
@@ -394,8 +397,8 @@
                                                     <td class="col-sm-1 center" id="tPh"></td>
                                                     <td class="col-sm-1"><strong>Pantone:</strong></td>
                                                     <td class="col-sm-1 center" id="tPantone"></td>
-                                                    <td class="col-sm-1"></td>
-                                                    <td class="col-sm-1"></td>
+                                                    <td class="col-sm-1"><strong>Costo Formula:</strong></td>
+                                                    <td class="col-sm-1 center" id="cForm"></td>
                                                 </tr>
                                                 <tr style="background: #E0E3E5;">
                                                     <td class="col-sm-1 center"><strong>Sección</strong></td>

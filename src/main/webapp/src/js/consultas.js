@@ -24,7 +24,7 @@
                         //frmAuxiliar.cargarDatos(response, 'f');
                         //frmProcPos.cargarDatos(response, 'f');
                         //frmFibra.cargarDatos(response, 'f');
-                        frmFormula.cargarDatos(response, 'f');
+                        //frmFormula.cargarDatos(response, 'f');
                     },
                     error: function(response, status, er) {
                         console.log("error: " + response + " status: " + status + " er:" + er);
@@ -39,14 +39,14 @@
                     //frmPreparacion.cargarDatos(response, 'q');
                     //frmAuxiliar.cargarDatos(response, 'q');
                     //frmProcPos.cargarDatos(response, 'q');
-                    frmFormula.cargarDatos(response, 'q');
+                    //frmFormula.cargarDatos(response, 'q');
                 });
             },
             
             consultarQuimicosColorantes: function() {
                 
                 $.get('../../../ServletProdFormulacion', {accion: 'colorantes'}, function(response) {
-                    frmFormula.cargarDatos(response, 'clrts');
+                    //frmFormula.cargarDatos(response, 'clrts');
                 });
             },
             
@@ -55,62 +55,62 @@
                 if (m === '') {
                     $.get('../../../ServletPreparaciones', {accion: 'buscar'}, function(response) {
                         //frmPreparacion.cargarDatos(response, 'pr');
-                        frmFormula.cargarDatos(response, 'pre');
+                        //frmFormula.cargarDatos(response, 'pre');
                     });
 
                     $.get('../../../ServletAuxiliares', {accion: 'buscar'}, function(response) {
                         //frmAuxiliar.cargarDatos(response, 'au');
-                        frmFormula.cargarDatos(response, 'aux');
+                        //frmFormula.cargarDatos(response, 'aux');
                     });
 
                     $.get('../../../ServletProcesosPost', {accion: 'buscar'}, function(response) {
                         //frmProcPos.cargarDatos(response, 'pp');
-                        frmFormula.cargarDatos(response, 'pp');
+                        //frmFormula.cargarDatos(response, 'pp');
                     });
                     
                     $.get('../../../ServletFormulas', {accion: 'buscar', tipo:'compos'}, function(response) {
-                        frmFormula.cargarDatos(response, 'cps');
+                        //frmFormula.cargarDatos(response, 'cps');
                     });
                 }
                 
                 if (m === '' || m === 'p') {
                     $.get('../../../ServletProcesos', {accion: 'buscar'}, function(response) {
-                        frmProceso.cargarDatos(response, 'pr');
-                        frmFormula.cargarDatos(response, 'pr');
+                        //frmProceso.cargarDatos(response, 'pr');
+                        //frmFormula.cargarDatos(response, 'pr');
                     });
                 }
                 
                 if (m === '' || m === 'c') {
                     $.get('../../../ServletCurvas', {accion: 'buscar'}, function(response) {
-                        frmProceso.cargarDatos(response, 'c');
-                        frmCurva.cargarDatos(response, 'c');
-                        frmFormula.cargarDatos(response, 'curv');
+                        //frmProceso.cargarDatos(response, 'c');
+                        //frmCurva.cargarDatos(response, 'c');
+                        //frmFormula.cargarDatos(response, 'curv');
                     });
                 }
                 
                 if (m === '' || m === 'll') {
                     $.get('../../../ServletLabelList', {accion: 'buscar'}, function(response) {
-                        frmListaC.cargarDatos(response, 'll');
-                        frmCurva.cargarDatos(response, 'll');
+                        //frmListaC.cargarDatos(response, 'll');
+                        //frmCurva.cargarDatos(response, 'll');
                     });
                 }
                 
                 if (m === '' || m === 'lc') {
                     $.get('../../../ServletListaCheck', {accion: 'buscar'}, function(response) {
-                            frmListaC.cargarDatos(response, 'lc');
-                            frmCurva.cargarDatos(response, 'lc');
+                            //frmListaC.cargarDatos(response, 'lc');
+                            //frmCurva.cargarDatos(response, 'lc');
                     });
                 }
                 
                 if (m === '' || m === 'clr') { //Colores
                     $.get('../../../ServletFormulas', {accion: 'buscar', tipo: 'color'}, function(response) {
-                            frmFormula.cargarDatos(response, 'clr');
+                            //frmFormula.cargarDatos(response, 'clr');
                     });
                 }
                 
                 if (m === '' || m === 'tn') { //Tonos
                     $.get('../../../ServletFormulas', {accion: 'buscar', tipo: 'tono'}, function(response) {
-                            frmFormula.cargarDatos(response, 'tn');
+                            //frmFormula.cargarDatos(response, 'tn');
                     });
                 }
             },

@@ -1,6 +1,8 @@
 (function(document, window, $, undefined) {
     (function() {
         return frmListaC = {
+            UrlLabelCheck: 'http://localhost:8084/ERPTenimosBackend/rest/listaCheck/',
+            UrlListaCheck: 'http://localhost:8084/ERPTenimosBackend/rest/nombreListCheck/',
             oItems: '',
             oListas: '',
             idItem: 0,
@@ -53,39 +55,42 @@
                 this.cerrarModalEdicion();
             },
             
-            cargarDatos: function(dato, opc) {
+            consultasListaCheck: function() {
                 var self = this;
-                var data = JSON.parse(dato);
-
+                
+                $.get(self.UrlLabelCheck + 'listadoItems', function(res) {
+                    self.cargarDatos(res, 'll');
+                
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'labelCheck/listadoItems');
+                });
+                    
+                $.get(self.UrlListaCheck + 'listadoListCheck', function(res) {
+                    self.cargarDatos(res, 'lc');
+                    
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'nombreListCheck/listadoListCheck');
+                });
+            },
+            
+            cargarDatos: function(data, opc) {
+                var self = this;
+                
                 if (opc === 'll') {//Cargar label para lista.
-                    self.oItems = '';
-                    self.oItems = data;
-                    um.destruirDataTable(self.$dataTableLabel, '');
-                    um.renderDataTables(self.$dataTableLabel, self.oItems, 'll');
-                    um.cargarDataList([self.$dlNomEtiqueta, self.$eDlNomEtiqueta], self.oItems, 'll');
-                }
-
-                if (opc === 'nll') {//Nuevo label para lista.
                     if (!$.isEmptyObject(data)) {
-                        self.oItems = "";
+                        self.oItems = '';
                         self.oItems = data;
                         um.destruirDataTable(self.$dataTableLabel, '');
                         self.limpiarFormulario('ll');
                         um.renderDataTables(self.$dataTableLabel, self.oItems, 'll');
+                        um.cargarDataList([self.$dlNomEtiqueta, self.$eDlNomEtiqueta], self.oItems, 'll');
                         self.pintarCamposObligatorios('ll');
                     }
                 }
                 
                 if (opc === 'lc') {//Cargar listas de chequeo.
-                    self.oListas = '';
-                    self.oListas = data;
-                    um.destruirDataTable(self.$dataTableLista, '');
-                    um.renderDataTables(self.$dataTableLista, self.oListas, 'lc');
-                }
-                
-                if (opc === 'nlc') {//Nueva lista de chequeo.
                     if (!$.isEmptyObject(data)) {
-                        self.oListas = "";
+                        self.oListas = '';
                         self.oListas = data;
                         um.destruirDataTable(self.$dataTableLista, '');
                         self.limpiarFormulario('lc');
@@ -104,20 +109,24 @@
             metodosUtiles: function() {
                 var self = this;
                 
-                self.$nomItem.on('keypress keyup', function() {
-                    self.$nomItem.val(self.$nomItem.val().toUpperCase());
+                self.$nomItem.on('focusin', function() {
+                    self.$nomItem.css('text-transform', 'uppercase');
                 });
                 
-                self.$nomItem.focusout(function(){
-                    u.camposObligatorios([self.$nomItem], '2');
+                self.$nomItem.on('focusout', function(){
+                    u.camposObligatorios([self.$nomItem], '4');
+                    
+                    (self.$nomItem.val() === '') ? self.$nomItem.css('text-transform', '') : '';
                 });
                 
-                self.$eNomItem.on('keyup keypress', function() {
-                    self.$eNomItem.val(self.$eNomItem.val().toUpperCase());
+                self.$eNomItem.on('focusin', function() {
+                    self.$eNomItem.css('text-transform', 'uppercase');
                 });
                 
-                self.$eNomItem.focusout(function(){
-                    u.camposObligatorios([self.$eNomItem], '2');
+                self.$eNomItem.on('focusout', function(){
+                    u.camposObligatorios([self.$eNomItem], '4');
+                    
+                    (self.$eNomItem.val() === '') ? self.$eNomItem.css('text-transform', '') : '';
                 });
                 
                 self.$btnCleanItem.on('click', function(e) {
@@ -126,36 +135,44 @@
                     self.limpiarFormulario('ll');
                 });
                 
-                self.$nomListCheck.on('keyup keypress', function() {
-                    self.$nomListCheck.val(self.$nomListCheck.val().toUpperCase());
+                self.$nomListCheck.on('focusin', function() {
+                    self.$nomListCheck.css('text-transform', 'uppercase');
                 });
                 
-                self.$nomListCheck.focusout(function(){
-                    u.camposObligatorios([self.$nomListCheck], '2');
+                self.$nomListCheck.on('focusout', function(){
+                    u.camposObligatorios([self.$nomListCheck], '4');
+                    
+                    (self.$nomListCheck.val() === '') ? self.$nomListCheck.css('text-transform', '') : '';
                 });
                 
-                self.$nomLabel.on('keyup keypress', function() {
-                    self.$nomLabel.val(self.$nomLabel.val().toUpperCase());
+                self.$nomLabel.on('focusin', function() {
+                    self.$nomLabel.css('text-transform', 'uppercase');
                 });
                 
-                self.$nomLabel.focusout(function(){
-                    u.camposObligatorios([self.$nomLabel], '2');
+                self.$nomLabel.on('focusout', function(){
+                    u.camposObligatorios([self.$nomLabel], '4');
+                    
+                    (self.$nomLabel.val() === '') ? self.$nomLabel.css('text-transform', '') : '';
                 });
                 
-                self.$eNomLista.on('keyup keypress', function() {
-                    self.$eNomLista.val(self.$eNomLista.val().toUpperCase());
+                self.$eNomLista.on('focusin', function() {
+                    self.$eNomLista.css('text-transform', 'uppercase');
                 });
                 
-                self.$eNomLista.focusout(function(){
-                    u.camposObligatorios([self.$eNomLista], '2');
+                self.$eNomLista.on('focusout', function(){
+                    u.camposObligatorios([self.$eNomLista], '4');
+                    
+                    (self.$eNomLista.val() === '') ? self.$eNomLista.css('text-transform', '') : '';
                 });
                 
-                self.$eNomLabel.on('keyup keypress', function() {
-                    self.$eNomLabel.val(self.$eNomLabel.val().toUpperCase());
+                self.$eNomLabel.on('focusin', function() {
+                    self.$eNomLabel.css('text-transform', 'uppercase');
                 });
                 
-                self.$eNomLabel.focusout(function(){
-                    u.camposObligatorios([self.$eNomLabel], '2');
+                self.$eNomLabel.on('focusout', function(){
+                    u.camposObligatorios([self.$eNomLabel], '4');
+                    
+                    (self.$eNomLabel.val() === '') ? self.$eNomLabel.css('text-transform', '') : '';
                 });
                 
                 self.$btnCleanLista.on('click', function(e) {
@@ -179,8 +196,6 @@
                 }
                 
                 u.limpiarCampos(elementos);
-
-                //self.pintarCamposObligatorios();
             },
             
             pintarCamposObligatorios: function() {
@@ -191,7 +206,7 @@
             },
             
             agregarLineaLabel: function() {
-                var self = this;                
+                var self = this;
                 var trTemplate = '<tr>' +
                                     '<td style="text-align: center">:idLabel:</td>' +
                                     '<td>:nomLabel:</td>' +
@@ -204,7 +219,7 @@
                 
                 self.$btnAddLineaLabel.on('click', function(e) {
                     e.preventDefault();
-                    var fila = $(this).closest('tr');
+                    //var fila = $(this).closest('tr');
                     var nomLabel = self.$nomLabel.val();
                     var campOblig = u.camposObligatorios([self.$nomLabel], '2');
 
@@ -228,7 +243,7 @@
                 
                 self.$eBtnAddLineaLabel.on('click', function(e) {
                     e.preventDefault();
-                    var fila = $(this).closest('tr');
+                    //var fila = $(this).closest('tr');
                     var nomLabel = self.$eNomLabel.val();
                     var campOblig = u.camposObligatorios([self.$eNomLabel], '2');
 
@@ -273,16 +288,38 @@
                 });
             },
             
-            mensajeObligatoriedad: function(mensaje) {
+            mensajeModalAndGritter: function(m) {
                 var self = this;
-
-                try {
-                    self.$tituloMensaje.text(mensaje.titulo);
-                    self.$cuerpoMensaje.text(mensaje.cuerpoMensaje);
-                    self.$modalMensaje.modal("show");
-                } catch (e) {
-                    alert(mensaje.cuerpoMensaje);
-                }
+                
+                if (m.tipo === 'modal') {
+                
+                    try {
+                        self.$tituloMensaje.text(m.titulo);
+                        self.$cuerpoMensaje.text(m.mensaje);
+                        self.$modalMensaje.modal("show");
+                    } catch (e) {
+                        alert(m.mensaje);
+                    }
+                    
+                } else if (m.tipo === 'gritter') {
+                
+                    if (m.clase === '') {
+                        $.gritter.add({
+                            title: m.titulo,
+                            text: m.mensaje,
+                            sticky: false,
+                            time: ''
+                        });
+                    } else {
+                        $.gritter.add({
+                            title: m.titulo,
+                            text: m.mensaje,
+                            class_name: m.clase,
+                            sticky: false,
+                            time: ''
+                        });
+                    }
+                }                
             },
             
             consultaNombre: function() {
@@ -294,7 +331,9 @@
                     var campOblig = u.camposObligatorios([self.$nomItem], '2');
 
                     if (campOblig) {
-                        consultas.consultarNombreMaestros(self.$nomItem.val().trim(), 'nuevo', 0, 'ServletLabelList');
+                        var n = self.$nomItem.val().trim();
+                        
+                        self.consultarNombresListaLabel(n.toUpperCase(), 'nuevo', 0, 'label');
                     }
                 });
                 
@@ -304,78 +343,195 @@
                     var campOblig = u.camposObligatorios([self.$nomListCheck], '2');
                     
                     if (campOblig) {
-                        consultas.consultarNombreMaestros(self.$nomListCheck.val().trim(), 'nuevo', 0, 'ServletListaCheck');
+                        var n = self.$nomListCheck.val().trim();
+                        
+                        self.consultarNombresListaLabel(n.toUpperCase(), 'nuevo', 0, 'lista');
                     }
                 });
 
                 self.$eBtnModificarLabel.on('click', function(e) {
                     e.preventDefault();
 
-                    var nombre = '';
                     var campOblig = u.camposObligatorios([self.$eNomItem], '2');
 
                     if (campOblig) {
-                        for (var i = 0; i < self.oItems.length; i++) {
-                            if (self.oItems[i].idLabel === parseInt(self.idItem)) {
-                                if (self.oItems[i].nombreLabel !== self.$eNomItem.val()) {
-                                    nombre = self.$eNomItem.val().trim();
-                                }
-                                break;
-                            }
-                        }
-
-                        consultas.consultarNombreMaestros(nombre, 'editar', self.idItem, 'ServletLabelList');
+                        var n = self.$eNomItem.val().trim();
+                        
+                        self.consultarNombresListaLabel(n.toUpperCase(), 'editar', self.idItem, 'label');
                     }
                 });
                 
                 self.$eBtnModificarLista.on('click', function(e) {
                     e.preventDefault();
 
-                    var nombre = '';
                     var campOblig = u.camposObligatorios([self.$eNomLista], '2');
 
                     if (campOblig) {
-                        for (var i = 0; i < self.oListas.length; i++) {
-                            if (self.oListas[i].idNomLista === parseInt(self.idLista)) {
-                                if (self.oListas[i].nomListaCheck !== self.$eNomLista.val()) {
-                                    nombre = self.$eNomLista.val().trim();
-                                }
-                                break;
-                            }
-                        }
+                        var n = self.$eNomLista.val().trim();
 
-                        consultas.consultarNombreMaestros(nombre, 'editar', self.idLista, 'ServletListaCheck');
+                        self.consultarNombresListaLabel(n.toUpperCase(), 'editar', self.idLista, 'lista');
                     }
                 });
             },
-                
-            agregarRegistro: function(response, frm) {
+            
+            consultarNombresListaLabel: function(n, t, i, frm) {
                 var self = this;
+                var url;
+                
+                if (frm === 'label') {
+                    url = self.UrlLabelCheck;
+                } else {
+                    url = self.UrlListaCheck;
+                }
+                    
+                $.get(url + 'buscarNombre', {
+                    nombre: n,
+                    tipo: t,
+                    idMaestro: i
+                }, function(res) {
+                    if (t === 'nuevo') {
+                        
+                        if (frm === 'label') {
+                            self.agregarRegistro(res, 'll');
+                        } else {
+                            self.agregarRegistro(res, 'lc');
+                        }
+                        
+                    } else {
+                        if (frm === 'label') {
+                            self.solicitarModificarRegistro(res, 'll');
+                        } else {
+                            self.solicitarModificarRegistro(res, 'lc');
+                        }
+                    }
 
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, frm + 'listaCheck/buscarNombre');
+                });
+            },
+                
+            agregarRegistro: function(res, frm) {
+                var self = this;
+                var usuario = JSON.parse(sessionStorage.user);
+                
                 if (frm === 'll') {
-                    if (response === 'true') {
-                        self.mensajeObligatoriedad({
+                    if (res) {
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
                             titulo: 'Etiqueta para Lista de Chequeo Existente.',
-                            cuerpoMensaje: 'Ya hay una etiqueta con ese nombre, por favor intente nuevamente.'
+                            mensaje: 'Ya hay una etiqueta con ese nombre, por favor intente nuevamente.'
                         });
 
-                    } else if (response === 'false') {
-                        var nombre = self.$nomItem.val().trim();
-
-                        um.guardarRegistro({form: 'label', nombre: nombre}, 'ServletLabelList');
+                    } else if (!res) {
+                        var n = self.$nomItem.val().trim();
+                        var datos = {};
+                        datos.nombreLabel = n.toUpperCase();
+                        datos.idUsuario = usuario.idUsuario.idPersonal;
+                        
+                        $.get(self.UrlLabelCheck + 'guardar', {
+                            datos: JSON.stringify(datos)
+                        }, function(res){
+                            if (res) {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: 'etiquetaCheck/guardar',
+                                    mensaje: '¡Se guardó la etiqueta.!',
+                                    clase: "growl-success",
+                                });
+                                
+                                $.get(self.UrlLabelCheck + 'listadoItems', function(res) {
+                                    self.cargarDatos(res, 'll');
+                                }).fail(function(res, status, er){
+                                    self.errorDeConexion(res, status, er, 'etiquetaCheck/listadoItems');
+                                });
+                                
+                                self.limpiarFormulario('ll');
+                            
+                            } else if (!res) {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: 'etiquetaCheck/guardar',
+                                    mensaje: '¡No se guardó la etiqueta.!',
+                                    clase: 'growl-danger'
+                                });
+                            }
+                        }).fail(function(res, status, er) {
+                            self.errorDeConexion(res, status, er, 'labelCheck/guardar');
+                        });
                     }
                 } else if (frm === 'lc') {
-                    if (response === 'true') {
-                        self.mensajeObligatoriedad({
+                    if (res) {
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
                             titulo: 'Lista de Chequeo Existente.',
-                            cuerpoMensaje: 'Ya hay una lista con ese nombre, por favor intente nuevamente.'
+                            mensaje: 'Ya hay una lista con ese nombre, por favor intente nuevamente.'
                         });
 
-                    } else if (response === 'false') {
-                        var nombre = self.$nomListCheck.val().trim();
-                        um.guardarRegistro({form: 'listaCheck', tabla: $('#tableNewLabel'), nombre: nombre}, 'ServletListaCheck');
+                    } else if (!res) {
+                        var n = self.$nomListCheck.val().trim();
+                        var datos = {};
+                        
+                        datos.nomListaCheck = n.toUpperCase();
+                        datos.idLabel = self.obtenerDatosTablaLabelLista($('#tableNewLabel'));
+                        datos.idUsuario = usuario.idUsuario.idPersonal;
+                        
+                        $.get(self.UrlListaCheck + 'guardar', {
+                            datos: JSON.stringify(datos)
+                        }, function(res){
+                            if (res) {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: 'listaCheck/guardar',
+                                    mensaje: '¡Se guardó la lista de chequeo.!',
+                                    clase: "growl-success",
+                                });
+                                
+                                $.get(self.UrlListaCheck + 'listadoListCheck', function(res) {
+                                    self.cargarDatos(res, 'lc');
+
+                                }).fail(function(res, status, er){
+                                    self.errorDeConexion(res, status, er, 'listaCheck/listadoListCheck');
+                                });
+                                
+                                self.limpiarFormulario('lc');
+                            
+                            } else if (!res) {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: 'listaCheck/guardar',
+                                    mensaje: '¡No se guardó la lista de chequeo.!',
+                                    clase: 'growl-danger'
+                                });
+                            }
+
+                        }).fail(function(res, status, er) {
+                            self.errorDeConexion(res, status, er, 'listaCheck/guardar');
+                        });
                     }
                 }
+            },
+            
+            obtenerDatosTablaLabelLista: function(tabla) {
+                var self = this;
+                var idRegistros = '';
+                
+                $(tabla).find('tbody tr').each(function(index) {
+                    if (index > 0) {
+                        $(this).children('td').each(function(index2) {
+                            switch (index2) {
+                                case 0: //Id Lista Chequeo
+                                    if (idRegistros === '') {
+                                        idRegistros = $(this).text();
+                                    } else {
+                                        idRegistros += "-" + $(this).text();
+                                    }
+                                    break;
+                            }
+                        });
+                    }
+                });
+                
+                return idRegistros;
             },
             
             verRegistro: function() {
@@ -441,7 +597,7 @@
                         }
                     }
                     
-                    self.$modalEditLista.modal('show', 'slow');                    
+                    self.$modalEditLista.modal('show', 'slow');
                     u.camposObligatorios(elementos, '3');
                     
                     e.stopPropagation();
@@ -449,66 +605,137 @@
                 
             },
             
-            solicitarModificarRegistro: function(response, frm) {
+            solicitarModificarRegistro: function(res, frm) {
                 var self = this;
+                var usuario = JSON.parse(sessionStorage.user);
                 
-                if (frm === 'll') {
-                    
-                    if (response === 'true') {
-                        self.mensajeObligatoriedad({
+                if (frm === 'll') {                    
+                    if (res) {
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
                             titulo: 'Etiqueta para Lista de Chequeo Existente.',
-                            cuerpoMensaje: 'Ya hay una etiqueta con ese nombre, por favor intente nuevamente.'
+                            mensaje: 'Ya hay una etiqueta con ese nombre, por favor intente nuevamente.'
                         });
 
-                    } else if (response === 'false') {
-                        var nombre = '';
-                        var j = 0;
-
+                    } else if (!res) {
+                        var n = self.$eNomItem.val().trim();
                         var coment = self.$eTextAreaLabel.val();
-
+                        var datos = {};
+                        datos.idLabel = self.idItem;
+                        datos.nombreLabel = '';
+                        datos.idUsuario = usuario.idUsuario.idPersonal;
+                        
                         for (var i = 0; i < self.oItems.length; i++) {
                             if (self.oItems[i].idLabel === parseInt(self.idItem)) {
-                                j = i;
-                                if (self.oItems[i].nombreLabel !== self.$eNomItem.val()) {
-                                    nombre = self.$eNomItem.val().trim();
+                                if (self.oItems[i].nombreLabel !== n.toUpperCase()) {
+                                    datos.nombreLabel = n.toUpperCase();
+                                    
+                                    $.get(self.UrlLabelCheck + 'editar', {
+                                        datos: JSON.stringify(datos)
+                                    }, function(res) {
+                                        if (res) {
+                                            self.mensajeModalAndGritter({
+                                                tipo: 'gritter',
+                                                titulo: 'labelCheck/editar',
+                                                mensaje: '¡Se modificó la etiqueta.!'
+                                            });
+
+                                            $.get(self.UrlLabelCheck + 'listadoItems', function(res) {
+                                                self.cargarDatos(res, 'll');
+                                            }).fail(function(res, status, er){
+                                                self.errorDeConexion(res, status, er, 'labelCheck/listadoItems');
+                                            });
+
+                                            self.$eBtnCerrarLabel.click();
+
+                                        } else {
+                                            self.mensajeModalAndGritter({
+                                                tipo: 'gritter',
+                                                titulo: 'labelCheck/editar',
+                                                mensaje: '¡No se modificó la etiqueta.!',
+                                                clase: 'growl-danger'
+                                            });
+                                        }
+                                    }).fail(function(res, status, er) {
+                                        self.errorDeConexion(res, status, er, 'labelCheck/editar');
+                                    });
+                                    
                                 } else {
-                                    nombre = self.oItems[i].nombreLabel;
+                                    self.mensajeModalAndGritter({
+                                        tipo: 'gritter',
+                                        titulo: "labelCheck/editar",
+                                        mensaje: "¡No hay datos a modificar.!",
+                                        clase: "growl-warning"                            
+                                    });
                                 }
                                 break;
                             }
                         }
-
-                        um.SolicitarModificarRegistro({tabla: '', nombre: nombre, idMaestro: self.idItem, coment: coment, org: self.oItems[j]}, [], [], self.$eBtnCerrarLabel, 'ServletLabelList');
                     }
                     
                 } else if (frm === 'lc') {
                     
-                    if (response === 'true') {
-                        self.mensajeObligatoriedad({
+                    if (res) {
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
                             titulo: 'Lista de Chequeo Existente.',
-                            cuerpoMensaje: 'Ya hay una lista con ese nombre, por favor intente nuevamente.'
+                            mensaje: 'Ya hay una lista con ese nombre, por favor intente nuevamente.'
                         });
 
-                    } else if (response === 'false') {
-                        var nombre = '';
+                    } else if (!res) {
                         var j = 0;
-
+                        var n = self.$eNomLista.val().trim();
                         var coment = self.$eTextAreaLista.val();
+                        var idLabel;
+                        var idLabelN = self.obtenerDatosTablaLabelLista($('#eTableNewLabel'));
+                        var c = 0;
+                        var datos = {};
+                        datos.idNomLista = self.idLista;
+                        datos.idUsuario = usuario.idUsuario.idPersonal;
 
                         for (var i = 0; i < self.oListas.length; i++) {
                             if (self.oListas[i].idNomLista === parseInt(self.idLista)) {
-                                j = i;
-                                if (self.oListas[i].nomListaCheck !== self.$eNomLista.val()) {
-                                    nombre = self.$eNomLista.val();
-                                } else {
-                                    nombre = self.oListas[i].nomListaCheck;
+                                idLabel = self.oListas[i].idLabel;
+                                if (self.oListas[i].nomListaCheck !== n.toUpperCase()) {
+                                    c++;
                                 }
 
                                 break;
                             }
                         }
+                        
+                        datos.nomListaCheck = n.toUpperCase();
+                        datos.idLabel = (idLabel.length > idLabelN.length || idLabel.length < idLabelN.length) ? idLabelN : idLabel;
 
-                        um.SolicitarModificarRegistro({tabla: $('#eTableNewLabel'), nombre: nombre, idMaestro: self.idLista, coment: coment, org: self.oListas[j]}, [], [], self.$eBtnCerrarLista, 'ServletListaCheck');
+                        $.get(self.UrlListaCheck + 'editar', {
+                            datos: JSON.stringify(datos)
+                        }, function(res) {
+                            if (res) {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: 'listaCheck/editar',
+                                    mensaje: '¡Se modificó la lista de chequeo.!'
+                                });
+
+                                $.get(self.UrlListaCheck + 'listadoListCheck', function(res) {
+                                    self.cargarDatos(res, 'lc');
+                                }).fail(function(res, status, er) {
+                                    self.errorDeConexion(res, status, er, 'listaCheck/listadoListCheck');
+                                });
+
+                                self.$eBtnCerrarLista.click();
+
+                            } else {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: 'listaCheck/editar',
+                                    mensaje: '¡No se modificó la lista de chequeo.!',
+                                    clase: 'growl-danger'
+                                });
+                            }
+                        }).fail(function(res, status, er) {
+                            self.errorDeConexion(res, status, er, 'listaCheck/editar');
+                        });
                     }
                 }
             },
@@ -567,6 +794,16 @@
                     self.bModalLabel = 0;
                     self.tEdicionLabel = 'nuevo';
                     self.$eTextAreaLabel.val('');
+                });
+            },
+            
+            errorDeConexion: function(res, status, er, serv) {
+                var self = this;
+                self.mensajeModalAndGritter({
+                    tipo: 'gritter',
+                    titulo: 'Servicio: ' + serv,
+                    mensaje: 'status: ' + status + ' er: ' + er,
+                    clase: 'growl-danger'
                 });
             }
         }

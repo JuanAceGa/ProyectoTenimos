@@ -13,16 +13,16 @@
                     
                     if (frm === 'preparacion' || frm === 'auxiliares' || frm === 'proPost' || frm === 'formula') {
                         oDatos.forEach(function(fibra){
-                            if (fibra.nomFibra !== "") {
+                            if (fibra.nomFibra !== '' && !$(oCbx[i]).is('#cbxFibra') && !$(oCbx[i]).is('#cbxFibraFiltro') && fibra.activo) {
+                                option = document.createElement('option');
+                                $(option).text(fibra.nomFibra);
+                                oCbx[i].append(option);
+                            } else if (fibra.nomFibra !== 'TODAS LAS FIBRAS' && ($(oCbx[i]).is('#cbxFibra') || $(oCbx[i]).is('#cbxFibraFiltro')) && fibra.activo) {
                                 option = document.createElement('option');
                                 $(option).text(fibra.nomFibra);
                                 oCbx[i].append(option);
                             }
                         });
-                    }
-                    
-                    if (frm === 'formula') {
-                        
                     }
                     
                     if (frm === 'curvas') {
@@ -62,6 +62,12 @@
                                 $(option).text(c.nomTono);
                                 oCbx[i].append(option);
                             }
+                        });
+                    }
+                    
+                    if (frm === 'maq') {
+                        oDatos.forEach(function(c) {
+                            oCbx[i].append('<option>' + c.nomMaquina + '</option>');
                         });
                     }
                 }
@@ -140,35 +146,6 @@
                 $(tabla).find('tbody').remove();
                 $(tabla).append('<tbody></tbody>');
                 
-                /*
-                if (t === '1') {
-                    $('#dataTablePreparacion tr:gt(0)').remove();
-                } 
-                
-                if (t === '2') {
-                    $('#dataTableAuxiliar tr:gt(0)').remove();
-                }
-                
-                if (t === '3') {
-                    $('#dataTableProcPos tr:gt(0)').remove();
-                }
-                
-                if (t === '4') {
-                    $('#dataTableFibra tr:gt(0)').remove();
-                }
-                
-                if (t === '5') {
-                    $('#dataTableProceso tr:gt(0)').remove();
-                }
-                
-                if (t === '6') {
-                    $('#dataTableCurva tr:gt(0)').remove();
-                }
-                
-                if (t === '7') {
-                    $('#dataTableLista ')
-                }
-                */
             },
             
             renderDataTables: function(tabla, oDatos, tipo) {
@@ -417,7 +394,7 @@
                                     .replace(':compos:', oDatos[i].compos)
                                     .replace(':rgb:', oDatos[i].color)
                                     .replace(':fechaUso:', (d > 1/1/1900) ? d.toLocaleDateString() : '')
-                                    .replace(':costoFormula:', oDatos[i].costoFormula.toFixed(0))
+                                    .replace(':costoFormula:', Math.round(oDatos[i].costo))
                                     .replace(':estado:', estado);
                         
                         $(tbody).append(newTr);
@@ -560,20 +537,27 @@
                 var miles;
                 var cientos;
                 var decimas;
+                var n = '';
 
                 if (data.input === "grlt") {
                     if (aNum.length === 3) {
+                        n = aNum[0] + aNum[1] + aNum[2];
+                        
                         millones = aNum[0];
                         miles = aNum[1];
                         aux = aNum[2].split(".", 3);
                         cientos = aux[0];
                         decimas = aux[1];
                     } else if (aNum.length === 2) {
+                        n = aNum[0] + aNum[1];
+                        
                         miles = aNum[0];
                         aux = aNum[1].split(".", 3);
                         cientos = aux[0];
                         decimas = aux[1];
                     } else if (aNum.length === 1) {
+                        n = aNum[0];
+                        
                         aux = aNum[0].split(".", 3);
                         cientos = aux[0];
                         decimas = aux[1];
@@ -584,13 +568,21 @@
                     cientos = parseFloat(cientos);
                     decimas = parseFloat(decimas);
                     
-                    if ((cientos === 0 && decimas === 0)) {
+                    if (parseFloat(n) === 0) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                    
+                    /*
+                    if (cientos === 0 && decimas === 0) {
                         return true;
                     } else if ((cientos === 0 && isNaN(decimas))) {
                         return true;
                     }else {
                         return false;
                     }
+                    */
                     
                 } else {
                     if (aNum.length > 1) {
@@ -704,18 +696,17 @@
                 var existe = false;
                 
                 if (d.tipo === "+") {
-                    if (d.maestro !== 'aux') {
+                    
+                    if (d.maestro === 'aux' || d.maestro === 'pp') {
                         for (var i = 0; i < oQuimicos.length; i++) {
-                            if (oQuimicos[i].codQuimico === d.codQuimico) {
+                            if ((oQuimicos[i].codQuimico === d.codQ) && (oQuimicos[i].codQuimico !== d.codQpermitido)) {
                                 existe = true;
                                 break;
                             }
                         }
-                    }
-                    
-                    if (d.maestro === 'aux') {
+                    } else { //if (d.maestro !== 'aux') 
                         for (var i = 0; i < oQuimicos.length; i++) {
-                            if ((oQuimicos[i].codQuimico === d.codQuimico) && (oQuimicos[i].codQuimico !== d.codQpermitido)) {
+                            if (oQuimicos[i].codQuimico === d.codQuimico) {
                                 existe = true;
                                 break;
                             }

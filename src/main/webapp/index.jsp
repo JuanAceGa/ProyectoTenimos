@@ -37,11 +37,11 @@
                     <div class="col-md-5">
                         <form method="post" id="frmSignIn">
                             <h4 class="nomargin">Ingresar</h4>
-                            <p class="mt5 mb20">Entrar y acceder a su cuenta</p>
+                            <p class="mt5 mb20">Accede con tu código y contraseña</p>
 
                             <input type="text" class="form-control uname" placeholder="Usuario" id="UserSignIn" name="UserSignIn"/>
                             <input type="password" class="form-control pword" placeholder="Password" id="PassSignIn" name="PassSignIn"/>
-                            <a href="#"><small>Olvido su contraseña?</small></a>
+                            <!--<a href="#"><small>Olvido su contraseña?</small></a>-->
                             <button class="btn btn-success btn-block" id="ingresar">Ingresar</button>
                         </form>
                     </div><!-- col-sm-5 -->

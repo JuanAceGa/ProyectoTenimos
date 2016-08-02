@@ -75,36 +75,21 @@
                     self.cargarDatos(data, 'f');
                     
                 }).fail(function(res, status, er){
-                    self.mensajeModalAndGritter({
-                       tipo: 'gritter',
-                       titulo: 'Servicio',
-                       mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
-                       clase: 'growl-danger'
-                    });                    
+                    self.errorDeConexion(res, status, er, 'fibras/listadoFibras');
                 });
                 
                 $.get(self.UrlProdQuimicos + 'noColorantes', function(data) {
                     self.cargarDatos(data, 'q');
                     
                 }).fail(function(res, status, er){
-                    self.mensajeModalAndGritter({
-                       tipo: 'gritter',
-                       titulo: 'Servicio',
-                       mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
-                       clase: 'growl-danger'
-                    });                    
+                    self.errorDeConexion(res, status, er, 'productosQuimicos/noColorantes');
                 });
                 
                 $.get(self.UrlAuxiliar + 'maestros', function(data) {
                         self.cargarDatos(data, 'au');
                         
                 }).fail(function(res, status, er){
-                    self.mensajeModalAndGritter({
-                       tipo: 'gritter',
-                       titulo: 'Servicio',
-                       mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
-                       clase: 'growl-danger'
-                    });                    
+                    self.errorDeConexion(res, status, er, 'auxiliares/maestros');
                 });
             },
             cargarDatos: function(data, opc) {
@@ -704,13 +689,8 @@
                         self.solicitarModificarAuxiliar(res);
                     }
 
-                }).fail(function(res, status, er) {
-                    self.mensajeModalAndGritter({
-                        tipo: 'gritter',
-                        titulo: 'Problema con la Aplicación',
-                        mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
-                        clase: 'growl-danger'
-                    });
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'auxiliar/buscarNombre');
                 });
             },
             
@@ -753,7 +733,7 @@
                         if (res) {
                             self.mensajeModalAndGritter({
                                 tipo: 'gritter',
-                                titulo: 'Aprobación de Maestro',
+                                titulo: 'auxiliar/guardarParaAprobacion',
                                 mensaje: "¡Se ha enviado la solicitud!",
                                 clase: ''
                             });
@@ -763,18 +743,13 @@
                         } else if (!res) {
                             self.mensajeModalAndGritter({
                                 tipo: 'gritter',
-                                titulo: 'Aprobación de Maestro',
+                                titulo: 'auxiliar/guardarParaAprobacion',
                                 mensaje: "¡No se entrego la solicitud!",
                                 clase: "growl-danger"
                             });
                         }
-                    }).fail(function(res, status, er) {
-                        self.mensajeModalAndGritter({
-                            tipo: 'gritter',
-                            titulo: 'Problema con la Aplicación',
-                            mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
-                            clase: "growl-danger"
-                        });
+                    }).fail(function(res, status, er){
+                        self.errorDeConexion(res, status, er, 'auxiliar/guardarParaAprobacion');
                     });
                 }
             },
@@ -926,8 +901,8 @@
                                     if (res) {
                                         self.mensajeModalAndGritter({
                                             tipo: 'gritter',
-                                            titulo: 'Modificar Registro',
-                                            mensaje: '¡El maestro ha sido modificado.!',
+                                            titulo: 'auxiliar/editar',
+                                            mensaje: '¡Se modificó el auxiliar.!',
                                             clase: ''
                                         });
 
@@ -940,26 +915,21 @@
                                     } else {
                                         self.mensajeModalAndGritter({
                                             tipo: 'gritter',
-                                            titulo: 'Modificar Registro',
-                                            mensaje: '¡El maestro no se modifico.!',
+                                            titulo: 'auxiliar/editar',
+                                            mensaje: '¡No se modificó el auxiliar.!',
                                             clase: 'growl-warning'
                                         });
                                     }
-                                }).fail(function(response, status, er) {
-                                    self.mensajeModalAndGritter({
-                                        tipo: 'gritter',
-                                        titulo: 'Problema con la Aplicación',
-                                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
-                                        clase: "growl-danger",
-                                    });
+                                }).fail(function(res, status, er){
+                                    self.errorDeConexion(res, status, er, 'auxiliar/editar');
                                 });
 
                             } else {
                                 self.mensajeModalAndGritter({
                                     tipo: 'gritter',
-                                    titulo: "Modificar Registro",
-                                    mensaje: "¡No hay datos a modificar.!",
-                                    clase: "growl-warning",
+                                    titulo: 'auxiliar/editar',
+                                    mensaje: '¡No hay datos a modificar.!',
+                                    clase: 'growl-warning',
                                 });
                             }
                             break;
@@ -1013,6 +983,16 @@
                     self.$eTextArea.val('');
                     self.eNuevosQuimicos = [];
                     self.eQuimicosModif = [];
+                });
+            },
+            
+            errorDeConexion: function(res, status, er, serv) {
+                var self = this;
+                self.mensajeModalAndGritter({
+                    tipo: 'gritter',
+                    titulo: 'Servicio: ' + serv,
+                    mensaje: 'status: ' + status + ' er: ' + er,
+                    clase: 'growl-danger'
                 });
             }
         };

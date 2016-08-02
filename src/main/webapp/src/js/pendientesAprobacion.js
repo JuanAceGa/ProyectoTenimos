@@ -93,10 +93,14 @@
                 
                 $.get(self.UrlFibras + 'listadoFibras', function(data) {
                     self.cargarDatos(data, 'f');
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'fibras/listadoFibras');
                 });
                 
                 $.get(self.UrlProdQuimicos + 'noColorantes', function(data) {
                     self.cargarDatos(data, 'q');
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'productosQuimicos/noColorantes');
                 });
                 
                 $.get(self.UrlPreparacion + 'pendientesPorAprobar', {
@@ -106,17 +110,13 @@
                         self.cargarDatos(data, 'preparacion', 'nuevo');
                     } else {
                         self.mensajeGritter({
-                            titulo: 'Maestros Pendientes',
+                            titulo: 'preparacion/pendientesPorAprobar',
                             mensaje: 'No hay preparaciones pendientes para aprobar.',
                             clase: ''
                         });
                     }
-                }).fail(function(response, status, er) {
-                    self.mensajeGritter({
-                        titulo: 'Problema con la Aplicación',
-                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
-                        clase: "growl-warning"
-                    });
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'preparacion/pendientesPorAprobar');
                 });
                 
                 $.get(self.UrlAuxiliar + 'pendientesPorAprobar', {
@@ -126,17 +126,13 @@
                         self.cargarDatos(data, 'auxiliar', 'nuevo');
                     } else {
                         self.mensajeGritter({
-                            titulo: 'Maestros Pendientes',
-                            mensaje: 'No hay preparaciones pendientes para aprobar.',
+                            titulo: 'auxiliar/pendientesPorAprobar',
+                            mensaje: 'No hay auxiliares pendientes para aprobar.',
                             clase: ''
                         });
                     }
-                }).fail(function(response, status, er) {
-                    self.mensajeGritter({
-                        titulo: 'Problema con la Aplicación',
-                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
-                        clase: "growl-warning"
-                    });
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'auxiliar/pendientesPorAprobar');
                 });
                 
                 $.get(self.UrlProcPos + 'pendientesPorAprobar', {
@@ -146,17 +142,13 @@
                         self.cargarDatos(data, 'procPost', 'nuevo');
                     } else {
                         self.mensajeGritter({
-                            titulo: 'Maestros Pendientes',
-                            mensaje: 'No hay preparaciones pendientes para aprobar.',
+                            titulo: 'procesosPosteriores/pendientesPorAprobar',
+                            mensaje: 'No hay procesos posteriores pendientes para aprobar.',
                             clase: ''
                         });
                     }
-                }).fail(function(response, status, er) {
-                    self.mensajeGritter({
-                        titulo: 'Problema con la Aplicación',
-                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
-                        clase: "growl-warning"
-                    });
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'procesosPosteriores/pendientesPorAprobar');
                 });
             },
             
@@ -166,10 +158,14 @@
                 
                 $.get(self.UrlFibras + 'listadoFibras', function(data) {
                     self.cargarDatos(data, 'f');
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'fibras/listadoFibras');
                 });
                 
                 $.get(self.UrlProdQuimicos + 'noColorantes', function(data) {
                     self.cargarDatos(data, 'q');
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'productosQuimicos/noColorantes');
                 });
                 
                 $.get(self.UrlPreparacion + 'pendientesPorAprobarYeditar', {
@@ -179,17 +175,13 @@
                         self.cargarDatos(data, 'preparacion', 'editar');
                     } else {
                         self.mensajeGritter({
-                            titulo: 'Maestros Pendientes',
-                            mensaje: 'No hay preparaciones pendientes para aprobar.',
+                            titulo: 'preparacion/pendientesPorAprobarYeditar',
+                            mensaje: 'No hay preparaciones pendientes para editar.',
                             clase: ''
                         });
                     }
-                }).fail(function(response, status, er) {
-                    self.mensajeGritter({
-                        titulo: 'Problema con la Aplicación',
-                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
-                        clase: 'growl-warning'
-                    });
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'preparacion/pendientesPorAprobarYeditar');
                 });
                 
                 $.get(self.UrlAuxiliar + 'pendientesPorAprobarYeditar', {
@@ -199,17 +191,13 @@
                         self.cargarDatos(data, 'auxiliar', 'editar');
                     } else {
                         self.mensajeGritter({
-                            titulo: 'Maestros Pendientes',
-                            mensaje: 'No hay preparaciones pendientes para aprobar.',
+                            titulo: 'auxiliar/pendientesPorAprobarYeditar',
+                            mensaje: 'No hay auxiliares pendientes para editar.',
                             clase: ''
                         });
                     }
-                }).fail(function(response, status, er) {
-                    self.mensajeGritter({
-                        titulo: 'Problema con la Aplicación',
-                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
-                        clase: "growl-warning"
-                    });
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'auxiliar/pendientesPorAprobarYeditar');
                 });
                 
                 $.get(self.UrlProcPos + 'pendientesPorAprobarYeditar', {
@@ -219,17 +207,13 @@
                         self.cargarDatos(data, 'procPost', 'editar');
                     } else {
                         self.mensajeGritter({
-                            titulo: 'Maestros Pendientes',
-                            mensaje: 'No hay preparaciones pendientes para aprobar.',
+                            titulo: 'procesosPosteriores/pendientesPorAprobarYeditar',
+                            mensaje: 'No hay procesos posteriores pendientes para editar.',
                             clase: ''
                         });
                     }
-                }).fail(function(response, status, er) {
-                    self.mensajeGritter({
-                        titulo: 'Problema con la Aplicación',
-                        mensaje: 'error: ' + response + ' status: ' + status + ' er: ' + er,
-                        clase: "growl-warning"
-                    });
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'procesosPosteriores/pendientesPorAprobarYeditar');
                 });
             },
             
@@ -427,18 +411,20 @@
                 $(tabla).find('tbody').remove();
                 $(tabla).append('<tbody></tbody>');
 
-                for (var i = 0; i < arr.length; i++) {
-                    var tempTrMaestro = self.$tempTrMaestro;
-                    try {
-                        var tempTr = tempTrMaestro
-                                .replace(':nombre:', arr[i].nombMaestro)
-                                .replace(':fibra:', arr[i].codFibra)
-                                .replace(':costo:', arr[i].costo.toFixed(2))
-                                .replace(':boton:', boton);
+                if(!$.isEmptyObject(arr)) {
+                    for (var i = 0; i < arr.length; i++) {
+                        var tempTrMaestro = self.$tempTrMaestro;
+                        try {
+                            var tempTr = tempTrMaestro
+                                    .replace(':nombre:', arr[i].nombMaestro)
+                                    .replace(':fibra:', arr[i].codFibra)
+                                    .replace(':costo:', Math.round(arr[i].costo))
+                                    .replace(':boton:', boton);
 
-                        $(tabla).find('tbody').append(tempTr);
-                    } catch (e) {
-                        console.log('renderTabla::[pendientesAprobacion.js] --> Problema renderizando registro... ' + e);
+                            $(tabla).find('tbody').append(tempTr);
+                        } catch (e) {
+                            console.log('renderTabla::[pendientesAprobacion.js] --> Problema renderizando registro... ' + e);
+                        }
                     }
                 }
             },
@@ -520,7 +506,7 @@
                     if (oPend[i].nombMaestro === self.nombreMaestro) {
                         var tempTrEncabezado = trEncabezado.replace(':nombMaestro:', oPend[i].nombMaestro)
                                                            .replace(':fibra:', oPend[i].codFibra + ' - ' + oPend[i].nomFibra)
-                                                           .replace(':costo:', '$ ' + oPend[i].costo.toFixed(2))
+                                                           .replace(':costo:', '$ ' + Math.round(oPend[i].costo))
                                                            .replace(':nomUsuario:', oPend[i].nomUsuario + ' ' + oPend[i].apeUsuario);
                                 
                         self.$tablaMaestroPend.find('tbody').append(tempTrEncabezado);
@@ -592,7 +578,7 @@
                     if (res) {
                         self.mensajeGritter({
                             titulo: 'Registro Guardado',
-                            mensaje: '¡Se ha guardado satisfactoriamente!',
+                            mensaje: '¡Se guardó el registro!',
                             clase: 'growl-success'
                         });
 
@@ -604,16 +590,12 @@
                     } else if (!res) {
                         self.mensajeGritter({
                             titulo: 'Registro No Guardado',
-                            mensaje: '¡No se ha guardado el registro!',
+                            mensaje: '¡No se guardó el registro!',
                             clase: 'growl-danger'
                         });
                     }
-                }).fail(function(res, status, er) {
-                    self.mensajeGritter({
-                        titulo: 'Problema con la Aplicación',
-                        mensaje: 'error: ' + res + ' status: ' + status + ' er: ' + er,
-                        clase: 'growl-danger'
-                    });
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, '/guardar');
                 });
             },
             
@@ -734,9 +716,7 @@
                 
                 $.get(url + 'rechazarPendiente', {
                     idMaestro: idMaestro
-                },
-                function(res) {
-                    
+                }, function(res) {
                     if (res) {
                         self.mensajeGritter({
                             titulo: 'Eliminar Maestro',
@@ -755,6 +735,8 @@
                         });
                         self.consultarPendientesParaEditar();
                     }
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, '/rechazarPendiente');
                 });
                 
             },
@@ -1038,8 +1020,7 @@
                                     tipo: 'editar',
                                     idMaestro: self.idMaestro,
                                     nombre: (nombre.toUpperCase() !== nombreOrg || fibra !== arrPend[i].nomFibra) ? nombre.toUpperCase() + ' (' + fibra + ')' : arrPend[i].nombMaestro
-                                },
-                                function(res) {
+                                }, function(res) {
                                     if (nombre.toUpperCase() !== nombreOrg || fibra !== arrPend[i].nomFibra) {
                                         var n = nombre.toUpperCase() + ' (' + fibra + ')';
                                     } else {
@@ -1047,6 +1028,8 @@
                                     }
                                     
                                     self.modificarMaestroPendiente(res, arrPend, url, n, fibra);
+                                }).fail(function(res, status, er){
+                                    self.errorDeConexion(res, status, er, '/buscarNombre');
                                 });
 
                                 break;
@@ -1134,7 +1117,7 @@
                         if (res) {
                             self.mensajeGritter({
                                 titulo: 'Modificar Registro',
-                                mensaje: '¡El maestro ha sido modificado.!',
+                                mensaje: '¡Se modificó el registro.!',
                                 clase: ''
                             });
 
@@ -1144,16 +1127,12 @@
                         } else {
                             self.mensajeGritter({
                                 titulo: 'Modificar Registro',
-                                mensaje: '¡El maestro no ha sido modificado.!',
+                                mensaje: '¡No se modificó el registro.!',
                                 clase: 'growl-warning'
                             });
                         }
-                    }).fail(function() {
-                        self.mensajeGritter({
-                            titulo: 'Problema con la Aplicación',
-                            mensaje: '¡Ah ocurrido un problema, favor intenta otra vez!',
-                            clase: 'growl-danger'
-                        });
+                    }).fail(function(res, status, er){
+                        self.errorDeConexion(res, status, er, '/editarPendiente');
                     });
                     
 //                    $.ajax({
@@ -1255,6 +1234,16 @@
                         time: ''
                     });
                 }
+            },
+            
+            errorDeConexion: function(res, status, er, serv) {
+                var self = this;
+                self.mensajeModalAndGritter({
+                    tipo: 'gritter',
+                    titulo: 'Servicio: ' + serv,
+                    mensaje: 'status: ' + status + ' er: ' + er,
+                    clase: 'growl-danger'
+                });
             }
         };
     })();

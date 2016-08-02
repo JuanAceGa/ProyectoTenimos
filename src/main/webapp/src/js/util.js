@@ -110,7 +110,7 @@
                     //}
                     
                     for (var i = 0; i < oDatos.length; i++) {
-                        oDatos[i].costo = oDatos[i].costo.toFixed(decimales);
+                        oDatos[i].costo = Math.round(oDatos[i].costo);
                     }
                     
                 } /*else if (tipo === 'preparacion') {

@@ -5,7 +5,6 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page import="com.co.tenimos.entities.Usuarios"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +21,7 @@
         <link href="../../css/display.css" rel="stylesheet">
         <link href="../../css/datatable-align-text.css" rel="stylesheet">
         <link href="../../css/bootstrap-timepicker.min.css" rel="stylesheet">
-        <link href="../../css/colorpicker.css" rel="stylesheet">        
+        <link href="../../css/colorpicker.css" rel="stylesheet">
     </head>
 
     <body>
@@ -63,16 +62,16 @@
                                 <a href="#"><i class="fa fa-question-circle"></i> <span>Ayuda</span></a>
                             </li>
                             <li>
-                                <a href="#"><i class="fa fa-sign-out"></i> <span>Cerrar Sesión</span></a>
+                                <a href="" id="logout1"><i class="fa fa-sign-out"></i> <span>Cerrar Sesión</span></a>
                             </li>
                         </ul>
                     </div>
 
                     <h5 class="sidebartitle">Navegación</h5>
                     <ul class="nav nav-pills nav-stacked nav-bracket" id="nav">
-                        <li class="active"><a href="#"><i class="fa fa-home"></i><span>Dashboard</span></a></li>
-                        <li><a href="#"><i class="fa fa-envelope-o"></i><span>Email</span></a></li>
-                        <li class="nav-parent" id="navLab"><a href="#"><i class="fa fa-edit"></i><span>Laboratorio</span></a>
+                        <li class="active" id="navDash"><a href="#"><i class="fa fa-home"></i><span>Dashboard</span></a></li>
+                        <li id="navEmail"><a href="#"><i class="fa fa-envelope-o"></i><span>Email</span></a></li>
+                        <li class="nav-parent" id="navLab"><a href="#"><i class="fa fa-flask"></i><span>Laboratorio</span></a>
                             <ul class="children">
                                 <li><a href="#"><i class="fa fa-caret-right"></i>Maestros Pendientes por Aprobar</a></li>
                                 <li><a href="#"><i class="fa fa-caret-right"></i>Solicitudes Enviadas</a></li>
@@ -85,9 +84,16 @@
                         </li>
                         <li class="nav-parent" id="navProd"><a href="#"><i class="fa fa-gears"></i><span>Producción</span></a>
                             <ul class="children" >
-                                <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Procesos</a></li>
+                                <!--<li><a href="#"><i class="fa fa-caret-right"></i>Maestro Lista de Chequeo</a></li>-->
                                 <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Curvas</a></li>
-                                <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Lista de Chequeo</a></li>
+                                <li><a href="#"><i class="fa fa-caret-right"></i>Maestro Procesos</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-parent" id="navProg"><a href="#"><i class="fa fa-clock-o"></i><span>Programación</span></a>
+                            <ul class="children" >
+                                <li><a href="#"><i class="fa fa-caret-right"></i>Pendiente por Formular</a></li>
+                                <li><a href="#"><i class="fa fa-caret-right"></i>Programación Maquinas</a></li>
+                                <li><a href="#"><i class="fa fa-caret-right"></i>Pendiente por Programar</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -177,7 +183,7 @@
                             <li>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                        <img src="../../images/photos/loggeduser.png" alt="" />
+                                        <img src="../../images/photos/loggeduser2.png" alt="" />
                                         <span id="nomUser">John Doe</span>
                                         <span class="caret"></span>
                                     </button>
@@ -192,7 +198,7 @@
                                             <a href="#"><i class="glyphicon glyphicon-question-sign"></i>Ayuda</a>
                                         </li>
                                         <li>
-                                            <a href="#"><i class="glyphicon glyphicon-log-out"></i>Cerrar Sesión</a>
+                                            <a href="#" id="logout2"><i class="glyphicon glyphicon-log-out"></i>Cerrar Sesión</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -225,6 +231,8 @@
                     <jsp:include page="../forms/produccion/frmcurvas.jspf"></jsp:include>
                     <jsp:include page="../forms/produccion/frmlistacheck.jspf"></jsp:include>
                     <jsp:include page="../forms/laboratorio/frmformular.jspf"></jsp:include>
+                    <jsp:include page="../forms/programacion/pendienteFormular.jspf"></jsp:include>
+                    <jsp:include page="../forms/programacion/programacionMaquina.jspf"></jsp:include>
                 </div><!-- contentpanel -->
             </div><!-- mainpanel -->
         </section>
@@ -271,7 +279,9 @@
         <script src="../../js/frmCurvas.js"></script>
         <script src="../../js/frmListaCheck.js"></script>
         <script src="../../js/frmFormulas.js"></script>
-        <script src="../../js/consultas.js"></script>
+        <script src="../../js/frmPendFormular.js"></script>
+        <script src="../../js/frmProgramaMaquinas.js"></script>
+        <!--<script src="../../js/consultas.js"></script>-->
         <script src="../../js/dashboard.js"></script>
     </body>
 </html>

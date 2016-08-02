@@ -1,6 +1,9 @@
 (function(document, window, $, undefined) {
     (function() {
         return frmCurva = {
+            UrlCurvas: 'http://localhost:8084/ERPTenimosBackend/rest/curvas/',
+            UrlLabelCheck: 'http://localhost:8084/ERPTenimosBackend/rest/listaCheck/',
+            UrlListaCheck: 'http://localhost:8084/ERPTenimosBackend/rest/nombreListCheck/',
             oCurvas: [],
             oListaCheck: [],
             oLabel: [],
@@ -33,6 +36,7 @@
             banderaModal: 0,
             tipoEdicion: 'nuevo',
             filaEditar: null,
+            idListaCheck: '',
             
             init: function() {
                 this.metodosUtiles();
@@ -45,15 +49,36 @@
                 this.verCurva();
                 this.cerrarModalEdicion();
             },
-            cargarDatos: function(dato, opc) {
+            
+            consultasCurvas: function() {
                 var self = this;
-                var data = JSON.parse(dato);
+                
+                $.get(self.UrlCurvas + 'listadoCurvas', function(res) {
+                    self.cargarDatos(res, 'c');
+                    
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'curvas/listadoCurvas');
+                });
+                    
+                $.get(self.UrlLabelCheck + 'listadoItems', function(res) {
+                    self.cargarDatos(res, 'll');
+                });
+                    
+                $.get(self.UrlListaCheck + 'listadoListCheck', function(res) {
+                    self.cargarDatos(res, 'lc');
+                });
+            },
+            
+            cargarDatos: function(data, opc) {
+                var self = this;
                 
                 if (opc === 'c') {
                     self.oCurvas = '';
                     self.oCurvas = data;
                     um.destruirDataTable(self.$dataTableCurva.dataTable(), '6');
+                    self.limpiarFormulario();
                     um.renderDataTables(self.$dataTableCurva, self.oCurvas, 'c');
+                    self.pintarCamposObligatorios();
                 }
                 
                 if (opc === 'lc') {
@@ -66,29 +91,30 @@
                     self.oLabel = [];
                     self.oLabel = data;
                 }
-                
-                if (opc === 'nc') {
-                    if (data !== null) {
-                        self.oCurvas = "";
-                        self.oCurvas = data;
-                        um.destruirDataTable(self.$dataTableCurva.dataTable(), '6');
-                        self.limpiarFormulario();
-                        um.renderDataTables(self.$dataTableCurva, self.oCurvas, 'c');
-                        self.pintarCamposObligatorios();
-                    }
-                }
             },
             
             metodosUtiles: function() {
                 var self = this;
 
-                self.$nomCurva.on('keyup keypress', function() {
-                    self.$nomCurva.val(self.$nomCurva.val().toUpperCase());
+                self.$nomCurva.on('focusin', function() {
+                    self.$nomCurva.css('text-transform', 'uppercase');
+                });
+                
+                self.$nomCurva.on('focusout', function() {
+                    u.camposObligatorios([self.$nomCurva], '4');
+                    
+                    (self.$nomCurva.val() === '') ? self.$nomCurva.css('text-transform', '') : '';
                 });
 
-                self.$eNombCurva.on('keyup keypress', function() {
-                    self.$eNombCurva.val(self.$eNombCurva.val().toUpperCase());
-                })
+                self.$eNombCurva.on('focusin', function() {
+                    self.$eNombCurva.css('text-transform', 'uppercase');
+                });
+                
+                self.$eNombCurva.on('focusout', function() {
+                    u.camposObligatorios([self.$eNombCurva], '4');
+                    
+                    (self.$eNombCurva.val() === '') ? self.$eNombCurva.css('text-transform', '') : '';
+                });
                 
                 self.$tiempoCurva.on('keypress', function(eve) {
                     if (eve.keyCode < 48 || eve.keyCode > 57) {
@@ -126,6 +152,30 @@
                     }
                 });
                 
+                self.$tiempoCurva.on('focusout', function() {
+                    u.camposObligatorios([self.$tiempoCurva], '4');
+                });
+                
+                self.$eTiempCurva.on('focusout', function() {
+                    u.camposObligatorios([self.$eTiempCurva], '4');
+                });
+                
+                self.$llenadoCurva.on('focusout', function() {
+                    u.camposObligatorios([self.$llenadoCurva], '4');
+                });
+                
+                self.$eLlenadCurva.on('focusout', function() {
+                    u.camposObligatorios([self.$eLlenadCurva], '4');
+                });
+                
+                self.$rinseCurva.on('focusout', function() {
+                    u.camposObligatorios([self.$rinseCurva], '4');
+                });
+                
+                self.$eRinseCurva.on('focusout', function() {
+                    u.camposObligatorios([self.$eRinseCurva], '4');
+                });
+                
                 self.$btnCleanCurva.on('click', function(e) {
                     e.preventDefault();
                     
@@ -141,29 +191,49 @@
             limpiarFormulario: function() {
                 var self = this;
                 
-                var elementos = [self.$nomCurva, self.$tiempoCurva, self.$llenadoCurva, self.$rinseCurva];
-                u.limpiarCampos(elementos);
+                u.limpiarCampos([self.$nomCurva, self.$tiempoCurva, self.$llenadoCurva, self.$rinseCurva]);
                 
                 self.pintarCamposObligatorios();
             },
             
             pintarCamposObligatorios: function() {
               var self = this;
-              var campos = [self.$nomCurva, self.$tiempoCurva, self.$llenadoCurva, self.$rinseCurva, self.$cbxListaCheck];
               
-              u.camposObligatorios(campos, '1');
+              u.camposObligatorios([self.$nomCurva, self.$tiempoCurva, self.$llenadoCurva, self.$rinseCurva, self.$cbxListaCheck], '1');
             },
             
-            mensajeObligatoriedad: function(mensaje) {
+            mensajeModalAndGritter: function(m) {
                 var self = this;
-
-                try {
-                    self.$tituloMensaje.text(mensaje.titulo);
-                    self.$cuerpoMensaje.text(mensaje.cuerpoMensaje);
-                    self.$modalMensaje.modal("show");
-                } catch (e) {
-                    alert(mensaje.cuerpoMensaje);
-                }
+                
+                if (m.tipo === 'modal') {
+                
+                    try {
+                        self.$tituloMensaje.text(m.titulo);
+                        self.$cuerpoMensaje.text(m.mensaje);
+                        self.$modalMensaje.modal("show");
+                    } catch (e) {
+                        alert(m.mensaje);
+                    }
+                    
+                } else if (m.tipo === 'gritter') {
+                
+                    if (m.clase === '') {
+                        $.gritter.add({
+                            title: m.titulo,
+                            text: m.mensaje,
+                            sticky: false,
+                            time: ''
+                        });
+                    } else {
+                        $.gritter.add({
+                            title: m.titulo,
+                            text: m.mensaje,
+                            class_name: m.clase,
+                            sticky: false,
+                            time: ''
+                        });
+                    }
+                }                
             },
             
             agregarListaChequeo: function() {
@@ -251,7 +321,7 @@
                                     '</td>' +
                                  '</tr>';
                     
-                    var campObligQuim = u.camposObligatorios([self.$eCbxListaCheck], '2');
+                    var campObligQuim = u.camposObligatorios([self.$eCbxListaCheck], '4');
                     
                     if (campObligQuim) {
                         var lista = self.$eCbxListaCheck.val();
@@ -285,7 +355,7 @@
                         $('dd').hide();
                         
                         self.$eCbxListaCheck.val("Seleccione una...");
-                        u.camposObligatorios([self.$eCbxListaCheck], '1');
+                        u.camposObligatorios([self.$eCbxListaCheck], '4');
                     }
                 });
             },
@@ -299,8 +369,7 @@
                     var lista = $(this).closest('dl').find('dd');
                     
                     $('dd').not(lista).slideUp('fast');
-                    $('dd').not(lista)
-                            .closest('dl').find('i').removeClass('fa-minus-square');
+                    $('dd').not(lista).closest('dl').find('i').removeClass('fa-minus-square');
 
                     $(this).find('i').toggleClass('fa-minus-square');
                     
@@ -313,8 +382,7 @@
                     var lista = $(this).closest('dl').find('dd');
                     
                     $('dd').not(lista).slideUp('fast');
-                    $('dd').not(lista)
-                            .closest('dl').find('i').removeClass('fa-minus-square');
+                    $('dd').not(lista).closest('dl').find('i').removeClass('fa-minus-square');
 
                     $(this).find('i').toggleClass('fa-minus-square');
                     
@@ -353,52 +421,125 @@
 
                     campObligPrep = u.camposObligatorios(elementos, '2');
 
-                    if (campObligPrep) {                        
-                        consultas.consultarNombreMaestros(self.$nomCurva.val(), 'nuevo', 0, 'ServletCurvas');
+                    if (campObligPrep) {
+                        var n = self.$nomCurva.val().trim();
+                        self.consultarNombresCurva(n.toUpperCase(), 'nuevo', 0);
                     }
                 });
                 
                 self.$eBtnModificar.on("click", function(e) {
                     e.preventDefault();
                     
-                    var nombre = '';
-                    var campOblig = false;
                     var elementos = [self.$eNombCurva, self.$eTiempCurva, self.$eLlenadCurva, self.$eRinseCurva, self.$eTextArea];
-
-                    campOblig = u.camposObligatorios(elementos, '2');
+                    var campOblig = u.camposObligatorios(elementos, '2');
 
                     if (campOblig) {
-                        for (var i = 0; i < self.oCurvas.length; i++) {
-                            if (self.oCurvas[i].idCurva === parseInt(self.idCurva)) {
-                                if (self.oCurvas[i].nomCurva !== self.$eNombCurva.val()) {
-                                    nombre = self.$eNombCurva.val();
-                                }
-                                break;
-                            }
-                        }
+                        var n = self.$eNombCurva.val().trim();
                         
-                        consultas.consultarNombreMaestros(nombre, 'editar', self.idCurva, 'ServletCurvas');
+                        self.consultarNombresCurva(n.toUpperCase(), 'editar', self.idCurva);
                     }
                 });
             },
             
-            agregarCurva: function(response) {
+            consultarNombresCurva: function(n, t, i) {
                 var self = this;
 
-                if (response === 'true') {
-                    self.mensajeObligatoriedad({
+                $.get(self.UrlCurvas + 'buscarNombre', {
+                    nombre: n,
+                    tipo: t,
+                    idMaestro: i
+                }, function(res) {
+                    if (t === 'nuevo') {
+                        self.agregarCurva(res);
+                    } else {
+                        self.solicitarModificarCurva(res);
+                    }
+
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'curvas/buscarNombre');
+                });
+            },
+            
+            agregarCurva: function(res) {
+                var self = this;
+
+                if (res) {
+                    self.mensajeModalAndGritter({
+                        tipo: 'modal',
                         titulo: 'Nombre de Curva Existente.',
-                        cuerpoMensaje: 'Ya hay un nombre de preparación para la fibra seleccionada, por favor intente nuevamente.'
+                        mensaje: 'Ya hay un nombre de preparación para la fibra seleccionada, por favor intente nuevamente.'
                     });
                 
-                } else if (response === 'false') {
-                    var nombre = self.$nomCurva.val();
+                } else if (!res) {
+                    var usuario = JSON.parse(sessionStorage.user);
+                    var nombre = self.$nomCurva.val().trim();
                     var tiempo = self.$tiempoCurva.val();
                     var llenado = self.$llenadoCurva.val();
                     var rinse = self.$rinseCurva.val();
                     
-                    um.guardarRegistro({form: 'curva', nombre: nombre, tiempo: tiempo, llenado: llenado, rinse: rinse, tabla: $('#tableNewListCheck')}, 'ServletCurvas');
+                    self.obtenerDatosTablaCurva($('#tableNewListCheck'));
+                    
+                    var datos = {};
+                    datos.nomCurva = nombre.toUpperCase();
+                    datos.tiempoCurva = tiempo;
+                    datos.llenadoCurva = llenado;
+                    datos.rinseCurva = rinse;
+                    datos.checkList = self.idListaCheck;
+                    datos.idUsuario = usuario.idUsuario.idPersonal;
+                    
+                    $.get(self.UrlCurvas + 'guardar', {
+                        datos: JSON.stringify(datos)
+                    }, function(res){
+                        if (res) {
+                            self.mensajeModalAndGritter({
+                                tipo: 'gritter',
+                                titulo: 'curvas/guardar',
+                                mensaje: '¡Se guardó la curva.!',
+                                clase: "growl-success",
+                            });
+                            
+                            $.get(self.UrlCurvas + 'listadoCurvas', function(res) {
+                                self.cargarDatos(res, 'c');
+
+                            }).fail(function(res, status, er){
+                                self.errorDeConexion(res, status, er, 'curvas/listadoCurvas');
+                            });
+                            
+                            self.limpiarFormulario();
+                            
+                        } else if (!res) {
+                            self.mensajeModalAndGritter({
+                                tipo: 'gritter',
+                                titulo: 'curvas/guardar',
+                                mensaje: '¡No se guardó la curva.!',
+                                clase: 'growl-danger'
+                            });
+                        }
+                        
+                    }).fail(function(res, status, er) {
+                        self.errorDeConexion(res, status, er, 'curvas/guardar');
+                    });                    
                 }
+            },
+            
+            obtenerDatosTablaCurva: function(tabla) {
+                var self = this;
+            
+                $(tabla).find('tbody tr').each(function(index) {
+                    if (index > 0) {
+                        $(this).children('td').each(function(index2) {
+                            switch (index2) {
+                                case 0: //Id Lista Chequeo
+                                    if (self.idListaCheck === '') {
+                                        self.idListaCheck = $(this).text();
+                                    } else {
+                                        self.idListaCheck += "-" + $(this).text();
+                                    }
+                                    break;
+                            }
+                        });
+                    }
+                });
             },
             
             verCurva: function() {
@@ -491,20 +632,23 @@
                 });
             },
             
-            solicitarModificarCurva: function(response) {
+            solicitarModificarCurva: function(res) {
                 var self = this;
                 
-                if (response === 'true') {
-                    self.mensajeObligatoriedad({
+                if (res) {
+                    self.mensajeModalAndGritter({
+                        tipo: 'modal',
                         titulo: 'Nombre de Curva Existente.',
-                        cuerpoMensaje: 'Ya existe una curva con ese nombre, por favor intente nuevamente.'
+                        mensaje: 'Ya existe una curva con ese nombre, por favor intente nuevamente.'
                     });
                 
-                } else if (response === 'false') {
-                    var nombre = '';
-                    var tiempo = '';
-                    var llenado = '';
-                    var rinse = '';
+                } else if (!res) {
+                    self.idListaCheck = '';
+                    var idListaCheck = '';
+                    var nombre = self.$eNombCurva.val().trim();
+                    var tiempo = self.$eTiempCurva.val();
+                    var llenado = self.$eLlenadCurva.val();
+                    var rinse = self.$eRinseCurva.val();
                     var j = 0;
                     
                     var coment = self.$eTextArea.val();
@@ -512,35 +656,74 @@
                     for (var i = 0; i < self.oCurvas.length; i++) {
                         if (self.oCurvas[i].idCurva === parseInt(self.idCurva)) {
                             j = i;
-                            if (self.oCurvas[i].nomCurva !== self.$eNombCurva.val()) {
-                                nombre = self.$eNombCurva.val();
-                            } else {
-                                nombre = self.oCurvas[i].nomCurva;
-                            }
-                            
-                            if (self.oCurvas[i].tiempoCurva !== parseInt(self.$eTiempCurva.val())) {
-                                tiempo = self.$eTiempCurva.val();
-                            } else {
-                                tiempo = self.oCurvas[i].tiempoCurva;
-                            }
-                            
-                            if (self.oCurvas[i].llenadoCurva !== parseInt(self.$eLlenadCurva.val())) {
-                                llenado = self.$eLlenadCurva.val();
-                            } else {
-                                llenado = self.oCurvas[i].llenadoCurva;
-                            }
-                            
-                            if (self.oCurvas[i].rinseCurva !== parseInt(self.$eRinseCurva.val())) {
-                                rinse = self.$eRinseCurva.val();
-                            } else {
-                                rinse = self.oCurvas[i].rinseCurva;
-                            }
-                            
+                            idListaCheck = self.oCurvas[i].checkList.split('-');                            
                             break;
                         }
                     }
                     
-                    um.SolicitarModificarRegistro({tabla: $('#eTableNewListCheck'), nombre: nombre, tiempo: tiempo, llenado: llenado, rinse: rinse, idMaestro: self.idCurva, coment: coment, org: self.oCurvas[j]}, [], [], self.$eBtnCerrar, 'ServletCurvas');
+                    self.obtenerDatosTablaCurva($('#eTableNewListCheck'));
+                    
+                    var idListaCheckN = self.idListaCheck.split('-');
+                    var c = 0;
+                    
+                    for (var k = 0; k < idListaCheck.length; k++) {
+                        for (var x = 0; x < idListaCheckN.length; x++) {
+                            if (idListaCheckN[x] !== idListaCheck[k]) {
+                                c++;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (c > 0) {
+                        var usuario = JSON.parse(sessionStorage.user);
+                        var datos = {};
+                        datos.idCurva = self.idCurva;
+                        datos.nomCurva = nombre.toUpperCase();
+                        datos.tiempoCurva = tiempo;
+                        datos.llenadoCurva = llenado;
+                        datos.rinseCurva = rinse;
+                        datos.checkList = (c === 0) ? self.oCurvas[j].checkList : self.idListaCheck;
+                        datos.idUsuario = usuario.idUsuario.idPersonal;
+                        
+                        $.get(self.UrlCurvas + 'editar', {
+                            datos: JSON.stringify(datos)
+                        }, function(res) {
+                            if (res) {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: 'curvas/editar',
+                                    mensaje: '¡Se modificó la curva.!'
+                                });
+                                
+                                $.get(self.UrlCurvas + 'listadoCurvas', function(res) {
+                                    self.cargarDatos(res, 'c');
+
+                                }).fail(function(res, status, er){
+                                    self.errorDeConexion(res, status, er, 'curvas/listadoCurvas');
+                                });
+                                
+                                self.$eBtnCerrar.click();
+
+                            } else {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'gritter',
+                                    titulo: 'curvas/editar',
+                                    mensaje: '¡No se modificó la curva.!',
+                                    clase: 'growl-danger'
+                                });
+                            }
+                        }).fail(function(res, status, er) {
+                            self.errorDeConexion(res, status, er, 'curvas/editar');
+                        });
+                    } else {
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
+                            titulo: 'curvas/editar',
+                            mensaje: '¡No hay datos a modificar.!',
+                            clase: 'growl-warning'                            
+                        });
+                    }
                 }
             },
             
@@ -577,6 +760,16 @@
                     self.banderaModal = 0;
                     self.tipoEdicion = 'nuevo';
                     self.$eTextArea.val('');
+                });
+            },
+            
+            errorDeConexion: function(res, status, er, serv) {
+                var self = this;
+                self.mensajeModalAndGritter({
+                    tipo: 'gritter',
+                    titulo: 'Servicio: ' + serv,
+                    mensaje: 'status: ' + status + ' er: ' + er,
+                    clase: 'growl-danger'
                 });
             }
         };

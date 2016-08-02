@@ -1,6 +1,14 @@
 (function(document, window, $, undefined) {
     (function() {
         return frmFormula = {
+            UrlFibras: 'http://localhost:8084/ERPTenimosBackend/rest/fibras/',
+            UrlProdQuimicos: 'http://localhost:8084/ERPTenimosBackend/rest/productformulacion/',
+            UrlProcesos: 'http://localhost:8084/ERPTenimosBackend/rest/procesos/',
+            UrlCurvas: 'http://localhost:8084/ERPTenimosBackend/rest/curvas/',
+            UrlPreparacion: 'http://localhost:8084/ERPTenimosBackend/rest/preparacion/',
+            UrlAuxiliar: 'http://localhost:8084/ERPTenimosBackend/rest/auxiliar/',
+            UrlProcPos: 'http://localhost:8084/ERPTenimosBackend/rest/procesopost/',
+            UrlFormulas: 'http://localhost:8084/ERPTenimosBackend/rest/formulas/',
             formula: {},
             oFibras: [],
             oProcesos: [],
@@ -24,6 +32,7 @@
             $barraProgreso: $('#barraProgreso'),
             $nomFormula: $('#nomFormula'),
             $codFormula: $('#codFormula'),
+            $consecFormula: $('#consecFormula'),
             $cbxFibra: $('#cbxFibra'),
             $cbxCompos: $('#cbxCompos'),
             $cbxColor: $('#cbxColor'),
@@ -80,6 +89,7 @@
             $btnSaveForm: $('#btnSaveForm'),
             proceso: 'nuevo',
             aux: [],
+            cbxCompos: false,
             $tempTrPrep: '<tr>' +
                             '<td class="center col-sm-2"><strong>Nombre Preparación:</strong></td>' +
                             '<td class="left col-sm-4" id="tNomPrep">:NombrePreparacion:</td>' +
@@ -164,6 +174,7 @@
                 var self = this;
                 
                 u.habilitarDeshabilitarCampos([
+                    self.$consecFormula,
                     self.$cbxCompos,
                     self.$codColor,
                     self.$nomColor,
@@ -245,14 +256,91 @@
                 }
             },
             
-            cargarDatos: function(dato, opc) {
+            consultasFormulas: function(){
                 var self = this;
-                var data = JSON.parse(dato);
+                
+                $.get(self.UrlFibras + 'listadoFibras', function(data) {
+                    self.cargarDatos(data, 'f');
+                    
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'fibras/listadoFibras');
+                });
+                
+                $.get(self.UrlProdQuimicos + 'noColorantes', function(data) {
+                    self.cargarDatos(data, 'q');
+                    
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'prodQuimicos/noColorantes');
+                });
+                
+                $.get(self.UrlProdQuimicos + 'colorantes', function(data) {
+                    self.cargarDatos(data, 'clrts');
+                    
+                }).fail(function(res, status, er){
+                    self.errorDeConexion(res, status, er, 'prodQuimicos/colorantes');
+                });
+                
+                $.get(self.UrlProcesos + 'listaProcesos', function(data) {
+                    self.cargarDatos(data, 'pr');
+                }).fail(function(res, status, er) {
+                    self.errorDeConexion(res, status, er, 'procesos/listaProcesos'); //CAMBIAR
+                });
+                
+                $.get(self.UrlFormulas + 'composiciones', function(data) {
+                    self.cargarDatos(data, 'cps');
+                    
+                }).fail(function(res, status, er) {
+                    self.errorDeConexion(res, status, er, 'formulas/composiciones');
+                });
+                
+                $.get(self.UrlFormulas + 'nombreColores', function(data) {
+                    self.cargarDatos(data, 'clr');
+                    
+                }).fail(function(res, status, er) {
+                    self.errorDeConexion(res, status, er, 'formulas/nombreColores');
+                });
+                
+                $.get(self.UrlFormulas + 'listadoTonos', function(data) {
+                    self.cargarDatos(data, 'tn');
+                    
+                }).fail(function(res, status, er) {
+                    self.errorDeConexion(res, status, er, 'formulas/listadoTonos');
+                });
+                
+                $.get(self.UrlPreparacion + 'maestros', function(data) {
+                    self.cargarDatos(data, 'pre');
+                
+                }).fail(function(res, status, er) {
+                    self.errorDeConexion(res, status, er, 'preparacion/maestros');
+                });
+                
+                $.get(self.UrlAuxiliar + 'maestros', function(data) {
+                    self.cargarDatos(data, 'aux');
+
+                }).fail(function(res, status, er) {
+                    self.errorDeConexion(res, status, er, 'auxiliar/maestros');
+                });
+                
+                $.get(self.UrlProcPos + 'maestros', function(data) {
+                    self.cargarDatos(data, 'pp');
+                        
+                }).fail(function(res, status, er) {
+                    self.errorDeConexion(res, status, er, 'procPos/maestros');
+                });
+                
+                $.get(self.UrlCurvas + 'listadoCurvas', function(data) {
+                    self.cargarDatos(data, 'curv');
+                    
+                }).fail(function(res, status, er) {
+                    self.errorDeConexion(res, status, er, 'curvas/listadoCurvas');
+                });
+            },
+            
+            cargarDatos: function(data, opc) {
+                var self = this;
                 
                 if (opc === 'f') { //Fibras
-                    if ($.type(data) !== 'array') {
-                        self.oFibras = JSON.parse(data);
-                    }
+                    self.oFibras = data;
                     
                     um.cargarComboBox([self.$cbxFibra, self.$cbxFibraFiltro], self.oFibras, 'formula');
                 }
@@ -262,23 +350,15 @@
                     um.cargarDataList([self.$dlCodAuxEsp, self.$dlNomAuxEsp], self.oQuimicos, 'auxEsp');
                 }
                 
+                if (opc === 'clrts') { //Colorantes
+                    self.oColorantes = data;
+                    um.cargarDataList([self.$dlCodColor, self.$dlNomColor], self.oColorantes, 'q');
+                }
+                
                 if (opc === 'pr') { //Procesos
                     self.oProcesos = data;
                     um.destruirDataTable(self.$daTableProcesos, '');
                     um.renderDataTables(self.$daTableProcesos, self.oProcesos, {frm: 'formula', tbl:'procesos'});
-                }
-                
-                if (opc === 'fla') {
-                    self.oFormulas = data;
-                    um.destruirDataTable(self.$dataTableFormulas, '');
-                    self.$dataTableFormulas.find('tbody').remove();
-                    if (!$.isEmptyObject(data)) {
-                        self.$divLoader.find('h3, div').remove();
-                        um.renderDataTables(self.$dataTableFormulas, self.oFormulas, {frm: 'formula', tbl: 'formulas'});
-                    } else {
-                        self.$divLoader.find('div').remove();
-                        self.$divLoader.find('h3').text('No se encontraron datos.');
-                    }
                 }
                 
                 if (opc === 'cps') { //Composicion
@@ -304,11 +384,6 @@
                     self.oAuxiliares = data;
                 }
                 
-                if (opc === 'clrts') { //Colorantes
-                    self.oColorantes = data;
-                    um.cargarDataList([self.$dlCodColor, self.$dlNomColor], self.oColorantes, 'q');
-                }
-                
                 if (opc === 'pp') { //Procesos Posteriores
                     self.oProPosterior = data;
                 }
@@ -316,31 +391,86 @@
                 if (opc === 'curv') { //Curvas
                     self.oCurvas = data;
                 }
+                
+                if (opc === 'fla') {
+                    self.oFormulas = data;
+                    um.destruirDataTable(self.$dataTableFormulas, '');
+                    self.$dataTableFormulas.find('tbody').remove();
+                    if (!$.isEmptyObject(data)) {
+                        self.$divLoader.find('h3, div').remove();
+                        um.renderDataTables(self.$dataTableFormulas, self.oFormulas, {frm: 'formula', tbl: 'formulas'});
+                    } else {
+                        self.$divLoader.find('div').remove();
+                        self.$divLoader.find('h3').text('No se encontraron datos.');
+                    }
+                }
             },
             
             metodosUtiles: function() {
                 var self = this;
                 
-                //focusin
-                //focusout
-                self.$cbxFibra.on('focusout, change', function(e) {
+                self.$consecFormula.inputNumber({
+                    allowDecimals: false,
+                    allowNegative: false,
+                    allowLeadingZero: true
+                });
+                
+                self.$consecFormula.on('focusout change', function() {
+                    if (self.$consecFormula.val().length >= 3) {
+                        self.verificarConsecutivo();
+                    } else {
+                        u.camposObligatorios([self.$consecFormula], '4');
+                    }
+                });
+                
+                self.$cbxFibra.on('focusout change', function(e) {
                     var fibra = self.$cbxFibra.val();
                     
                     self.cargarDataTablesByFibra(fibra);
                     u.camposObligatorios([self.$cbxFibra], '4');
+                    
+                    if (self.$codFormula.val().length >= 5) {
+                        self.$consecFormula.attr('disabled', false);
+                        u.camposObligatorios([self.$consecFormula], '4');
+                    } else {
+                        self.$consecFormula.attr('disabled', true);
+                        self.$consecFormula.val('');
+                        u.camposObligatorios([self.$consecFormula], '4');
+                    }
+                    
+                    if (self.$codFormula.val().length >= 5 && self.$consecFormula.val().length >= 3) {
+                        self.verificarConsecutivo();
+                    }
                 });
                 
-                self.$cbxCompos.on('focusout, change', function(e) {
+                self.$cbxCompos.on('focusout change', function(e) {
                     u.camposObligatorios([self.$cbxCompos], '4');
                     self.vistaPreliminarFormula({in: ''});
                     self.codigoFormula();
+                    
+                    if (self.$codFormula.val().length >= 5 && self.$consecFormula.val().length >= 3) {
+                        self.verificarConsecutivo();
+                    }
                 });
                 
-                self.$cbxColor.on('focusout, change', function(e) {
+                self.$cbxColor.on('focusout change', function(e) {
                     u.camposObligatorios([self.$cbxColor], '4');
                     self.nombreFormula();
                     self.codigoFormula();
                     self.vistaPreliminarFormula({in: ''});
+                    
+                    if (self.$codFormula.val().length >= 5) {
+                        self.$consecFormula.attr('disabled', false);
+                        u.camposObligatorios([self.$consecFormula], '4');
+                    } else {
+                        self.$consecFormula.attr('disabled', true);
+                        self.$consecFormula.val('');
+                        u.camposObligatorios([self.$consecFormula], '4');
+                    }
+                    
+                    if (self.$codFormula.val().length >= 5 && self.$consecFormula.val().length >= 3) {
+                        self.verificarConsecutivo();
+                    }
                 });
                 
                 self.$desColor.focusin(function(e) {
@@ -348,20 +478,31 @@
                 });
                 
                 self.$desColor.focusout(function(e) {
-                    u.camposObligatorios([self.$desColor], '4');
+                    //u.camposObligatorios([self.$desColor], '4');
                     self.nombreFormula();
                     self.vistaPreliminarFormula({in: ''});
                     
-                    if (self.$desColor.val() === '') {
-                        self.$desColor.css('text-transform', '');
-                    }
+                    (self.$desColor.val() === '') ? self.$desColor.css('text-transform', '') : '';
                 });
                 
-                self.$cbxTono.on('focusout, change', function(e) {
+                self.$cbxTono.on('focusout change', function(e) {
                     u.camposObligatorios([self.$cbxTono], '4');
                     self.nombreFormula();
                     self.codigoFormula();
                     self.vistaPreliminarFormula({in: ''});
+                    
+                    if (self.$codFormula.val().length >= 5) {
+                        self.$consecFormula.attr('disabled', false);
+                        u.camposObligatorios([self.$consecFormula], '4');
+                    } else {
+                        self.$consecFormula.attr('disabled', true);
+                        self.$consecFormula.val('');
+                        u.camposObligatorios([self.$consecFormula], '4');
+                    }
+                    
+                    if (self.$codFormula.val().length >= 5 && self.$consecFormula.val().length >= 3) {
+                        self.verificarConsecutivo();
+                    }
                 });
                 
                 self.$codPantone.focusin(function(e) {
@@ -372,20 +513,23 @@
                     u.camposObligatorios([self.$codPantone], '4');
                     self.vistaPreliminarFormula({in: ''});
                     
-                    if (self.$codPantone.val() === '') {
-                        self.$codPantone.css('text-transform', '');
-                    }
+                    (self.$codPantone.val() === '') ? self.$codPantone.css('text-transform', '') : '';
                 });
                 
-                self.$phFormula.on('focusout, change', function(e) {
+                self.$phFormula.on('focusout change', function(e) {
                     u.camposObligatorios([self.$phFormula], '4');
                     self.vistaPreliminarFormula({in: ''});
                 });
                 
-                self.$codColor.on("keyup keypress change", function() {
-                    self.$nomColor.val("");
-                    um.cargarCoincidenciaProductoQuimico('cod', [self.$codColor, self.$nomColor], self.oColorantes);
-                    u.camposObligatorios([self.$codColor, self.$nomColor], '4');
+                self.$codColor.on("keyup keypress change", function(e) {
+                    
+                    if(e.keyCode < 48 || e.keyCode > 57){                        
+                        e.preventDefault();
+                    } else {
+                        self.$nomColor.val("");
+                        um.cargarCoincidenciaProductoQuimico('cod', [self.$codColor, self.$nomColor], self.oColorantes);
+                        u.camposObligatorios([self.$codColor, self.$nomColor], '4');
+                    }
                 });
                 
                 self.$nomColor.on('keyup keypress change', function() {
@@ -407,17 +551,21 @@
                     maxDecimalDigits: 3
                 });
                 
-                self.$codAuxEsp.on("keyup keypress change", function() {
-                    self.$nomAuxEsp.val("");
+                self.$codAuxEsp.on("keyup keypress change", function(e) {
                     
-                    for (var i = 0; i < self.oQuimicos.length; i++){
-                        if ((self.$codAuxEsp.val() === self.oQuimicos[i].codProduct) && (self.oQuimicos[i].auxEsp === true)) {
-                            um.cargarCoincidenciaProductoQuimico('cod', [self.$codAuxEsp, self.$nomAuxEsp], self.oQuimicos);
-                            break;
-                        } 
+                    if(e.keyCode < 48 || e.keyCode > 57){                        
+                        e.preventDefault();
+                    } else {
+                        self.$nomAuxEsp.val("");
+                        for (var i = 0; i < self.oQuimicos.length; i++){
+                            if ((self.$codAuxEsp.val() === self.oQuimicos[i].codProduct) && (self.oQuimicos[i].auxEsp === true)) {
+                                um.cargarCoincidenciaProductoQuimico('cod', [self.$codAuxEsp, self.$nomAuxEsp], self.oQuimicos);
+                                break;
+                            } 
+                        }
+
+                        u.camposObligatorios([self.$codAuxEsp, self.$nomAuxEsp], '4');
                     }
-                    
-                    u.camposObligatorios([self.$codAuxEsp, self.$nomAuxEsp], '4');
                 });
                 
                 self.$nomAuxEsp.on('keyup keypress change', function() {
@@ -436,7 +584,7 @@
                 self.$cantAuxEsp.on('keyup keypress change', function() {
                     u.camposObligatorios([self.$cantAuxEsp], '4');
                 });
-                
+                                
                 self.$cantAuxEsp.inputNumber({
                     allowDecimals: true,
                     allowNegative: false,
@@ -455,7 +603,7 @@
                     maxDecimalDigits: 2
                 });
                 
-                self.$observ.on('focusin, focusout', function() {
+                self.$observ.on('focusin focusout', function() {
                     self.vistaPreliminarFormula({in: ''});
                 });
                 
@@ -473,16 +621,30 @@
                     thousandSep: ','
                 });
                 
-                self.$cbxFechaFiltro.on('focusout, change', function(e) {
-                    if (self.$cbxFechaFiltro.val() !== 'Seleccione una...') {
-                        u.habilitarDeshabilitarCampos([self.$fechaDesde,self.$fechaHasta,], 'hab');
-                    } else {
-                        u.limpiarCampos([self.$fechaDesde,self.$fechaHasta]);
-                        u.habilitarDeshabilitarCampos([self.$fechaDesde,self.$fechaHasta], 'des');
+                self.$cbxFibraFiltro.on('focusout change', function(){
+                    for (var i = 0; i < self.oFibras.length; i++) {
+                        if (self.oFibras[i].nomFibra === self.$cbxFibraFiltro.val()) {
+                            if (self.oFibras[i].composicion === "SI") {
+                                u.habilitarDeshabilitarCampos([self.$cbxComposFiltro], 'hab');
+                            } else {
+                                self.$cbxComposFiltro.val('Seleccione una...');
+                                u.habilitarDeshabilitarCampos([self.$cbxComposFiltro], 'des');
+                            }
+                            break;
+                        }
                     }
                 });
                 
-                self.$cbxCostoFiltro.on('focusout, change', function(e) {
+                self.$cbxFechaFiltro.on('focusout change', function(e) {
+                    if (self.$cbxFechaFiltro.val() !== 'Seleccione una...') {
+                        u.habilitarDeshabilitarCampos([self.$fechaDesde, self.$fechaHasta], 'hab');
+                    } else {
+                        u.limpiarCampos([self.$fechaDesde,self.$fechaHasta]);
+                        u.habilitarDeshabilitarCampos([self.$fechaDesde, self.$fechaHasta], 'des');
+                    }
+                });
+                
+                self.$cbxCostoFiltro.on('focusout change', function(e) {
                     if (self.$cbxCostoFiltro.val() !== 'Seleccione una...') {
                         
                         if (self.$cbxCostoFiltro.val() === 'ENTRE') {
@@ -586,69 +748,131 @@
                         
                         self.$divLoader.append(self.$cargando);
                         self.$divLoader.append(self.$loader);
-                        consultas.consultarMaestroFormulas(fibra, compos, color, tono, tipoFecha, fechaDes, fechaHas, rango, valor1, valor2, activa);
+                        //consultas.consultarMaestroFormulas(fibra, compos, color, tono, tipoFecha, fechaDes, fechaHas, rango, valor1, valor2, activa);
+                        
+                        var filtro = {};
+                        filtro.fibra = fibra;
+                        filtro.compos = compos;
+                        filtro.color = color;
+                        filtro.tono = tono;
+                        filtro.tipoFecha = tipoFecha;
+                        filtro.fechaDes = fechaDes;
+                        filtro.fechaHas = fechaHas;
+                        filtro.rango = rango;
+                        filtro.valor1 = valor1;
+                        filtro.valor2 = valor2;
+                        filtro.activa = activa;
+                        
+                        $.get(self.UrlFormulas + 'listaFormulas', {
+                            datos: JSON.stringify(filtro)
+                        }, function(data) {
+                            self.cargarDatos(data, 'fla');
+                        });
+                        
                     } else {
                         self.$divLoader.append(self.$cargando);
                         self.$divLoader.find('h3').text('No hay datos a consultar');
                         um.destruirDataTable(self.$dataTableFormulas, '');
-                        self.$dataTableFormulas.find('tbody').remove();
+                        //self.$dataTableFormulas.find('tbody').remove();
                     }
                 });
                 
             },
             
+            verificarConsecutivo: function() {
+                var self = this;
+                
+                if (!self.$cbxCompos.attr('disabled')) {
+                    var compos = self.$cbxCompos.val();
+                }
+                
+                if (compos !== 'Seleccione una...') {
+                    $.get(self.UrlFormulas + 'verificarConsecutivo', {
+                        idFibra: self.formula.idFibra,
+                        idColor: self.formula.idColor,
+                        codTono: self.formula.codTono,
+                        consecutivo: self.$consecFormula.val(),
+                        compos: (self.$cbxCompos.val() !== 'Seleccione una...') ? self.$cbxCompos.val() : ''
+                    }, function(res) {
+                        if (res) {
+                            self.formula.consecutivo = self.$consecFormula.val();
+                        } else {
+                            self.formula.consecutivo = -1;
+                            self.mensajeModalAndGritter({
+                                tipo: 'modal',
+                                titulo: 'Consecutivo en Uso',
+                                mensaje: (self.$cbxCompos.val() !== 'Seleccione una...') ? 'Ya existe una formula con el código: ' + self.$codFormula.val() + self.$consecFormula.val() + ' composición: ' + self.$cbxCompos.val() : 'Ya existe una formula con el código: ' + self.$codFormula.val() + self.$consecFormula.val()
+                            });
+                        }
+                    }).fail(function(res, status, er) {
+                        self.errorDeConexion(res, status, er, 'formulas/verificarConsecutivo');
+                    });
+                } else {
+                    self.mensajeModalAndGritter({
+                        tipo: 'modal',
+                        titulo: 'Campos Obligatorios',
+                        mensaje: 'No ha seleccionado la composición de la fibra.'
+                    });
+                }
+            },
+            
             cargarDataTablesByFibra: function(fibra) {
                 var self = this;
                 var arrTemp = [];
+                var idFibra = [];
 
                 if (fibra !== 'Seleccione una...') {
                     self.$tPreparaciones.find('tbody').remove();
                     self.$tAuxiliares.find('tbody').remove();
                     self.$tProPosteriores.find('tbody').remove();
-
+                    
+                    self.colorPorFormula = [];
+                    self.$tColorantes.find('tr:gt(1)').remove();
+                    self.$tAuxEsp.find('tr:gt(1)').remove();
+                    u.habilitarDeshabilitarCampos([
+                        self.$codColor,
+                        self.$nomColor,
+                        self.$cantColor,
+                        self.$btnAddColor
+                    ], 'hab');
+                    
                     for (var i = 0; i < self.oFibras.length; i++) {
-                        if (self.oFibras[i].nomFibra === fibra) {
-                            var idFibra = self.oFibras[i].idFibra;
+                        if (self.oFibras[i].nomFibra === fibra || self.oFibras[i].nomFibra === "TODAS LAS FIBRAS") {
+                            idFibra.push({idF: self.oFibras[i].idFibra});
                             
-                            if (self.oFibras[i].composicion === 'SI') {
+                            if (self.oFibras[i].composicion === 'SI' && self.oFibras[i].nomFibra === fibra) {
                                 self.cantQuimicos = 6;
                                 self.cQuimicos = 6;
                                 self.$cbxCompos.attr('disabled', false);
+                                self.cbxCompos = false;
                                 u.camposObligatorios([self.$cbxCompos], '4');
                             } else {
                                 self.cantQuimicos = 3;
                                 self.cQuimicos = 3;
-                                self.$cbxCompos.val('Seleccione una...');
                                 self.$cbxCompos.attr('disabled', true);
+                                self.cbxCompos = true;
+                                self.$cbxCompos.val('Seleccione una...');
                                 u.camposObligatorios([self.$cbxCompos], '4');
                             }
-
-                            self.colorPorFormula = [];
-                            self.$tColorantes.find('tr:gt(1)').remove();
-                            self.$tAuxEsp.find('tr:gt(1)').remove();
-                            u.habilitarDeshabilitarCampos([
-                                self.$codColor,
-                                self.$nomColor,
-                                self.$cantColor,
-                                self.$btnAddColor
-                            ], 'hab');
-
-                            break;
+                            //break;
                         }
                     }
-
-                    for (var j = 0; j < self.oPreparaciones.length; j++) {
-                        if (self.oPreparaciones[j].idFibra.idFibra === idFibra) {
-                            var obj = {
-                                idNomPreparacion: self.oPreparaciones[j].idNomPreparacion,
-                                nomPreparacion: self.oPreparaciones[j].nomPreparacion,
-                                codFibra: self.oPreparaciones[j].idFibra.codFibra,
-                                costoPreparacion: self.oPreparaciones[j].costoPreparacion.toFixed(1),
-                                fechaUso: self.oPreparaciones[j].fechaUso
-                            };
-                            arrTemp.push(obj);
+                    
+                    for (var k = 0; k < idFibra.length; k++) {
+                        for (var j = 0; j < self.oPreparaciones.length; j++) {
+                            if (self.oPreparaciones[j].idFibra === idFibra[k].idF || self.oPreparaciones[j].idFibra === idFibra[k].idF) {
+                                var obj = {
+                                    idNomPreparacion: self.oPreparaciones[j].idMaestro,
+                                    nomPreparacion: self.oPreparaciones[j].nombMaestro,
+                                    codFibra: self.oPreparaciones[j].codFibra,
+                                    costoPreparacion: Math.round(self.oPreparaciones[j].costo),
+                                    fechaUso: (self.oPreparaciones[j].fechaUso === 'null') ? '' : self.oPreparaciones[j].fechaUso
+                                };
+                                arrTemp.push(obj);
+                                break;
+                            }
                         }
-                    }
+                    }    
 
                     var tp = self.$daTablePreparaciones.dataTable();
                     tp.fnDestroy();
@@ -656,15 +880,18 @@
                     um.renderDataTables(self.$daTablePreparaciones, arrTemp, {frm: 'formula', tbl: 'preparacion'});
 
                     arrTemp = [];
-                    for (var j = 0; j < self.oAuxiliares.length; j++) {
-                        if (self.oAuxiliares[j].idFibra.idFibra === idFibra) {
-                            var obj = {
-                                nomAuxiliar: self.oAuxiliares[j].nomAuxiliar,
-                                codFibra: self.oAuxiliares[j].idFibra.codFibra,
-                                costoAuxiliar: self.oAuxiliares[j].costoAuxiliar.toFixed(1),
-                                fechaUso: self.oAuxiliares[j].fechaUso
-                            };
-                            arrTemp.push(obj);
+                    for (var k = 0; k < idFibra.length; k++) {
+                        for (var j = 0; j < self.oAuxiliares.length; j++) {
+                            if (self.oAuxiliares[j].idFibra === idFibra[k].idF || self.oAuxiliares[j].idFibra === idFibra[k].idF) {
+                                var obj = {
+                                    nomAuxiliar: self.oAuxiliares[j].nombMaestro,
+                                    codFibra: self.oAuxiliares[j].codFibra,
+                                    costoAuxiliar: Math.round(self.oAuxiliares[j].costo),
+                                    fechaUso: (self.oAuxiliares[j].fechaUso === 'null') ? '' : self.oAuxiliares[j].fechaUso
+                                };
+                                arrTemp.push(obj);
+                                break;
+                            }
                         }
                     }
 
@@ -674,15 +901,18 @@
                     um.renderDataTables(self.$daTableAuxiliares, arrTemp, {frm: 'formula', tbl: 'auxiliar'});
 
                     arrTemp = [];
-                    for (var j = 0; j < self.oProPosterior.length; j++) {
-                        if (self.oProPosterior[j].idFibra.idFibra === idFibra) {
-                            var obj = {
-                                nomProcPost: self.oProPosterior[j].nomProcPost,
-                                codFibra: self.oProPosterior[j].idFibra.codFibra,
-                                costoProcPost: self.oProPosterior[j].costoProcPost.toFixed(1),
-                                fechaUso: self.oProPosterior[j].fechaUso
-                            };
-                            arrTemp.push(obj);
+                    for (var k = 0; k < idFibra.length; k++) {
+                        for (var j = 0; j < self.oProPosterior.length; j++) {
+                            if (self.oProPosterior[j].idFibra === idFibra[k].idF || self.oProPosterior[j].idFibra === idFibra[k].idF) {
+                                var obj = {
+                                    nomProcPost: self.oProPosterior[j].nombMaestro,
+                                    codFibra: self.oProPosterior[j].codFibra,
+                                    costoProcPost: Math.round(self.oProPosterior[j].costo),
+                                    fechaUso: (self.oProPosterior[j].fechaUso === 'null') ? '' : self.oProPosterior[j].fechaUso
+                                };
+                                arrTemp.push(obj);
+                                break;
+                            }
                         }
                     }
 
@@ -711,6 +941,7 @@
                         self.$cantAuxEsp,
                         self.$btnAddAuxEsp
                     ], 'des');
+                    self.$cbxCompos.val('Seleccione una...');
                     u.camposObligatorios([self.$cbxCompos, self.$codColor, self.$nomColor, self.$cantColor], '4');
                     self.nombreFormula();
                     self.codigoFormula();
@@ -759,6 +990,11 @@
                 var self = this;
                 
                 self.formula = {};
+                self.formula.proces = false;
+                self.formula.preparacion = false;
+                self.formula.auxiliar = false;
+                self.formula.procPost = false;
+                self.formula.costo = 0;
                 self.proceso = 'nuevo';
                 
                 self.$cbxFibra.val('Seleccione una...');
@@ -768,6 +1004,7 @@
                 self.$colorpicker.css('backgroundColor', '');
                 
                 u.limpiarCampos([
+                    self.$consecFormula,
                     self.$desColor,
                     self.$codPantone,
                     self.$phFormula,
@@ -782,9 +1019,9 @@
                 ]);
 
                 u.camposObligatorios([
+                    self.$consecFormula,
                     self.$cbxFibra,
                     self.$cbxColor,
-                    self.$desColor,
                     self.$cbxTono,
                     self.$codPantone,
                     self.$phFormula,
@@ -821,6 +1058,7 @@
                 self.$tAuxEsp.find('tr:gt(1)').remove();
 
                 u.habilitarDeshabilitarCampos([
+                    self.$consecFormula,
                     self.$cbxCompos,
                     self.$codColor,
                     self.$nomColor,
@@ -849,55 +1087,66 @@
             },
             
             pintarCamposObligatorios: function() {
-              var self = this;
-              
-                var campos = [
-                  self.$cbxFibra,
-                  self.$cbxColor,
-                  self.$desColor,
-                  self.$cbxTono,
-                  self.$codPantone,
-                  self.$phFormula,
-                  self.$colorpicker,
-                  self.$codColor,
-                  self.$nomColor,
-                  self.$cantColor,
-                  self.$codAuxEsp,
-                  self.$nomAuxEsp,
-                  self.$cantAuxEsp
-              ];
-              
-              u.camposObligatorios(campos, '1');
-            },
-            
-            mensajeObligatoriedad: function(mensaje) {
                 var self = this;
 
-                if (mensaje.t === 'modal') {
+                var campos = [
+                    self.$consecFormula,
+                    self.$cbxFibra,
+                    self.$cbxColor,
+                    self.$cbxTono,
+                    self.$codPantone,
+                    self.$phFormula,
+                    self.$colorpicker,
+                    self.$codColor,
+                    self.$nomColor,
+                    self.$cantColor,
+                    self.$codAuxEsp,
+                    self.$nomAuxEsp,
+                    self.$cantAuxEsp
+                ];
+
+                u.camposObligatorios(campos, '1');
+            },
+            
+            mensajeModalAndGritter: function(m) {
+                var self = this;
+
+                if (m.tipo === 'modal') {
                     try {
-                        self.$tituloMensaje.text(mensaje.titulo);
-                        self.$cuerpoMensaje.text(mensaje.cuerpoMensaje);
+                        self.$tituloMensaje.text(m.titulo);
+                        self.$cuerpoMensaje.text(m.mensaje);
                         self.$modalMensaje.modal("show");
                     } catch (e) {
-                        alert(mensaje.cuerpoMensaje);
+                        alert(m.mensaje);
                     }
-                } else if (mensaje.t === 'gritter') {
+                } else if (m.tipo === 'gritter') {
                     try {
-                        $.gritter.add({
-                            title: mensaje.titulo,
-                            text: mensaje.cuerpoMensaje,
-                            sticky: false,
-                            time: "30000"
-                        });
+                        
+                        if (m.clase === '') {
+                            $.gritter.add({
+                                title: m.titulo,
+                                text: m.mensaje,
+                                sticky: false,
+                                time: ''
+                            });
+                        } else {
+                            $.gritter.add({
+                                title: m.titulo,
+                                text: m.mensaje,
+                                class_name: m.clase,
+                                sticky: false,
+                                time: ''
+                            });
+                        }
                     } catch (e) {
-                        alert(mensaje.cuerpoMensaje);
+                        alert(m.mensaje);
                     }
                 }
             },
             
             consultaNombreFormula: function(){
                 var self = this;
-
+                
             },
             
             agregarColorantes: function() {
@@ -912,26 +1161,26 @@
 
                     if (um.cantidadDeQuimico({val: self.$cantColor.val(), input: 'pctj'})) {
                         b = false;
-                        self.mensajeObligatoriedad({
-                            t: 'modal',
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
                             titulo: 'Unidad de Medida Porcentaje por Kilo',
-                            cuerpoMensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'});
+                            mensaje: 'El porcentaje debe estar entre 0.00001 y 100.00000.'});
                     }
 
                     if (b && campObligQuim) {
                         if (self.cantQuimicos > 0) {
                             var d = um.noRepetirQuimicos({
                                 tipo: '+', 
-                                codQ: self.$codColor.val(),
-                                cant1: 0,
-                                cant2: 0,
+                                codQuimico: self.$codColor.val(),
+                                cantGr: 0,
+                                cantPtj: 0,
                                 maestro: 'formula', 
                                 codQpermitido: ''},
                                 self.colorPorFormula);
 
                             if (!d.existe) {
 
-                                self.colorPorFormula.push({codQ: self.$codColor.val(), cant1: 0, cant2: parseFloat(self.$cantColor.val())});
+                                self.colorPorFormula.push({codQuimico: self.$codColor.val(), cantGr: 0, cantPtj: parseFloat(self.$cantColor.val())});
                                 
                                 if (self.colorPorFormula.length > 0 && self.$tAuxiliares.find('tbody tr'). length > 0) {
                                     u.habilitarDeshabilitarCampos([
@@ -963,17 +1212,18 @@
                                 u.camposObligatorios([self.$codColor, self.$nomColor, self.$cantColor], '4');
                                 self.cantQuimicos--;
                                 
+                                self.costearFormula();
                             } else {
-                                self.mensajeObligatoriedad({
-                                    t: 'modal',
+                                self.mensajeModalAndGritter({
+                                    tipo: 'modal',
                                     titulo: 'Registro de Colorantes',
-                                    cuerpoMensaje: 'No puede agregar más de una vez un mismo color.'});
+                                    mensaje: 'No puede agregar más de una vez un mismo color.'});
                             }
                         } else {
-                            self.mensajeObligatoriedad({
-                                t: 'modal',
+                            self.mensajeModalAndGritter({
+                                tipo: 'modal',
                                 titulo: 'Cantidad Colorantes',
-                                cuerpoMensaje: 'La cantidad permitida para la fibra seleccionada es de ' + self.cQuimicos + ' colorantes.'});
+                                mensaje: 'La cantidad permitida para la fibra seleccionada es de ' + self.cQuimicos + ' colorantes.'});
                         }
                     }
                 });
@@ -1020,6 +1270,7 @@
                     }
                     
                     self.vistaPreliminarFormula({in: 'colorante'});
+                    self.costearFormula();
                     
                     e.stopPropagation();
                 });
@@ -1037,10 +1288,10 @@
 
                     if (um.cantidadDeQuimico({val: self.$cantAuxEsp.val(), input: 'grlt'})) {
                         b = false;
-                        self.mensajeObligatoriedad({
-                            t: 'modal',
+                        self.mensajeModalAndGritter({
+                            tipo: 'modal',
                             titulo: 'Unidad de Medida Gramos por Litro',
-                            cuerpoMensaje: 'La cantida de gramos debe ser superior a 0 (Cero).'});
+                            mensaje: 'La cantida de gramos debe ser superior a 0 (Cero).'});
                     }
 
                     if (b && campObligQuim) {
@@ -1056,7 +1307,8 @@
                         });
 
                         self.vistaPreliminarFormula({in: 'auxEsp'});
-
+                        self.costearFormula();
+                        
                         u.limpiarCampos([self.$codAuxEsp, self.$nomAuxEsp, self.$cantAuxEsp]);
                         u.camposObligatorios([self.$codAuxEsp, self.$nomAuxEsp, self.$cantAuxEsp], '4');
                     }
@@ -1085,6 +1337,7 @@
                     fila.remove();
                     
                     self.vistaPreliminarFormula({in: 'auxEsp'});
+                    self.costearFormula();
                     
                     e.stopPropagation();
                 });
@@ -1092,12 +1345,18 @@
             
             agregarMaestros: function() {
                 var self = this;
+                self.formula.proces = false;
+                self.formula.preparacion = false;
+                self.formula.auxiliar = false;
+                self.formula.procPost = false;
                 
                 self.$daTableProcesos.on('click', '#btnAdd', function (e) {
                     e.preventDefault();
                     var fila = $(this).closest('tr');
                     var nomProceso = fila[0].cells[0].textContent;
                     var tiempo = (parseInt(fila[0].cells[2].textContent));
+                    
+                    (self.proceso === 'editar') ? self.formula.proces = true : self.formula.proces = false;
                     
                     self.renderTablas('proceso', {nombre: nomProceso, tiempo: tiempo});
                 });
@@ -1107,6 +1366,8 @@
                     var fila = $(this).closest('tr');
                     var nomPrep = fila[0].cells[0].textContent;
                     
+                    (self.proceso === 'editar') ? self.formula.preparacion = true : self.formula.preparacion = false;
+    
                     self.renderTablas('preparacion', nomPrep);
                 });
                 
@@ -1115,6 +1376,8 @@
                     var fila = $(this).closest('tr');
                     var nomAux = fila[0].cells[0].textContent;
                     
+                    (self.proceso === 'editar') ? self.formula.auxiliar = true : self.formula.auxiliar = false;
+                    
                     self.renderTablas('auxiliar', nomAux);
                 });
                 
@@ -1122,6 +1385,8 @@
                     e.preventDefault();
                     var fila = $(this).closest('tr');
                     var nomProPos = fila[0].cells[0].textContent;
+                    
+                    (self.proceso === 'editar') ? self.formula.procPost = true : self.formula.procPost = false;
                     
                     self.renderTablas('proPost', nomProPos);
                 });
@@ -1140,13 +1405,13 @@
                     
                     var trProc = tempTrProceso
                                     .replace(':NombreProceso:', maestro.nombre)
-                                    .replace(':Tiempo:', tiempo.toFixed(2));
+                                    .replace(':Tiempo:', Math.round(tiempo));
                     
                     self.$tProcesos.find('tbody').append(trProc);
                     
                     for (var i = 0; i < self.oProcesos.length; i++) {
                         if (maestro.nombre === self.oProcesos[i].nomProceso) {
-                            self.formula.idProceso = self.oProcesos[i].idProceso;
+                            self.formula.proceso = self.oProcesos[i].idProceso;
                             
                             self.vistaPreliminarFormula({in: 'proceso', proceso: self.oProcesos[i].idProceso, tiempo: tiempo, curva: self.oProcesos[i].idCurvas});
                             
@@ -1158,7 +1423,7 @@
                                     if (parseInt(curvas[j]) === self.oCurvas[k].idCurva) {
                                         var trCurva = tempTrCurva
                                                         .replace(':NombreCurva:', self.oCurvas[k].nomCurva)
-                                                        .replace(':TiempoCurva:', ((self.oCurvas[k].tiempoCurva / 60).toFixed(2)))
+                                                        .replace(':TiempoCurva:', (Math.round((self.oCurvas[k].tiempoCurva / 60))))
                                                         .replace(':LlenadoCurva:', self.oCurvas[k].llenadoCurva)
                                                         .replace(':RinseCurva:', self.oCurvas[k].rinseCurva);
                                         
@@ -1179,17 +1444,17 @@
                     var tempTrPrep = self.$tempTrPrep;
                     
                     for (var i = 0; i < self.oPreparaciones.length; i++) {
-                        if (maestro === self.oPreparaciones[i].nomPreparacion) {
+                        if (maestro === self.oPreparaciones[i].nombMaestro) {
                             
-                            self.formula.idPreparacion = self.oPreparaciones[i].idNomPreparacion;
+                            self.formula.idPreparacion = self.oPreparaciones[i].idMaestro;
                             
                             var trPrep = tempTrPrep
-                                    .replace(':NombrePreparacion:', self.oPreparaciones[i].nomPreparacion)
-                                    .replace(':Fibra:', self.oPreparaciones[i].idFibra.nomFibra);
+                                    .replace(':NombrePreparacion:', self.oPreparaciones[i].nombMaestro)
+                                    .replace(':Fibra:', self.oPreparaciones[i].nomFibra);
                             
                             self.$tPreparaciones.find('tbody').append(trPrep);
                             
-                            var quimicos = self.oPreparaciones[i].preparacionCollection;
+                            var quimicos = self.oPreparaciones[i].quimicos;
                             
                             for (var j = 0; j < quimicos.length; j++) {
                                 for (var k = 0; k < self.oQuimicos.length; k ++) {                                    
@@ -1214,6 +1479,7 @@
                             break;
                         }
                     }
+                    self.costearFormula();
                 } else if (tabla === 'auxiliar') {
                     self.$tAuxiliares.find('tbody').remove();
                     self.$tAuxiliares.append('<tbody></tbody>');
@@ -1221,17 +1487,17 @@
                     var tempTrAux = self.$tempTrAux;
                     
                     for (var i = 0; i < self.oAuxiliares.length; i++) {
-                        if (maestro === self.oAuxiliares[i].nomAuxiliar) {
+                        if (maestro === self.oAuxiliares[i].nombMaestro) {
                             
-                            self.formula.idAuxiliar = self.oAuxiliares[i].idNomAuxiliar;
+                            self.formula.idAuxiliar = self.oAuxiliares[i].idMaestro;
                             
                             var trAux = tempTrAux
-                                    .replace(':NombreAuxiliar:', self.oAuxiliares[i].nomAuxiliar)
-                                    .replace(':Fibra:', self.oAuxiliares[i].idFibra.nomFibra);
+                                    .replace(':NombreAuxiliar:', self.oAuxiliares[i].nombMaestro)
+                                    .replace(':Fibra:', self.oAuxiliares[i].nomFibra);
                             
                             self.$tAuxiliares.find('tbody').append(trAux);
                             
-                            var quimicos = self.oAuxiliares[i].auxiliarCollection;
+                            var quimicos = self.oAuxiliares[i].quimicos;
                             
                             for (var j = 0; j < quimicos.length; j++) {
                                 for (var k = 0; k < self.oQuimicos.length; k ++) {                                    
@@ -1250,7 +1516,7 @@
                                 }
                             }
                             
-                            if (self.colorPorFormula.length > 0 && self.$tAuxiliares.find('tbody tr'). length > 0) {
+                            if (self.colorPorFormula.length > 0 && self.$tAuxiliares.find('tbody tr').length > 0) {
                                 u.habilitarDeshabilitarCampos([
                                     self.$codAuxEsp,
                                     self.$nomAuxEsp,
@@ -1274,6 +1540,7 @@
                             break;
                         }
                     }
+                    self.costearFormula();
                 } else if (tabla === 'proPost') {
                     self.$tProPosteriores.find('tbody').remove();
                     self.$tProPosteriores.append('<tbody></tbody>');
@@ -1281,17 +1548,17 @@
                     var tempTrProPos = self.$tempTrProPos;
                     
                     for (var i = 0; i < self.oProPosterior.length; i++) {
-                        if (maestro === self.oProPosterior[i].nomProcPost) {
+                        if (maestro === self.oProPosterior[i].nombMaestro) {
                             
-                            self.formula.idProPost = self.oProPosterior[i].idNomProcPost;
+                            self.formula.idProcPost = self.oProPosterior[i].idMaestro;
                             
                             var trProPos = tempTrProPos
-                                    .replace(':NombreProPos:', self.oProPosterior[i].nomProcPost)
-                                    .replace(':Fibra:', self.oProPosterior[i].idFibra.nomFibra);
+                                    .replace(':NombreProPos:', self.oProPosterior[i].nombMaestro)
+                                    .replace(':Fibra:', self.oProPosterior[i].nomFibra);
                             
                             self.$tProPosteriores.find('tbody').append(trProPos);
                             
-                            var quimicos = self.oProPosterior[i].procesosPosterioresCollection;
+                            var quimicos = self.oProPosterior[i].quimicos;
                             
                             for (var j = 0; j < quimicos.length; j++) {
                                 for (var k = 0; k < self.oQuimicos.length; k ++) {
@@ -1316,6 +1583,7 @@
                             break;
                         }
                     }
+                    self.costearFormula();
                 }
             },
             
@@ -1343,12 +1611,16 @@
                     
                     if (!$.isEmptyObject(formula)) {
                         self.$nomFormula.val(formula.nombreForm);
-                        self.$codFormula.val(formula.codFibra + formula.codColor + formula.codTono + formula.consecutivo);
+                        self.$codFormula.val(formula.codFibra + formula.codColor + formula.codTono);
+                        self.$consecFormula.val(formula.consecutivo);
+                        self.$consecFormula.attr('disabled', true);
                         self.$observ.val(formula.observ);
                         
+                        self.formula.nombreForm = formula.nombreForm;                        
                         self.formula.codTono = formula.codTono;
                         self.formula.idColor = formula.idColor;
                         self.formula.idFibra = formula.idFibra;
+                        self.formula.consecutivo = formula.consecutivo;
                                                 
                         for (var i = 0; i < self.oFibras.length; i++) {
                             if (formula.idFibra === self.oFibras[i].idFibra) {
@@ -1358,6 +1630,7 @@
                             }
                         }
                         
+                        self.formula.compos = formula.compos;
                         if (formula.compos !== '') {
                             self.$cbxCompos.val(formula.compos);
                         }
@@ -1384,7 +1657,9 @@
                                 self.$desColor.val(nom.trim());
                             }
                             
+                            self.formula.pantone = formula.pantone;
                             self.$codPantone.val((formula.pantone !== 'no Pantone') ? formula.pantone : '');
+                            self.formula.phFormula = formula.phFormula;
                             self.$phFormula.val((formula.phFormula !== 'no PH') ? formula.phFormula : '');
                         }
                         
@@ -1395,16 +1670,18 @@
                             }
                         }
                         
+                        self.formula.color = formula.color;
                         self.$colorpicker.val(formula.color);
                         self.$colorpicker.css({color: 'rgb(' + formula.color + ')', backgroundColor: 'rgb(' + formula.color + ')'});
                         
+                        self.formula.proceso = formula.proceso;
                         for (var i = 0; i < self.oProcesos.length; i++) {
                             if (formula.proceso === self.oProcesos[i].idProceso) {
                                 self.renderTablas('proceso', {nombre: self.oProcesos[i].nomProceso, tiempo: self.oProcesos[i].tiempoEst});
                             }
                         }
                         
-                        var quimicos = formula.labFormulaDetalleCollection;
+                        var quimicos = formula.formulaDetalle;
                         var prep = [];
                         var ppos = [];
                         
@@ -1423,14 +1700,14 @@
                         self.$tProPosteriores.find('tbody').append(self.$loader);
                         var tempTrProPos = self.$tempTrProPos;
                         
-                        if (formula.idPreparacion !== 0) {
+                        if (formula.idPreparacion >= 0) {
                             for (var i = 0; i < self.oPreparaciones.length; i++) {                            
-                                if (formula.idPreparacion === self.oPreparaciones[i].idNomPreparacion) {
+                                if (formula.idPreparacion === self.oPreparaciones[i].idMaestro) {
                                     var trPrep = tempTrPrep
-                                                    .replace(':NombrePreparacion:', self.oPreparaciones[i].nomPreparacion)
+                                                    .replace(':NombrePreparacion:', self.oPreparaciones[i].nombMaestro)
                                                     .replace(':Fibra:', self.$cbxFibra.val());
                                     
-                                    self.formula.idPreparacion = self.oPreparaciones[i].idNomPreparacion;
+                                    self.formula.idPreparacion = self.oPreparaciones[i].idMaestro;
                                     break;
                                 }
                             }    
@@ -1438,19 +1715,19 @@
                             var trPrep = tempTrPrep
                                             .replace(':NombrePreparacion:', 'SIN MAESTRO ASIGNADO')
                                             .replace(':Fibra:', self.$cbxFibra.val());
-                            self.formula.idPreparacion = 0;
+                            self.formula.idPreparacion = -1;
                         }
                         
                         self.$tPreparaciones.find('tbody').append(trPrep);
                         
-                        if (formula.idAuxiliar !== 0) {
+                        if (formula.idAuxiliar >= 0) {
                             for (var i = 0; i < self.oAuxiliares.length; i++) {
-                                if (formula.idAuxiliar === self.oAuxiliares[i].idNomAuxiliar) {
+                                if (formula.idAuxiliar === self.oAuxiliares[i].idMaestro) {
                                     var trAux = tempTrAux
-                                                .replace(':NombreAuxiliar:', self.oAuxiliares[i].nomAuxiliar)
+                                                .replace(':NombreAuxiliar:', self.oAuxiliares[i].nombMaestro)
                                                 .replace(':Fibra:', self.$cbxFibra.val());
                                     
-                                    self.formula.idAuxiliar = self.oAuxiliares[i].idNomAuxiliar;
+                                    self.formula.idAuxiliar = self.oAuxiliares[i].idMaestro;
                                     break;
                                 }
                             }
@@ -1459,19 +1736,20 @@
                                         .replace(':NombreAuxiliar:', 'SIN MAESTRO ASIGNADO')
                                         .replace(':Fibra:', self.$cbxFibra.val());
                             
-                            self.formula.idAuxiliar = 0;
+                            self.formula.idAuxiliar = -1;
                         }
                             
                         self.$tAuxiliares.find('tbody').append(trAux);
                         
-                        if (formula.idProcPost !== 0) {
+                        if (formula.idProcPost >= 0) {
                             for (var i = 0; i < self.oProPosterior.length; i++) {
-                                if (formula.idProcPost === self.oProPosterior[i].idNomProcPost) {
+                                if (formula.idProcPost === self.oProPosterior[i].idMaestro) {
                                     var trPpos = tempTrProPos
-                                                .replace(':NombreProPos:', self.oProPosterior[i].nomProcPost)
+                                                .replace(':NombreProPos:', self.oProPosterior[i].nombMaestro)
                                                 .replace(':Fibra:', self.$cbxFibra.val());
                                         
-                                    self.formula.idProPost = self.oProPosterior[i].idNomProcPost;
+                                    self.formula.idProcPost = self.oProPosterior[i].idMaestro;
+                                    
                                     break;
                                 }
                             }
@@ -1480,7 +1758,7 @@
                                         .replace(':NombreProPos:', 'SIN MAESTRO ASIGNADO')
                                         .replace(':Fibra:', self.$cbxFibra.val());
                             
-                            self.formula.idProPost = 0;
+                            self.formula.idProcPost = -1;
                         }
                             
                         self.$tProPosteriores.find('tbody').append(trPpos);
@@ -1518,16 +1796,16 @@
                                         if (self.cantQuimicos > 0) {
                                             var d = um.noRepetirQuimicos({
                                                 tipo: '+',
-                                                codQ: quimicos[i].codProducto,
-                                                cant1: 0,
-                                                cant2: 0,
+                                                codQuimico: quimicos[i].codProducto,
+                                                cantGr: 0,
+                                                cantPtj: 0,
                                                 maestro: 'formula',
                                                 codQpermitido: ''},
                                             self.colorPorFormula);
 
                                             if (!d.existe) {
 
-                                                self.colorPorFormula.push({codQ: quimicos[i].codProducto, cant1: 0, cant2: parseFloat(quimicos[i].cantPtje)});
+                                                self.colorPorFormula.push({codQuimico: quimicos[i].codProducto, cantGr: 0, cantPtj: parseFloat(quimicos[i].cantPtje)});
 
                                                 if (self.colorPorFormula.length > 0 && self.$tAuxiliares.find('tbody tr').length > 0) {
                                                     u.habilitarDeshabilitarCampos([
@@ -1558,15 +1836,15 @@
                                                 self.cantQuimicos--;
 
                                             } else {
-                                                self.mensajeObligatoriedad({
-                                                    t: 'modal',
+                                                self.mensajeModalAndGritter({
+                                                    tipo: 'modal',
                                                     titulo: 'Registro de Colorantes',
-                                                    cuerpoMensaje: 'No puede agregar más de una vez un mismo color.'});
+                                                    mensaje: 'No puede agregar más de una vez un mismo color.'});
                                             }
                                         }
                                     }
                                 }
-                            } else if (quimicos[i].seccion === 2) {
+                            } else if (quimicos[i].seccion === 2 || quimicos[i].seccion === 5) {
                                 for (var j = 0; j < self.oQuimicos.length; j ++) {
                                     if (quimicos[i].codProducto === self.oQuimicos[j].codProduct && !self.oQuimicos[j].auxEsp) {
                                         var tempTrQuim = self.$tempTrQuim;
@@ -1653,96 +1931,8 @@
                             self.$colorpicker
                         ], 'des');
                     }
-                    
-                    /*
-                    codColor:"4"
-                    codFibra:"011"
-                    codTono:"2"
-                    color:"64, 0, 64"
-                    compos:""
-                    consecutivo:"320"
-                    costoFormula:955
-                    estado:false
-                    fechaCreacion:1341464400000
-                    fechaModificacion:1341464400000
-                    fechaUso:1341464400000
-                    idAuxiliar: 1
-                    idColor:7
-                    idFibra:1
-                    idFormula:3919
-                    idPreparacion:1
-                    idProcPost:1
-                    labFormulaDetalleCollection: Array[10]
-                            0:Object
-                                cantGrs:1
-                                cantPtje:0
-                                codProducto:"3350"
-                                idFrmDetalle:43494
-                                seccion:2
-                    nombreForm:"ALG LYCRA MORADO OSCURO"
-                    observ:"preblanq"
-                    pantone:"no Pantone"
-                    phFormula:"no PH"
-                    proceso:37
-                    */
-                        
-                    /*
-                    oFibras: [],
-                    oProcesos: [],
-                    oComposicion: [],
-                    oColores: [],
-                    oTonos: [],
-                    oPreparaciones: [],
-                    oAuxiliares: [],
-                    oColorantes: [],
-                    oProPosterior: [],
-                    oCurvas: [],
-                    oQuimicos: [],
-                    oFormulas: [],
-                    cantQuimicos: 0,
-                    cQuimicos: 0,
-                    colorPorFormula: [],
-                    auxEsporFormula: [],
-                    tipoEdicionColor: 'nuevoColor',
-                    tipoEdicionAuxEsp: 'nuevoAuxEsp',
-                    $barraProgreso: $('#barraProgreso'),
-                    $nomFormula: $('#nomFormula'),
-                    $codFormula: $('#codFormula'),
-                    $cbxFibra: $('#cbxFibra'),
-                    $cbxCompos: $('#cbxCompos'),
-                    $cbxColor: $('#cbxColor'),
-                    $desColor: $('#desColor'),
-                    $cbxTono: $('#cbxTono'),
-                    $codPantone: $('#codPantone'),
-                    $phFormula: $('#phFormula'),
-                    $colorpicker: $('#colorpicker'),
-                    $colorSelector: $('#colorSelector'),
-                    $tProcesos: $('#tProcesos'),
-                    $btnLimpiarEncab: $('#btnLimpiarEncab'),
-                    $daTableProcesos: $('#daTableProcesos'),
-                    $tPreparaciones: $('#tPreparaciones'),
-                    $daTablePreparaciones: $('#daTablePreparaciones'),
-                    $tAuxiliares: $('#tAuxiliares'),
-                    $daTableAuxiliares: $('#daTableAuxiliares'),
-                    $tColorantes: $('#tColorantes'),
-                    $codColor: $('#codColor'),
-                    $dlCodColor: $('#dlCodColor'),
-                    $nomColor: $('#nomColor'),
-                    $dlNomColor: $('#dlNomColor'),
-                    $cantColor: $('#cantColor'),
-                    $btnAddColor: $('#btnAddColor'),
-                    $tAuxEsp: $('#tAuxEsp'),
-                    $codAuxEsp: $('#codAuxEsp'),
-                    $dlCodAuxEsp: $('#dlCodAuxEsp'),
-                    $nomAuxEsp: $('#nomAuxEsp'),
-                    $dlNomAuxEsp: $('#dlNomAuxEsp'),
-                    $cantAuxEsp: $('#cantAuxEsp'),
-                    $btnAddAuxEsp: $('#btnAddAuxEsp'), 
-                    $tProPosteriores: $('#tProPosteriores'),
-                    $daTableProPosteriores: $('#daTableProPosteriores'),
-                    $observ: $('#observ'),
-                    $tFormula: $('#tFormula').find('tbody'),
-                    */                  
+                    self.formula.costo = formula.costo;
+                    $('#cForm').text('$ ' + formula.costo);
                 });
             },
             
@@ -1820,28 +2010,13 @@
                     var codigo = codFibra + codColor + codTono;
 
                     self.$codFormula.val(codigo.trim());
-                    
-                    if (self.formula.idFibra !== '' && self.formula.idColor !== '' && self.formula.codTono !== '' && self.proceso === 'nuevo') {
-                        $.getJSON('../../../ServletFormulas', {
-                            accion: 'consecutivo',
-                            idFibra: self.formula.idFibra,
-                            idColor: self.formula.idColor,
-                            codTono: self.formula.codTono,
-                            compos: self.formula.compos
-                        }, function(response) {
-                            self.formula.consec = response;
-                            codigo = codFibra + codColor + codTono;
-                            self.$codFormula.val(codigo.trim() + response);
-                            self.vistaPreliminarFormula({in: ''});
-                        });
-                    }
                 }
             },
             
             vistaPreliminarFormula: function(oD) {
                 var self = this;
                 
-                var cod = self.$codFormula.val();
+                var cod = self.$codFormula.val() + self.$consecFormula.val();
                 var fibra = '';
                 var compos = '';
                 var color = self.$desColor.val().toUpperCase();
@@ -1898,10 +2073,11 @@
                 $('#tPantone').text(pantone.trim());
                 
                 $('#tObserv').html(observ.trim());
+                $('#cForm').text('$ ' + self.formula.costo);
                 
                 if (oD.in === 'proceso') {
                     proceso = oD.proceso;
-                    tiempo = oD.tiempo.toFixed(2) + ' Hora(s)';
+                    tiempo = Math.round(oD.tiempo) + ' Hora(s)';
                     curva = oD.curva;
                     
                     $('#tProceso').text(proceso);
@@ -1980,8 +2156,8 @@
                         var nomAux = $('#tNomAux').text();
                     
                         for (var i = 0; i < self.oAuxiliares.length; i++) {
-                            if (nomAux === self.oAuxiliares[i].nomAuxiliar) {
-                                var quimicos = self.oAuxiliares[i].auxiliarCollection;
+                            if (nomAux === self.oAuxiliares[i].nombMaestro) {
+                                var quimicos = self.oAuxiliares[i].quimicos;
 
                                 for (var i = 0; i < quimicos.length; i++) {
                                     for (var k = 0; k < self.oQuimicos.length; k++) {
@@ -2057,17 +2233,17 @@
                 if (oD.in === 'colorante') {
                     for (var i = 0; i < self.colorPorFormula.length; i++) {
                         for (var j = 0; j < self.oColorantes.length; j++) {
-                            if (self.oColorantes[j].codProduct === self.colorPorFormula[i].codQ) {
+                            if (self.oColorantes[j].codProduct === self.colorPorFormula[i].codQuimico) {
                                 
                                 if (codQuimCol === '') {
                                     codQuimCol = self.oColorantes[j].codProduct + ' <br>';
                                     nomQuimCol = self.oColorantes[j].nomProducto + ' <br>';
-                                    cantCol = self.colorPorFormula[i].cant2 + ' p <br>';
+                                    cantCol = self.colorPorFormula[i].cantPtj + ' p <br>';
                                     
                                 } else {
                                     codQuimCol = codQuimCol + self.oColorantes[j].codProduct + ' <br>';
                                     nomQuimCol = nomQuimCol + self.oColorantes[j].nomProducto + ' <br>';
-                                    cantCol = cantCol + self.colorPorFormula[i].cant2 + ' p <br>';
+                                    cantCol = cantCol + self.colorPorFormula[i].cantPtj + ' p <br>';
                                 }
                                 break;
                             }
@@ -2115,7 +2291,7 @@
             
             guardarFormula: function() {
                 var self = this;
-                
+                var usuario = JSON.parse(sessionStorage.user);
                 
                 self.$btnSaveForm.on('click', function(e) {
                     e.preventDefault();
@@ -2135,146 +2311,189 @@
                     if ($('#tNomFibra').text() === '') {
                         resp2 = false;
 
-                        self.mensajeObligatoriedad({
-                            t: 'gritter',
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
                             titulo: 'Campos obligatorios',
-                            cuerpoMensaje: 'No ha seleccionado una fibra.'
+                            mensaje: 'No ha seleccionado una fibra.'
                         });
                     } 
                     
                     if ($('#tColor').text() === '') {
                         resp2 = false;
 
-                        self.mensajeObligatoriedad({
-                            t: 'gritter',
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
                             titulo: 'Campos obligatorios',
-                            cuerpoMensaje: 'No ha seleccionado un color.'
+                            mensaje: 'No ha seleccionado un color.'
                         });
                     } 
                     
                     if ($('#tTono').text() === '') {
                         resp2 = false;
 
-                        self.mensajeObligatoriedad({
-                            t: 'gritter',
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
                             titulo: 'Campos obligatorios',
-                            cuerpoMensaje: 'No ha seleccionado un tono.'
+                            mensaje: 'No ha seleccionado un tono.'
                         });
                     } 
                     
                     if ($('#tProceso').text() === '') {
                         resp2 = false;
 
-                        self.mensajeObligatoriedad({
-                            t: 'gritter',
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
                             titulo: 'Campos obligatorios',
-                            cuerpoMensaje: 'No ha seleccionado un proceso.'
+                            mensaje: 'No ha seleccionado un proceso.'
                         });
                     } 
                     
                     if ($('#tPh').text() === '') {
                         resp2 = false;
 
-                        self.mensajeObligatoriedad({
-                            t: 'gritter',
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
                             titulo: 'Campos obligatorios',
-                            cuerpoMensaje: 'No ha indicado el ph para la formula.'
+                            mensaje: 'No ha indicado el ph para la formula.'
                         });
                     } 
                     
                     if ($('#tPantone').text() === '') {
                         resp2 = false;
 
-                        self.mensajeObligatoriedad({
-                            t: 'gritter',
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
                             titulo: 'Campos obligatorios',
-                            cuerpoMensaje: 'No ha indicado el código pantone para la formula.'
+                            mensaje: 'No ha indicado el código pantone para la formula.'
                         });
                     } 
                     
                     if ($('#tNomPrep').text() === '' || $('#tNomPrep').text() === 'SIN MAESTRO ASIGNADO') {
                         resp2 = false;
 
-                        self.mensajeObligatoriedad({
-                            t: 'gritter',
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
                             titulo: 'Campos obligatorios',
-                            cuerpoMensaje: 'No ha seleccionado una preparación.'
+                            mensaje: 'No ha seleccionado una preparación.'
                         });
                     } 
                     
                     if ($('#tNomAux').text() === '' || $('#tNomAux').text() === 'SIN MAESTRO ASIGNADO') {
                         resp2 = false;
 
-                        self.mensajeObligatoriedad({
-                            t: 'gritter',
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
                             titulo: 'Campos obligatorios',
-                            cuerpoMensaje: 'No ha seleccionado un auxiliar.'
+                            mensaje: 'No ha seleccionado un auxiliar.'
                         });
                     }
                     
                     if (self.$tAuxEsp.find('tbody tr').length < 2) {
                         resp2 = false;
 
-                        self.mensajeObligatoriedad({
-                            t: 'gritter',
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
                             titulo: 'Campos obligatorios',
-                            cuerpoMensaje: 'No ha seleccionado un auxiliar especial.'
+                            mensaje: 'No ha seleccionado un auxiliar especial.'
                         });
                     }
                     
                     if ($('#tCodQuimCol').text() === '') {
                         resp2 = false;
 
-                        self.mensajeObligatoriedad({
-                            t: 'gritter',
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
                             titulo: 'Campos obligatorios',
-                            cuerpoMensaje: 'No ha seleccionado un colorante.'
+                            mensaje: 'No ha seleccionado un colorante.'
                         });
                     }
                     
                     if ($('#tNomProPos').text() === '' || $('#tNomProPos').text() === 'SIN MAESTRO ASIGNADO') {
                         resp2 = false;
 
-                        self.mensajeObligatoriedad({
-                            t: 'gritter',
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
                             titulo: 'Campos obligatorios',
-                            cuerpoMensaje: 'No ha seleccionado un proceso posterior.'
+                            mensaje: 'No ha seleccionado un proceso posterior.'
+                        });
+                    }
+                    
+                    if (self.$consecFormula.val() === '') {
+                        resp2 = false;
+
+                        self.mensajeModalAndGritter({
+                            tipo: 'gritter',
+                            titulo: 'Campos obligatorios',
+                            mensaje: 'No ha indicado el número de consecutivo.'
                         });
                     }
 
                     if (resp && resp2) {
                         if (self.proceso === 'nuevo') {
-                            
-                            self.formula.nomFormula = self.$nomFormula.val().toUpperCase();
-                            self.formula.desColor = self.$desColor.val().toUpperCase();
-                            self.formula.codPantone = self.$codPantone.val().toUpperCase();
-                            self.formula.phFormula = self.$phFormula.val();
-                            self.formula.color = self.$colorpicker.val();
-                            self.formula.codColorante = '';
-                            self.formula.cantColorante = '';
-                            self.formula.codAuxEsp = '';
-                            self.formula.cantCodAuxEsp = '';
-                            
-                            for (var i = 0; i < self.colorPorFormula.length; i++) {
-                                self.formula.codColorante = self.formula.codColorante + self.colorPorFormula[i].codQ + ' ';
-                                self.formula.cantColorante = self.formula.cantColorante + self.colorPorFormula[i].cant2 + ' ';
+                            if (self.formula.consecutivo < 0) {
+                                self.mensajeModalAndGritter({
+                                    tipo: 'modal',
+                                    titulo: 'Guardar Nueva Formula',
+                                    mensaje: 'Debe cambiar el número del consecutivo de la formula.'
+                                });
+                            } else {
+                                self.formula.nombreForm = self.$nomFormula.val().toUpperCase();
+                                //self.formula.desColor = self.$desColor.val().toUpperCase();
+                                self.formula.pantone = self.$codPantone.val().toUpperCase();
+                                self.formula.phFormula = self.$phFormula.val();
+                                self.formula.color = self.$colorpicker.val();
+                                self.formula.codColorante = '';
+                                self.formula.cantColorante = '';
+                                self.formula.codAuxEsp = '';
+                                self.formula.cantCodAuxEsp = '';
+
+                                for (var i = 0; i < self.colorPorFormula.length; i++) {
+                                    self.formula.codColorante = self.formula.codColorante + self.colorPorFormula[i].codQuimico + ' ';
+                                    self.formula.cantColorante = self.formula.cantColorante + self.colorPorFormula[i].cantPtj + ' ';
+                                }
+
+                                for(var i = 0; i < self.auxEsporFormula.length; i++) {
+                                    self.formula.codAuxEsp = self.formula.codAuxEsp + self.auxEsporFormula[i].codQuimico + ' ';
+                                    self.formula.cantCodAuxEsp = self.formula.cantCodAuxEsp + self.auxEsporFormula[i].cantGr + ' ';
+                                }
+
+                                self.formula.observ = self.$observ.val();
+
+                                //consultas.guardarFormula(self.formula);
+
+                                $.get(self.UrlFormulas + 'guardar', {
+                                    datos: JSON.stringify(self.formula),
+                                    idUsuario: usuario.numUsuario
+                                }, function(res) {
+
+                                    if (res) {
+                                        self.mensajeModalAndGritter({
+                                            tipo: 'gritter',
+                                            titulo: 'formulas/guardar',
+                                            mensaje: '¡Se guardó la formula!',
+                                            clase: 'growl-success'
+                                        });
+
+                                        self.limpiarTodo();
+
+                                    } else {
+                                        self.mensajeModalAndGritter({
+                                            tipo: 'gritter',
+                                            titulo: 'formulas/guardar',
+                                            mensaje: '¡No se guardó la formula.!',
+                                            clase: 'growl-danger'
+                                        });
+                                    }
+                                }).fail(function(res, status, er){
+                                    self.errorDeConexion(res, status, er, 'formulas/guardar');
+                                });
                             }
-                            
-                            for(var i = 0; i < self.auxEsporFormula.length; i++) {
-                                self.formula.codAuxEsp = self.formula.codAuxEsp + self.auxEsporFormula[i].codQuimico + ' ';
-                                self.formula.cantCodAuxEsp = self.formula.cantCodAuxEsp + self.auxEsporFormula[i].cantGr + ' ';
-                            }
-                            
-                            self.formula.observ = self.$observ.val();
-                            
-                            consultas.guardarFormula(self.formula);
-                            self.limpiarTodo();
                             
                         } else if (self.proceso === 'editar') {
                             var nombre = self.$cbxFibra.val() + ' ' + self.$cbxColor.val() + ' ' + self.$desColor.val().toUpperCase() + ' ' + self.$cbxTono.val();
-                            self.formula.nomFormula = nombre.trim();
-                            self.formula.desColor = self.$desColor.val().toUpperCase();
-                            self.formula.codPantone = self.$codPantone.val().toUpperCase();
+                            self.formula.nombreForm = nombre.trim();
+                            //self.formula.desColor = self.$desColor.val().toUpperCase();
+                            self.formula.pantone = self.$codPantone.val().toUpperCase();
                             self.formula.phFormula = self.$phFormula.val();
                             self.formula.color = self.$colorpicker.val();
                             self.formula.codColorante = '';
@@ -2283,8 +2502,8 @@
                             self.formula.cantCodAuxEsp = '';
                             
                             for (var i = 0; i < self.colorPorFormula.length; i++) {
-                                self.formula.codColorante = self.formula.codColorante + self.colorPorFormula[i].codQ + ' ';
-                                self.formula.cantColorante = self.formula.cantColorante + self.colorPorFormula[i].cant2 + ' ';
+                                self.formula.codColorante = self.formula.codColorante + self.colorPorFormula[i].codQuimico + ' ';
+                                self.formula.cantColorante = self.formula.cantColorante + self.colorPorFormula[i].cantPtj + ' ';
                             }
                             
                             for(var i = 0; i < self.auxEsporFormula.length; i++) {
@@ -2294,11 +2513,104 @@
                             
                             self.formula.observ = self.$observ.val();
                             
-                            consultas.editarFormula(self.formula);
-                            self.limpiarTodo();
+                            //consultas.editarFormula(self.formula);
+                            var d = JSON.stringify(self.formula);
+                            $.get(self.UrlFormulas + 'editar', {
+                                datos: d,
+                                idUsuario: usuario.numUsuario
+                            }, function(res) {
+                                if (res) {
+                                    self.mensajeModalAndGritter({
+                                        tipo: 'gritter',
+                                        titulo: 'formula/editar',
+                                        mensaje: '¡Se modificó la formula.!',
+                                        clase: 'growl-success'
+                                    });
+
+                                    self.limpiarTodo();
+                                    
+                                } else {
+                                    self.mensajeModalAndGritter({
+                                        tipo: 'gritter',
+                                        titulo: 'formula/editar',
+                                        mensaje: '¡No se modificó la formula.!',
+                                        clase: 'growl-danger'
+                                    });
+                                }
+                            }).fail(function(res, status, er){
+                                self.errorDeConexion(res, status, er, 'formulas/editar');
+                            });
                         }
                     }
                 });
+            },
+            
+            errorDeConexion: function(res, status, er, serv){
+                var self = this;
+                self.mensajeModalAndGritter({
+                       tipo: 'gritter',
+                       titulo: 'Servicio: ' + serv,
+                       mensaje: 'status: ' + status + ' er: ' + er,
+                       clase: 'growl-danger'
+                    });
+            }, 
+            
+            costearFormula: function(){
+                var self = this;
+                
+                self.formula.costo = 0;
+                
+                if (self.formula.idPreparacion !== undefined) {
+                    for (var i = 0; i < self.oPreparaciones.length; i++) {
+                        if (self.oPreparaciones[i].idMaestro === self.formula.idPreparacion) {
+                            self.formula.costo += Math.round(self.oPreparaciones[i].costo);
+                            $('#cForm').text('$ ' + self.formula.costo);
+                            break;
+                        }
+                    }
+                }
+                
+                if (self.formula.idAuxiliar !== undefined) {
+                    for (var i = 0; i < self.oAuxiliares.length; i++) {
+                        if (self.oAuxiliares[i].idMaestro === self.formula.idAuxiliar) {
+                            self.formula.costo += Math.round(self.oAuxiliares[i].costo);
+                            $('#cForm').text('$ ' + self.formula.costo);
+                            break;
+                        }
+                    }
+                }
+                
+                if (self.formula.idProcPost !== undefined) {
+                    for (var i = 0; i < self.oProPosterior.length; i++) {
+                        if (self.oProPosterior[i].idMaestro === self.formula.idProcPost) {
+                            self.formula.costo += Math.round(self.oProPosterior[i].costo);
+                            $('#cForm').text('$ ' + self.formula.costo);
+                            break;
+                        }
+                    }
+                }
+                
+                for (var i = 0; i < self.colorPorFormula.length; i++) {
+                    $.get(self.UrlFormulas + 'costear', {
+                        codProd: self.colorPorFormula[i].codQuimico,
+                        cantGrs: 0.0,
+                        cantPtj: self.colorPorFormula[i].cantPtj
+                    }, function(res) {
+                        self.formula.costo += Math.round(res);
+                        $('#cForm').text('$ ' + self.formula.costo);
+                    });
+                }
+
+                for(var i = 0; i < self.auxEsporFormula.length; i++) {
+                    $.get(self.UrlFormulas + 'costear', {
+                        codProd: self.auxEsporFormula[i].codQuimico,
+                        cantGrs: self.auxEsporFormula[i].cantGr,
+                        cantPtj: 0.0
+                    }, function(res) {
+                        self.formula.costo += Math.round(res);
+                        $('#cForm').text('$ ' + self.formula.costo);
+                    });
+                }
             }
         };
     })();
@@ -2306,26 +2618,3 @@
     frmFormula.init();
 
 })(document, window, jQuery)
-
-            /*formula: {
-              nomFormula: '',
-              idFibra: '',
-              compos: '',
-              idColor: '',
-              desColor: '',
-              codTono: '',
-              codPantone: '',
-              phFormula: '',
-              color: '',
-              idProceso: '',
-              idPreparacion: '',
-              idAuxiliar: '',
-              idProPost: '',
-              codColorante: '',
-              cantColorante: '',
-              codAuxEsp: '',
-              cantCodAuxEsp: '',
-              observ: '',
-              idFormula: '',
-              consec: ''
-            }*/
